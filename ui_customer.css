@@ -1,0 +1,47 @@
+html {
+  background: maroon;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  overflow: scroll;
+}
+
+body {
+  width: 50%;
+  margin: 0 auto;
+  background: #C1C1C1;
+  font-size: 87.5%; /* Normi fontti koko on 14px */
+  font-family: Arial, 'Lucida Sans Unicode';
+  line-height: 1.5;
+  text-align: left;
+}
+
+#prepared p, #prepared ol {
+  margin: 0 0 0 0px;
+
+}
+
+#prepared {
+  margin-left: 36px;
+}
+
+#contentleft {
+  background: #C1C1C1;
+  width: 20%;
+  float: left;
+}
+
+#contentright {
+  background: #C1C1C1;
+  width: 80%;
+  float: left;
+}
+
+.drink {
+  width: 80%;
+}
+
+.drink img {
+  width: 100%;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Drinkrobot</title>
+    <link rel="stylesheet" href="ui_customer.css">
+  </head>
+  <body>
+  <header>
+    <p>Good evening sir/madam! <br><br>
+
+    Order a drink you prefer from the list. If you want to get your drink faster, order a
+    drink which is already on the order list and is not full of orderers!</p>
+  </header>
+  <div id="contentleft">
+    <h1>Being prepared:</h1>
+    <div id="prepared">
+      <p>Screwdriver</p>
+        <ol>
+          <li>Jori</li>
+          <li>Andres</li>
+          <li>Oskari</li>
+          <li>Ville</li>
+        </ol>
+    </div>
+
+    <hr>
+    <h1>Next order:</h1>
+    <ol>
+      <li class="batch">Vodka Apple
+        <ol>
+          <li>Mikko</li>
+          <li>Aleksi</li>
+          <li>-</li>
+          <li>-</li>
+        </ol>
+      </li>
+      <li class="batch">Screwdriver
+        <ol>
+          <li>Max</li>
+          <li>-</li>
+          <li>-</li>
+          <li>-</li>
+        </ol>
+      </li>
+      <li class="batch">Green Widow
+        <ol>
+          <li>Joonas</li>
+          <li>Konsta</li>
+          <li>-</li>
+          <li>-</li>
+        </ol>
+      </li>
+      <li class="batch">Cranberry Lime Virgin
+        <ol>
+          <li>Tatu</li>
+          <li>-</li>
+          <li>-</li>
+          <li>-</li>
+        </ol>
+      </li>
+    </ol>
+
+  </div>
+  <div id="contentmiddle">
+  </div>
+  <div id="contentright">
+    <button class="drink" onclick="move_pallet23()">
+      <img src="Drinkit\Screwdriver.jpg">
+    </button><br>
+    <div id="drinklist" class="panel">
+    <button class="drink" onclick="move_pallet12()">
+      <img src="Drinkit\Apple Juice.jpg">
+    </button><br>
+    <button class="drink" onclick="move_pallet23()">
+      <img src="Drinkit\Green Widow.jpg">
+    </button><br>
+
+    </div>
+  </div>
+  </body>
+
+  </html>
