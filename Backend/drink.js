@@ -21,7 +21,7 @@ class Drink {
     // Function for adding a portion into the recipe-array. Incase of duplicates, changes the amount of the drink.
     addPortion(pname, pamount) {
         // Check for invalid amount:
-        if (arguments.length < 1 || typeof(pamount) != "number") {
+        if (typeof(pamount) != "number") {
             console.log('Invalid amount when adding ' + pname + ' to recipe.')
             return;
         }
@@ -56,24 +56,12 @@ class Drink {
     // Function which checks if the drink can be mixed with current bottles:
     checkAvailability() {
         //Todo:
-        this.available = true;
-    }
-
-    // Function, which turns the portions in the recipe into JSON-strings and returns it in an array.
-    recipetoJSON() {
-        if (this.recipe.length < 1) {
-            console.log('No recipe.')
-            return;
+        if(this.available = false) {
+            this.available = true;
         }
-        let portions = [];
-        let string;
-        for (let i = 0; i < this.recipe.length; i++) {
-            string = JSON.stringify(this.recipe[i]);
-            portions.push(string);
-        }
-        return portions;
+        return;
     }
 
 };
 
-module.exports = Drink
+module.exports = Drink;

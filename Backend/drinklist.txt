@@ -1,0 +1,1 @@
+{"drinks":[{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kahvi","amount":4}]}]}
