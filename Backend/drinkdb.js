@@ -16,7 +16,10 @@ class DrinkDB {
     // Function which adds a drink to the drinks array. Assumes a string and a JSON-string of an array of portions as parameters. 
     // TODO?: Also appends the drink to the drinklist.txt.
     // Difficulty: Changing recipe values of the already existing drinks, currently done by exporting the whole drinklist.
-    addDrink(name, recipeJSON) {
+    addDrink(name, recipeJSON, initialized) {
+        if(typeof(initialized) == 'undefined') {
+            initialized = false;
+        }
         console.log('Adding drink ' + name + ' to the database.');
         // Create an object of the recipe-parameter
         let recipe = JSON.parse(recipeJSON);
@@ -30,25 +33,35 @@ class DrinkDB {
         beverage.checkAvailability()
         
         // Check the database if the drink already exists and if so, remove it.
-        this.removeDrink(name);
-        
+        if(!initialized) {
+            this.removeDrink(name);
+        } else {
+            this.removeDrink(name, true);
+        }
         // Add the new drink to the container.
         this.drinks.push(beverage);
-        // Export the new drinklist to the default file.
-        changeExport(this);
+        // If the DB is not being imported, export the new drinklist to the default file.
+        if(!initialized) {
+            changeExport(this.drinks);
+        }
         console.log('Succesfully added drink ' + name + ' to the database.');
         return;
     }
     
     // The function that searches for a drink by name and removes it if found.
-    removeDrink(name) {
+    removeDrink(name, initialized) {
+        if(typeof(initialized) == 'undefined') {
+            initialized == false;
+        }
         // Search for the drink
         for(let i = 0; i < this.drinks.length; i++) {
             if(this.drinks[i].name == name) {
                 // Remove it
                 this.drinks.splice(i, 1);
                 // Export the new database list.
-                changeExport(this);
+                if(!initialized) {
+                    changeExport(this.drinks);    
+                }
                 console.log('Succesfully removed the drink ' + name + ' from the drink database.')
                 return;
             }
@@ -59,33 +72,34 @@ class DrinkDB {
     }
     
     // The function that reads the drink database from a separate file.
-    // NOTE: Currently asynchronous behaviour, might be a problem?
-    // to be checked later on on the actual app development.
     initialize(filename) {
         // Check for default filename:
         if(typeof(filename) == 'undefined') {
-            filename = 'drinklist.txt'
+            filename = 'drinklist.txt';
         }
         console.log('Initializing database from the file ' + filename + '.');
-        
-        let DB;
-        // Read the file using utf-8 encoding.
-        fs.readFile(filename, "utf-8", (err, data) => {
-            if (err) {
-                throw err;
-            }            
-            // Save the data to the DBString.
-            DB = JSON.parse(data);
-            // Check if the type is correct:
-            if(typeof(DB) != 'object') {
-            console.log("Error: The database file could not be read.")
-            return;
-            }
-            // If the read file indeed was in the right format, replace the current database with the one read.
-            this.drinks = DB;
-            console.log("Database initialized succesfully!");
-            return;
-        })
+        // Empty the current database:
+        this.drinks = [];
+
+        // Read the file using utf-8 encoding, save the data to the DBstring.
+        let DBstring;
+        DBstring = fs.readFileSync(filename, 'utf-8'); 
+        // Parse to DB
+        let DB = JSON.parse(DBstring);
+        // Check if the type is correct:
+        if(typeof(DB) != 'object') {
+        console.log("Error: The database file could not be read.")
+        return;
+        }
+        // If the read file indeed was in the right format, replace the current database with the one read by adding objects.
+        for(let i = 0; i < DB.length; i++) {
+            // Get the name and the recipe
+            let name = DB[i].name;
+            let recipe = JSON.stringify(DB[i].recipe);
+            // Add the drink in the initialization mode.
+            this.addDrink(name,recipe,true);
+        }
+        console.log("Database initialized succesfully!");
         return;
     }
     
@@ -94,7 +108,7 @@ class DrinkDB {
     export(filename) {
         // Check for default filename:
         if(typeof(filename) == 'undefined') {
-            filename = 'drinklist.txt'
+            filename = 'drinklist.txt';
         }
         console.log('Exporting the database to ' + filename + '.');
         // Convert the Database to a JSON String.
@@ -148,7 +162,10 @@ resepti = '[{"bottleName": "Jallu", "amount":6},{"bottleName":"Kahvi","amount":4
 DB.addDrink('Jallukahvi', resepti);
 resepti = '[{"bottleName": "Jack Daniels", "amount":6},{"bottleName":"Coca-Cola","amount":8}]';
 DB.addDrink('Lemmy', resepti);
+DB.export('testi3.txt');
 DB.removeDrink('Lemmy');
-DB.initialize('testi.txt');
+DB.export('testi4.txt');
+DB.initialize('testi5.txt');
+DB.drinks[2].addPortion('Ice',1);
 DB.export('testi2.txt');
 
