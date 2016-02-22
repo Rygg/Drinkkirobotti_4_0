@@ -88,19 +88,28 @@ class DrinkDB {
         let DB = JSON.parse(DBstring);
         // Check if the type is correct:
         if(typeof(DB) != 'object') {
-        console.log("Error: The database file could not be read.")
-        return;
+            console.log("Error: The drink database file could not be read: Not a JSON-string.")
+            return false;
         }
         // If the read file indeed was in the right format, replace the current database with the one read by adding objects.
         for(let i = 0; i < DB.length; i++) {
-            // Get the name and the recipe
-            let name = DB[i].name;
-            let recipe = JSON.stringify(DB[i].recipe);
-            // Add the drink in the initialization mode.
-            this.addDrink(name,recipe,true);
+            // Get the name and the recipe, if they exist: Checks that the drink-object is correct, doesn't check its recipe.
+            if ( typeof(DB[i].name) == 'string' && typeof(DB[i].available) == 'boolean' && typeof(DB[i].recipe) == 'object') {
+                let name = DB[i].name;
+                let recipe = JSON.stringify(DB[i].recipe);
+                // Add the drink in the initialization mode.
+                this.addDrink(name,recipe,true);
+            } 
+            // If the object was in the wrong format, return false: 
+            else {
+                console.log('Error: The drink database could not be read: Not a proper DrinkDB-object.');
+                this.drinks = [];
+                return false;
+            }
+            
         }
         console.log("Database initialized succesfully!");
-        return;
+        return true;
     }
     
     // The function which writes the current drink database into a separate 'drinklist.txt' file.
