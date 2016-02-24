@@ -1,1 +1,0 @@
-["empty",{"name":"Janoviina","type":"whatisthis?","volume":10,"pourSpeed":2,"isAlcoholic":true},"empty","empty","empty",{"name":"Janoviina","type":"whatisthis?","volume":10,"pourSpeed":2,"isAlcoholic":true},{"name":"Gin","type":"whatisthis?","volume":10,"pourSpeed":2,"isAlcoholic":true},"empty","empty","empty","empty","empty"]
