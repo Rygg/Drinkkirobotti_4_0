@@ -36,7 +36,7 @@ class BottleShelf {
             return -1;
         }
         // Check if the current bottleslot is occupied.
-        if(this.bottles[location] != 'string') {
+        if(this.bottles[location] != 'empty') {
             console.log('Error occurred while adding bottle: The location is occupied by another bottle.');
             return 0;
         }
@@ -69,7 +69,7 @@ class BottleShelf {
     }
     
     // Returns an array of the bottle names present in the shelf
-    listBottles() {
+    getBottles() {
         // Create the return array:
         let array = [];
         // Push all the non-empty elements in it.
@@ -109,13 +109,15 @@ class BottleShelf {
         this.bottles = [];
         
         // Create an object from the read data.
-        let object = JSON.parse(fs.readFileSync(filename, 'utf-8'));
-        // Check if it is the correct type:
-        if(typeof(object) != 'object') {
-            console.log('Error while reading shelf configuration from file ' + filename + ': Not a JSON-string.');
+        // Check if the file is indeed a string.
+        let objString = fs.readFileSync(filename, 'utf-8');
+        let object;
+        try {
+            object = JSON.parse(objString);
+        } catch (err) {
+            console.log('Error while reading shelf configuration from file: ' + err.message + '.');
             return false;
         }
-        
         // Check if the length of the object is 12.
         if(object.length != 12) {
             console.log('Error while reading shelf configuration from file ' + filename +': Not a proper BottleShelf-object.');
@@ -151,13 +153,15 @@ class BottleShelf {
     // Asynchronous functionality.
     exportShelf(filename) {
         // Create the JSON-string of the bottleshelf.
+        console.log('Exporting the configuration of the bottle shelf to ' + filename + '.')
         let exportString = JSON.stringify(this.bottles);
-        fs.writefile(filename, exportString, (err) => {
+        fs.writeFile(filename, exportString, (err) => {
             if (err) {
                 throw err;
             }
+            console.log('Bottleshelf configuration saved to the file ' + filename + '.');
+            return;
         })
-        console.log('Bottleshelf configuration saved to the file ' + filename + '.');
         return;
     }
     
@@ -170,4 +174,31 @@ module.exports = BottleShelf;
 // Testing:
 let BS = new BottleShelf();
 console.log(BS);
+console.log(BS.getBottles());
+let bottleString= '{ "name":"Janoviina", "type":"whatisthis?", "volume":10,"pourSpeed":2, "isAlcoholic":true}';
+BS.addBottle(bottleString, 5);
+console.log(BS.getBottles());
+BS.exportShelf('hyllytesti1.txt');
+BS.addBottle(bottleString,1);
+bottleString= '{ "name":"Gin", "type":"whatisthis?", "volume":10,"pourSpeed":2, "isAlcoholic":true}';
+BS.addBottle(bottleString, 6);
+BS.addBottle(bottleString, 5);
+console.log(BS.getBottles());
+BS.exportShelf('hyllytesti2.txt');
+console.log('TEST: Find bottle locations for Janoviina');
+console.log(BS.findBottleLocations('Janoviina'));
+console.log('TEST: Find bottle location for Gin');
+console.log(BS.findBottleLocations('Gin'));
+console.log('TEST: Removing bottle based on location:');
+BS.removeBottle(5);
+console.log('')
+console.log('TEST: Trying to remove bottle based on name:');
+BS.removeBottle('Janoviina');
+console.log(BS.getBottles);
+BS.loadShelf('hyllytesti1.txt'); // Reads or doesn't, depending of the writing speed of the computer, otherwise throws an error.
+console.log(BS.getBottles());
+BS.loadShelf('hyllytesti2.txt'); // Reads or doesn't, depending of the writing speed of the computer, otherwise throws an error.
+
+
+
 // TODO, ei jaksa.

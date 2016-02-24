@@ -93,8 +93,8 @@ class DrinkDB {
         }
         // If the read file indeed was in the right format, replace the current database with the one read by adding objects.
         for(let i = 0; i < DB.length; i++) {
-            // Get the name and the recipe, if they exist: Checks that the drink-object is correct, doesn't check its recipe.
-            if ( typeof(DB[i].name) == 'string' && typeof(DB[i].available) == 'boolean' && typeof(DB[i].recipe) == 'object') {
+            // Get the name and the recipe, if they exist. Utilizes checkFormat()-function to check whether the current element is a correct element for the database.
+            if (checkFormat(DB[i])) {
                 let name = DB[i].name;
                 let recipe = JSON.stringify(DB[i].recipe);
                 // Add the drink in the initialization mode.
@@ -134,47 +134,31 @@ class DrinkDB {
     }
 };
 
+// Convert the Database to JSON String and save to default file:
 function changeExport(object) {
-    // Convert the Database to JSON String:
     let drinksJSON = JSON.stringify(object);
     fs.writeFileSync("drinklist.txt", drinksJSON)
     console.log("Changes were made into drinklist.txt");
     return;
 }
 
+// Check if the current element in object is a proper DrinkDB object. Returns true/false.
+function checkFormat(object) {
+    // Check if the drink object inside the container is in the right 'shape'. 
+    if ( typeof(object.name) != 'string' && typeof(object.available) != 'boolean' && typeof(object.recipe) != 'object') {
+        // Is not.
+        return false;
+    } 
+    // Is, Check if the recipe is an array of portions:
+    else {
+        for (let i = 0; i < object.recipe.length; i++) {
+            if( typeof(object.recipe[i].bottleName) != 'string' && typeof(object.recipe[i].amount) != 'number' ) {
+                return false;
+            }
+        }
+    }
+    // No errors found.    
+    return true;
+}
 
 module.exports = DrinkDB;
-
-// For testing purposes.
-// Drink
-console.log('Testing intensifies:')
-let GT = new Drink('GT');
-GT.addPortion('Gin', 4);
-GT.addPortion('Tonic', 6);
-GT.addPortion('Kalja');
-GT.addPortion('Kalja', "lol");
-console.log(GT.recipe);
-GT.addPortion('Gin', 6);
-console.log(GT.recipe);
-GT.removePortion('Kaljala');
-console.log(GT.recipe);
-GT.removePortion('Tonic');
-console.log(GT.recipe);
-
-// Database
-let DB = new DrinkDB();
-let resepti = '[{"bottleName": "Jallu", "amount":4},{"bottleName":"Kahvi","amount":4}]';
-let resp = JSON.parse(resepti); 
-DB.addDrink('Jallukahvi', resepti);
-DB.export('testi.txt');
-resepti = '[{"bottleName": "Jallu", "amount":6},{"bottleName":"Kahvi","amount":4}]';
-DB.addDrink('Jallukahvi', resepti);
-resepti = '[{"bottleName": "Jack Daniels", "amount":6},{"bottleName":"Coca-Cola","amount":8}]';
-DB.addDrink('Lemmy', resepti);
-DB.export('testi3.txt');
-DB.removeDrink('Lemmy');
-DB.export('testi4.txt');
-DB.initialize('testi5.txt');
-DB.drinks[2].addPortion('Ice',1);
-DB.export('testi2.txt');
-
