@@ -110,7 +110,13 @@ class BottleShelf {
         
         // Create an object from the read data.
         // Check if the file is indeed a string.
-        let objString = fs.readFileSync(filename, 'utf-8');
+        let objString;
+        try {
+            objString = fs.readFileSync(filename, 'utf-8'); 
+        } catch(err) {
+            console.log('Error while reading shelf configuration from file: ' + err.message + '.');
+            return false;
+        }
         let object;
         try {
             object = JSON.parse(objString);
@@ -140,6 +146,7 @@ class BottleShelf {
             // If it wasn't, the file is in an incorrect format:
             else {
                 console.log('Error while reading shelf configuration from file ' + filename +': Not a proper BottleShelf-object.');
+                this.bottles.fill('empty');
                 return false;
             }
                  
@@ -169,36 +176,3 @@ class BottleShelf {
 
 
 module.exports = BottleShelf;
-
-
-// Testing:
-let BS = new BottleShelf();
-console.log(BS);
-console.log(BS.getBottles());
-let bottleString= '{ "name":"Janoviina", "type":"whatisthis?", "volume":10,"pourSpeed":2, "isAlcoholic":true}';
-BS.addBottle(bottleString, 5);
-console.log(BS.getBottles());
-BS.exportShelf('hyllytesti1.txt');
-BS.addBottle(bottleString,1);
-bottleString= '{ "name":"Gin", "type":"whatisthis?", "volume":10,"pourSpeed":2, "isAlcoholic":true}';
-BS.addBottle(bottleString, 6);
-BS.addBottle(bottleString, 5);
-console.log(BS.getBottles());
-BS.exportShelf('hyllytesti2.txt');
-console.log('TEST: Find bottle locations for Janoviina');
-console.log(BS.findBottleLocations('Janoviina'));
-console.log('TEST: Find bottle location for Gin');
-console.log(BS.findBottleLocations('Gin'));
-console.log('TEST: Removing bottle based on location:');
-BS.removeBottle(5);
-console.log('')
-console.log('TEST: Trying to remove bottle based on name:');
-BS.removeBottle('Janoviina');
-console.log(BS.getBottles);
-BS.loadShelf('hyllytesti1.txt'); // Reads or doesn't, depending of the writing speed of the computer, otherwise throws an error.
-console.log(BS.getBottles());
-BS.loadShelf('hyllytesti2.txt'); // Reads or doesn't, depending of the writing speed of the computer, otherwise throws an error.
-
-
-
-// TODO, ei jaksa.

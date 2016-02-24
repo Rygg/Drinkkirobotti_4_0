@@ -83,15 +83,21 @@ class DrinkDB {
 
         // Read the file using utf-8 encoding, save the data to the DBstring.
         let DBstring;
-        DBstring = fs.readFileSync(filename, 'utf-8'); 
-        // Parse to DB
-        let DB = JSON.parse(DBstring);
-        // Check if the type is correct:
-        if(typeof(DB) != 'object') {
-            console.log("Error: The drink database file could not be read: Not a JSON-string.")
+        try {
+            DBstring = fs.readFileSync(filename, 'utf-8');
+        } catch(err) {
+            console.log("Error: Could not read file: " + err.message + ".");
+            return false;
+        } 
+        // Parse to DB and // Check if the type is correct:
+        let DB;
+        try {
+            DB = JSON.parse(DBstring);    
+        } catch(err) {
+            console.log("Error: The drink database file could not be read: " + err.message + ".");
             return false;
         }
-        // If the read file indeed was in the right format, replace the current database with the one read by adding objects.
+        // If the read file indeed was in JSON format, replace the current database with the one read by adding objects.
         for(let i = 0; i < DB.length; i++) {
             // Get the name and the recipe, if they exist. Utilizes checkFormat()-function to check whether the current element is a correct element for the database.
             if (checkFormat(DB[i])) {
@@ -103,6 +109,7 @@ class DrinkDB {
             // If the object was in the wrong format, return false: 
             else {
                 console.log('Error: The drink database could not be read: Not a proper DrinkDB-object.');
+                console.log('Reseting drink database.');
                 this.drinks = [];
                 return false;
             }
@@ -145,14 +152,14 @@ function changeExport(object) {
 // Check if the current element in object is a proper DrinkDB object. Returns true/false.
 function checkFormat(object) {
     // Check if the drink object inside the container is in the right 'shape'. 
-    if ( typeof(object.name) != 'string' && typeof(object.available) != 'boolean' && typeof(object.recipe) != 'object') {
+    if ( typeof(object.name) != 'string' || typeof(object.available) != 'boolean' || typeof(object.recipe) != 'object') {
         // Is not.
         return false;
     } 
     // Is, Check if the recipe is an array of portions:
     else {
         for (let i = 0; i < object.recipe.length; i++) {
-            if( typeof(object.recipe[i].bottleName) != 'string' && typeof(object.recipe[i].amount) != 'number' ) {
+            if( typeof(object.recipe[i].bottleName) != 'string' || typeof(object.recipe[i].amount) != 'number' ) {
                 return false;
             }
         }
