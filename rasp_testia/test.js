@@ -1,10 +1,9 @@
 "use strict"
 
-let SerialPort = require("serialport").SerialPort
-let serialPort = new SerialPort("/dev/tty-usbserial1", {
-    baudrate: 57600
+let SerialPort = require("serialport").SerialPort;
+let serialPort = new SerialPort("/dev/ttyUSB0", {
+    baudrate: 9600
 }); 
-
 
 serialPort.open(function(err) {
     if(err) {
@@ -21,3 +20,12 @@ serialPort.open(function(err) {
     }    
 });
 
+// Listening:
+/* 
+serialPort.on("open", function() {
+    console.log('open');
+    serialPort.on('data', function(data) {
+        console.log(data);
+    });
+});
+*/
