@@ -28,7 +28,7 @@ class BottleShelf {
     
     // Adds a bottle to the specific location in the shelf. Assumes a JSON-String of Bottle-object.
     // Returns 1 if the bottle was placed in the place, 0 if place was occupied.
-    // If location isn't between 0 and 11 or is not specified, returns -1.
+    // If location isn't between 0 and 11 or is not specified or JSON cannot be parsed, returns -1.
     addBottle(bottle, location) {
         // Check for the value of location parameter. If incorrect, return false.
         if(location < 0 || location > 11 || typeof(location) != 'number') {
@@ -41,7 +41,14 @@ class BottleShelf {
             return 0;
         }
         // Parse an object from the JSON string.
-        let temp = JSON.parse(bottle);
+        let temp;
+        try {
+            temp = JSON.parse(bottle); 
+        } catch(err) {
+            console.log("Error while adding bottle to the shelf: " + err.message);
+            return -1;
+        }
+        
         // Create a new bottle object based on the objects fields, add it to the intended location in the container.
         let newBottle = new Bottle(temp.name, temp.type, temp.volume, temp.pourSpeed, temp.isAlcoholic);
         this.bottles[location] = newBottle;
@@ -65,7 +72,7 @@ class BottleShelf {
         // Remove the bottle.
         this.bottles[location] = 'empty';
         console.log('Bottle from location ' + location + ' was removed succesfully.');
-        return false;
+        return true;
     }
     
     // Returns an array of the bottle names present in the shelf
@@ -101,7 +108,7 @@ class BottleShelf {
         return array;
     } 
     
-    // Loads the shelf configuration from a separate file.
+    // Loads the shelf configuration from a separate file. Clears the current structure when called.
     // Returns true if succesfull, false if the file is in the wrong format.
     loadShelf(filename) {
         console.log('Loading bottleshelf from file ' + filename +'.');
