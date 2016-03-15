@@ -6,7 +6,7 @@
 let SerialPort = require("serialport").SerialPort;
 
 // Serial Port configuration:
-let port = "/dev/ttyUSB0";
+let port = '/COM1';
 // Create the serialPort variable:
 let serialPort = new SerialPort(port, {
     baudrate: 9600
@@ -36,11 +36,20 @@ class Robot {
     
 };
 
-
+let i = 0;
 // Function to handle the listened communication:
 function handler(data) {
     console.log(data);
+    console.log("tapahtuuko mitään");
+    i++;
+    console.log(data);
+    serialPort.close();
+    if (i <5) {
+        serialPort.close();
+    }
     return;
 }
  
+let Rob = new Robot();
 
+//serialPort.close();

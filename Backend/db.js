@@ -15,11 +15,41 @@ class Database {
     }
     
     // Function for reserving a drink from the reservedShelf. Returns the reserved drink(s) in the
-    // QueueObject-JSON for the main program to use.  
-    reserveDrink(drinkName) {
-        return;
+    // QueueObject-JSON for the main program to use.
+    // returns false if the drink is not available in the database, though assumes it is in there.
+    // Implementation for ID parameter is missing, assuming parameter.
+    reserveDrink(drinkName, id) {
+        
+        // Search the drink from the database.
+        let usedDrink;
+        for (let i = 0; i < this.drinkDB.drinks.length; i++) {
+            if (this.drinkDB.drinks[i].name == drinkName) {
+                // Drink found, find the bottles used:
+                if (this.drinkDB.drinks[i].available) {
+                    usedDrink = this.drinkDB.drinks[i];
+                } else {
+                    return false;
+                }
+            }
+        }
+        let usedLocations = [];
+        // Find bottles and their locations.
+        // Remove the amounts from the reserved shelf.
+        for (let i = 0; i < usedDrink.recipe.length; i++) {
+            let am  = usedDrink.recipe[i].amount;
+            let loc = this.reservedShelf.findBottleLocations(usedDrink.recipe[i].bottleName);
+            
+            this.reservedShelf.bottles[loc].volume =- am;
+            usedLocations.push(loc);
+        }
+        
+        return {
+            Drink: usedDrink,
+            locations: usedLocations,
+            ID: id
+        };
     }
-    
+        
     // Function for canceling a drink from the queue. Returns the reservedShelf back to the original value before the order.
     // Returns true for a succesful operation and false for failure.
     cancelDrink(qObject) {
