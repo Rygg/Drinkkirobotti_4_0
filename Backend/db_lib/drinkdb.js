@@ -2,9 +2,9 @@
 "use strict";
 
 // Import Drink-class
-const Drink = require("./drink.js");
+let Drink = require("./drink.js");
 // Import FileSystem for reading and writing.
-const fs = require('fs');
+let fs = require('fs');
 
 
 // The definition for the class

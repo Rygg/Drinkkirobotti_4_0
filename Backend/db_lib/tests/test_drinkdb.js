@@ -95,7 +95,7 @@ console.log("");
  
  // Test #4: Adding a drink with the same name.
 console.log("----------------------------------------------------");
-console.log("Test 4: Testing 'addDrink()' - adding a drink with the same name.");
+console.log("Test 5: Testing 'addDrink()' - adding a drink with the same name.");
 console.log("----------------------------------------------------");
 console.log("");
 
@@ -123,7 +123,7 @@ console.log("");
 
 
 console.log("----------------------------------------------------");
-console.log("Test 5: Testing 'removeDrink()'.");
+console.log("Test 6: Testing 'removeDrink()'.");
 console.log("----------------------------------------------------");
 console.log("");
 
@@ -149,7 +149,7 @@ console.log("");
 
 // Test 6: Testing the initializing (read from file).
 console.log("----------------------------------------------------");
-console.log("Test 6: Testing 'intialize()'. Also tests if objects keep their methods when read from file.");
+console.log("Test 7: Testing 'intialize()'. Also tests if objects keep their methods when read from file.");
 console.log("----------------------------------------------------");
 console.log("");
 
@@ -181,7 +181,7 @@ DB.export('testi2.txt');
 
 // Test 7: Testing the initializing (read from file).
 console.log("----------------------------------------------------");
-console.log("Test 7: Testing 'intialize()' with an invalid filename.");
+console.log("Test 8: Testing 'intialize()' with an invalid filename.");
 console.log("----------------------------------------------------");
 console.log("");
 
@@ -199,7 +199,7 @@ console.log("");
 
 // Test 8: Testing the initializing (read from file).
 console.log("----------------------------------------------------");
-console.log("Test 8: Testing 'intialize()' with file that doesn't include JSON.");
+console.log("Test 9: Testing 'intialize()' with file that doesn't include JSON.");
 console.log("----------------------------------------------------");
 console.log("");
 
@@ -217,7 +217,7 @@ console.log("");
 
 // Test 9: Testing the initializing (read from file).
 console.log("----------------------------------------------------");
-console.log("Test 9: Testing 'intialize()' with file that includes JSON in a wrong structure.");
+console.log("Test 10: Testing 'intialize()' with file that includes JSON in a wrong structure.");
 console.log("----------------------------------------------------");
 console.log("");
 
