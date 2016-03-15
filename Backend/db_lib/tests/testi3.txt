@@ -1,1 +1,0 @@
-[{"name":"Lemmy","available":false,"recipe":[{"bottleName":"Jack Daniels","amount":6},{"bottleName":"Coca-Cola","amount":8}]},{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kahvi","amount":4}]}]
