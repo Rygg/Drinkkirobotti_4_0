@@ -22,16 +22,19 @@ class DrinkDB {
         }
         console.log('Adding drink ' + name + ' to the database.');
         // Create an object of the recipe-parameter
-        let recipe = JSON.parse(recipeJSON);
+        let recipe;
+        try {
+            recipe = JSON.parse(recipeJSON);
+        } catch(err) {
+            console.log("Error when adding drink: " + err.message);
+            return false;
+        }
         // Create the object for the drink.
         let beverage = new Drink(name);
         // Copy the recipe from the parameter
         for (let i = 0; i < recipe.length; i++) {
             beverage.addPortion(recipe[i].bottleName, recipe[i].amount);
-        }
-        // Check for current availablity
-        beverage.checkAvailability()
-        
+        }        
         // Check the database if the drink already exists and if so, remove it.
         if(!initialized) {
             this.removeDrink(name);
@@ -45,7 +48,7 @@ class DrinkDB {
             changeExport(this.drinks);
         }
         console.log('Succesfully added drink ' + name + ' to the database.');
-        return;
+        return true;
     }
     
     // The function that searches for a drink by name and removes it if found.

@@ -77,7 +77,7 @@ console.log("");
 
 // Testing the exportShelf -function.
 // Hyllytesti1.txt should contain:
-// {['empty','empty','empty','empty',{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},'empty','empty','empty','empty','empty','empty','empty'] } 	
+// ["empty","empty","empty","empty",{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty","empty","empty","empty","empty"] 	
 BS.exportShelf('hyllytesti1.txt');
 
 // Testing the adding of more bottles:
@@ -209,7 +209,7 @@ console.log("");
 
 
 // The second export test: Hyllytesti2.txt should contain: 
-// {[{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},'empty','empty','empty',{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},{"name":"Gin", "type":"Bombaypullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},'empty','empty','empty','empty','empty','empty'] } 	
+// [{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty",{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},{"name":"Gin", "type":"Bombaypullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty","empty","empty","empty"] 	
 BS.exportShelf('hyllytesti2.txt');
 
 // Testing the findBottleLocations() subroutine:
@@ -417,7 +417,6 @@ if(BS.loadShelf('test_bottleShelf.txt') != true && BS.bottles.length != 12) {
 total++;
 console.log("");
 
-console.log("");
 console.log("");
 console.log('Testing completed: ' + total + ' tests were run with ' + success + ' successes and ' +failure + ' failures.');
 console.log("");

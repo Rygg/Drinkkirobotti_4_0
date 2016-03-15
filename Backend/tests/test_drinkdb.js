@@ -66,6 +66,32 @@ if (DB.drinks.length == 2 && DB.drinks[0].name == "Jallukahvi" && typeof(DB.drin
 }
 total++;
 console.log("");
+
+// Test 4: Adding another drink with an invalid bottle parameter
+console.log("----------------------------------------------------");
+console.log("Test 4: Testing 'addDrink()' - adding a drink with an invalid bottle.");
+console.log("----------------------------------------------------");
+console.log("");
+
+resepti = '[{"bottleName": "Jack Daniels", "amount":6,{"bottleName":"Coca-Cola","amount":8}]';
+if(DB.addDrink('Ei toimi', resepti) != false) {
+    console.log("Test failure!");
+    failure++;
+} else {
+    // Should still have an array with 2 drinks. 
+    if (DB.drinks.length == 2 && DB.drinks[0].name == "Jallukahvi" && typeof(DB.drinks[0].available) == 'boolean' && DB.drinks[0].recipe &&
+        DB.drinks[1].name == "Lemmy" && typeof(DB.drinks[1].available) == 'boolean' && DB.drinks[1].recipe) {
+        console.log("Test success!");
+        success++;
+    } else {
+        console.log("Test failure!");
+        failure++;
+    }    
+}
+
+total++;
+console.log("");
+
  
  // Test #4: Adding a drink with the same name.
 console.log("----------------------------------------------------");
