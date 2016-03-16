@@ -58,10 +58,11 @@ class Database {
             for(let i = 0; i < qObject.drink.recipe.length; i++) {
                 let returnAmount = qObject.drink.recipe[i].amount;
                 let currentLoc = qObject.locations[i];
-                this.reservedShelf.bottles[currentLoc].amount += returnAmount;
+                this.reservedShelf.bottles[currentLoc].volume += returnAmount;
             }
             return true;
-        } catch() {
+        } catch(err) {
+            console.log("Canceling drink failed: "+err.message);
             return false;
         }
     }
@@ -70,19 +71,39 @@ class Database {
     // has been completed.
     // rather simple but keeps the implementation more module.
     pourCompleted(location, amount) {
-        this.currentShelf[location].amount =- amount;
+        this.currentShelf[location].volume =- amount;
         return;
     }
     
-    // A function for simply importing both bottleshelf and drinkDB at once. On a second thought completely useless? 
-    // Maybe for a "read/write default structure"
+    // A function for simply importing both bottleshelf and drinkDB at once.
     importDB(drinkDB_file, bottleShelf_file) {
+        // Check if only the drinkDB is imported (the usual case);
+        if(typeof(bottleShelf_file) == 'undefined') {
+            this.drinkDB.initialize(drinkDB_file);
+        }
+        // A bottleShelf file also needs to be imported.
+        else {
+            this.drinkDB.initialize(drinkDB_file);
+            this.currentShelf.loadShelf(bottleShelf_file);
+            this.reservedShelf.loadShelf(bottleShelf_file);
+        }
+        // Exit
         return;
     }
     
-    // A function for simply exporting both bottleshelf and drinkDB at once. On a second thought completely useless?  
-    // Maybe for a "read/write default structure."
+    // A function for simply exporting both bottleshelf and drinkDB at once. 
     exportDB(drinkDB_file, bottleShelf_file) {
+        // Check if only the drinkDB is to be exported (the usual case);
+        if(typeof(bottleShelf_file) == 'undefined') {
+            this.drinkDB.export(drinkDB_file);
+        }
+        // A bottleShelf file also needs to be imported.
+        else {
+            this.drinkDB.export(drinkDB_file);
+            this.currentShelf.exportShelf(bottleShelf_file);
+            this.reservedShelf.exportShelf(bottleShelf_file);
+        }
+        // Exit
         return;
     }
     
@@ -90,15 +111,50 @@ class Database {
     checkDrinkAvailability(drinkName) {
         // Create a variable for the drinks availability:
         let isAvailable = true;
-        // Get the drinks recipe:
+        // Get the drinks recipe and location in the drinkdb:
+        let drinkLocation = 0;
         let recipe;
-        for(let i = 0; i < this.drinkDB.drinks.length; i++) {
-            if(this.drinkDB.drinks[i].name == drinkName) {
-
+        // Search
+        for(drinkLocation; drinkLocation < this.drinkDB.drinks.length; drinkLocation++) {
+            if(this.drinkDB.drinks[drinkLocation].name == drinkName) {
+                recipe = this.drinkDB.drinks[drinkLocation].recipe;
+            } else {
+                console.log("Drink not found in database, add the drink before checking for availability.");
+                return;
             }
         }
-
-        return;
+        // Check if the bottleshelf has the proper bottles in it:
+        for (let i = 0; i < recipe.length; i++) {
+            let loc = this.reservedShelf.bottles.findBottleLocations(recipe[i].name);
+            if(loc.length == 0 || typeof(loc) == 'undefined') {
+                // Bottle not present in the shelf configuration
+                isAvailable = false;
+                break;
+            }
+            // Check in how many bottles the liquid is available in:
+            else if(loc.length == 1) {
+                // Operate normally:
+                if(this.reservedShelf.bottles[loc[0]].volume < recipe[i].amount) {
+                    // The bottle does not have enough liquid in it.
+                    isAvailable = false;
+                    break;
+                }
+            } else {
+                // More than one bottle present.
+                for(let j = 0; j < loc.length; j++) {
+                    if(this.reservedShelf.bottles[loc[j]].volume > recipe[i].amount) {
+                        // Found an okay bottle:
+                        isAvailable = true;
+                        break;
+                    } // Not this round:
+                    isAvailable = false;
+                }
+            } 
+        }
+        // Set the availability value for the drink:
+        this.drinkDB.drinks[drinkLocation].available = isAvailable;
+        
+        return; // Exit.
     }
     
 };
