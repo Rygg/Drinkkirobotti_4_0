@@ -76,9 +76,9 @@ total++;
 console.log("");
 
 // Testing the exportShelf -function.
-// Hyllytesti1.txt should contain:
+// Hyllytesti1.json should contain:
 // ["empty","empty","empty","empty",{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty","empty","empty","empty","empty"] 	
-BS.exportShelf('hyllytesti1.txt');
+BS.exportShelf('hyllytesti1.json');
 
 // Testing the adding of more bottles:
 console.log("----------------------------------------------------");
@@ -208,9 +208,9 @@ total++;
 console.log("");
 
 
-// The second export test: Hyllytesti2.txt should contain: 
+// The second export test: Hyllytesti2.json should contain: 
 // [{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty",{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},{"name":"Gin", "type":"Bombaypullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty","empty","empty","empty"] 	
-BS.exportShelf('hyllytesti2.txt');
+BS.exportShelf('hyllytesti2.json');
 
 // Testing the findBottleLocations() subroutine:
 console.log("----------------------------------------------------");
@@ -345,7 +345,7 @@ console.log('Test 14: Testing the loadShelf() with an invalid filename:');
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.loadShelf('eiole.txt') != false && this.bottles.length != 0) {
+if(BS.loadShelf('eiole.json') != false && this.bottles.length != 0) {
     failure++;
     console.log('Test failure!');
 } else {
@@ -361,7 +361,7 @@ console.log('Test 15: Testing the loadShelf() with a file that is not in JSON fo
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.loadShelf('notJSON.txt') != false && this.bottles.length != 0) {
+if(BS.loadShelf('notJSON.json') != false && this.bottles.length != 0) {
     failure++;
     console.log('Test failure!');
 } else {
@@ -378,7 +378,7 @@ console.log('Test 16: Testing the loadShelf() with a file that is not a correct 
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.loadShelf('invalid_bottleShelf.txt') != false && this.bottles.length != 0) {
+if(BS.loadShelf('invalid_bottleShelf.json') != false && this.bottles.length != 0) {
     failure++;
     console.log('Test failure!');
 } else {
@@ -394,7 +394,7 @@ console.log('Test 17: Testing the loadShelf() with a file with a correct bottleS
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.loadShelf('test_bottleShelf.txt') != true && BS.bottles.length != 12) {
+if(BS.loadShelf('test_bottleShelf.json') != true && BS.bottles.length != 12) {
     failure++;
     console.log('Test failure!');
 } else {

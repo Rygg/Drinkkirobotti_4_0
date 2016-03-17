@@ -1,0 +1,9 @@
+Test files:
+test_db.js           | tests the database-class.
+test_drink.js        | tests the drink-class.
+test_drinkdb.js      | tests the drinkdatabase-class.
+test_bottleshelf.js  | tests the bottleshelf-class.
+
+running:
+node <filename>
+

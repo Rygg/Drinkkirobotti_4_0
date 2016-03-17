@@ -20,7 +20,7 @@ class DrinkDB {
         if(typeof(initialized) == 'undefined') {
             initialized = false;
         }
-        console.log('Adding drink ' + name + ' to the database.');
+        //console.log('Adding drink ' + name + ' to the database.');
         // Create an object of the recipe-parameter
         let recipe;
         try {
@@ -69,8 +69,10 @@ class DrinkDB {
                 return;
             }
         }
-        // Drink was not in the database.  
-        console.log('Drink ' + name + ' not present in the database.');
+        // Drink was not in the database.
+        if (!initialized) {
+            console.log('Drink ' + name + ' not present in the database.');    
+        }  
         return;
     }
     
@@ -78,7 +80,7 @@ class DrinkDB {
     initialize(filename) {
         // Check for default filename:
         if(typeof(filename) == 'undefined') {
-            filename = 'drinklist.txt';
+            filename = 'drinkdb.json';
         }
         console.log('Initializing database from the file ' + filename + '.');
         // Empty the current database:
@@ -127,7 +129,7 @@ class DrinkDB {
     export(filename) {
         // Check for default filename:
         if(typeof(filename) == 'undefined') {
-            filename = 'drinklist.txt';
+            filename = 'drinkdb.json';
         }
         console.log('Exporting the database to ' + filename + '.');
         // Convert the Database to a JSON String.
@@ -147,7 +149,7 @@ class DrinkDB {
 // Convert the Database to JSON String and save to default file:
 function changeExport(object) {
     let drinksJSON = JSON.stringify(object);
-    fs.writeFileSync("drinklist.txt", drinksJSON)
+    fs.writeFileSync("drinkdb.json", drinksJSON)
     console.log("Changes were made into drinklist.txt");
     return;
 }

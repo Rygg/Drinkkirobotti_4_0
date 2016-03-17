@@ -22,21 +22,21 @@ class Drink {
     addPortion(pname, pamount) {
         // Check for invalid amount:
         if (typeof(pamount) != "number") {
-            console.log('Invalid amount when adding ' + pname + ' to recipe.')
+            //console.log('Invalid amount when adding ' + pname + ' to recipe.')
             return;
         }
         // Check for duplicates:
         for (let i = 0; i < this.recipe.length; i++) {
             if (this.recipe[i].bottleName == pname) {
                 this.recipe[i].amount = pamount;
-                console.log(pname + ' already found in the recipe. Changed the amount to ' + pamount + 'cl.');
+                //console.log(pname + ' already found in the recipe. Changed the amount to ' + pamount + 'cl.');
                 return;
             }
         }
         // Add a new portion:
         let newportion = new Portion(pname, pamount)
         this.recipe.push(newportion);
-        console.log('Added ' + pamount + 'cl of ' + pname + ' to the recipe.')
+        //console.log('Added ' + pamount + 'cl of ' + pname + ' to the recipe.')
     }
 
     // Function for removing the portion of the wanted name from the recipe-array.
@@ -50,16 +50,7 @@ class Drink {
             }
         }
         // Not found:
-        console.log(pname + ' not found in the recipe.')
-    }
-
-    // Function which checks if the drink can be mixed with current bottles:
-    checkAvailability() {
-        //Todo:
-        if(this.available = false) {
-            this.available = true;
-        }
-        return;
+        //console.log(pname + ' not found in the recipe.')
     }
 
 };

@@ -42,9 +42,9 @@ total++;
 
 console.log("");
 // FIRST EXPORT:
-// testi.txt should contain:
+// testi.json should contain:
 // [{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":4},{"bottleName":"Kahvi","amount":4}]}]
-DB.export('testi.txt');
+DB.export('testi.json');
 console.log("");
 
 // Test 3: Adding another drink
@@ -114,11 +114,11 @@ total++;
 console.log("");
 
 // SECOND EXPORT:
-/* testi3.txt should contain:
+/* testi3.json should contain:
 [{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kahvi","amount":4}]},
 {"name":"Lemmy","available":false,"recipe":[{"bottleName":"Jack Daniels","amount":6},{"bottleName":"Coca-Cola","amount":8}]}]
 */
-DB.export('testi3.txt');
+DB.export('testi3.json');
 console.log("");
 
 
@@ -140,11 +140,11 @@ total++;
 console.log("");
 
 // THIRD EXPORT:
-/* testi4.txt should contain:
+/* testi4.json should contain:
 [{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kahvi","amount":4}]}]
 */
 
-DB.export('testi4.txt');
+DB.export('testi4.json');
 console.log("");
 
 // Test 6: Testing the initializing (read from file).
@@ -153,7 +153,7 @@ console.log("Test 7: Testing 'intialize()'. Also tests if objects keep their met
 console.log("----------------------------------------------------");
 console.log("");
 
-DB.initialize('testi5.txt');
+DB.initialize('testi5.json');
 DB.drinks[2].addPortion('Ice',1); // If no error/crash, methods retained.
 
 // Should contain:
@@ -169,14 +169,14 @@ total++;
 console.log("");
 
 // THIRD EXPORT:
-/* testi2.txt should contain:
+/* testi2.json should contain:
 [{"name":"Jallukahvi","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kahvi","amount":4}]},
 {"name":"Jallukola","available":false,"recipe":[{"bottleName":"Jallu","amount":6},{"bottleName":"Kola","amount":8}]},
 {"name":"Lemmy","available":false,"recipe":[{"bottleName":"Jack","amount":6},{"bottleName":"Kola","amount":8},{"bottleName":"Ice","amount":1}]},
 {"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}]
 */
 
-DB.export('testi2.txt');
+DB.export('testi2.json');
 
 
 // Test 7: Testing the initializing (read from file).
@@ -203,7 +203,7 @@ console.log("Test 9: Testing 'intialize()' with file that doesn't include JSON."
 console.log("----------------------------------------------------");
 console.log("");
 
-ans = DB.initialize('notJSON.txt');
+ans = DB.initialize('notJSON.json');
 // Should be false:
 if (!ans) {
     console.log("Test success!");
@@ -221,7 +221,7 @@ console.log("Test 10: Testing 'intialize()' with file that includes JSON in a wr
 console.log("----------------------------------------------------");
 console.log("");
 
-ans = DB.initialize('invalid_drinkDB.txt');
+ans = DB.initialize('invalid_drinkDB.json');
 // Should be false:
 if (!ans) {
     console.log("Test success!");

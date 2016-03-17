@@ -27,6 +27,8 @@ class Database {
                 if (this.drinkDB.drinks[i].available) {
                     usedDrink = this.drinkDB.drinks[i];
                 } else {
+                    // Drink not found in the database
+                    console.log("Drink not available in the database.");
                     return false;
                 }
             }
@@ -37,11 +39,29 @@ class Database {
         for (let i = 0; i < usedDrink.recipe.length; i++) {
             let am  = usedDrink.recipe[i].amount;
             let loc = this.reservedShelf.findBottleLocations(usedDrink.recipe[i].bottleName);
-            
-            this.reservedShelf.bottles[loc].volume =- am;
-            usedLocations.push(loc);
+            // Bottle not present.
+            if(loc.length == 0 && typeof(loc) == 'undefined') {
+                return false;
+            }
+            // Bottle only in one location:
+            else if(loc.length == 1) {
+                this.reservedShelf.bottles[loc[0]].volume -= am;
+                usedLocations.push(loc[0]);    
+            } 
+            // Bottle in more than 1 place. Check from the number 0 onwards if it has enough.
+            else {
+                for(let j = 0; j < loc.length; j++) {
+                    if(this.reservedShelf.bottles[loc[j]].volume > am) {
+                        // Found an okay bottle:
+                        this.reservedShelf.bottles[loc[j]].volume -= am;
+                        break;
+                    } // Not this round, repeat:       
+                }    
+            }
         }
         
+        // Check availability and return the QueueObject
+        this.checkDrinkAvailability(drinkName);
         return {
             drink: usedDrink,
             locations: usedLocations,
@@ -118,14 +138,16 @@ class Database {
         for(drinkLocation; drinkLocation < this.drinkDB.drinks.length; drinkLocation++) {
             if(this.drinkDB.drinks[drinkLocation].name == drinkName) {
                 recipe = this.drinkDB.drinks[drinkLocation].recipe;
-            } else {
-                console.log("Drink not found in database, add the drink before checking for availability.");
-                return;
+                break;
             }
+        }
+        if(typeof(recipe) == 'undefined') {
+            console.log("Drink not available as it is not in the database.");
+            return false;    
         }
         // Check if the bottleshelf has the proper bottles in it:
         for (let i = 0; i < recipe.length; i++) {
-            let loc = this.reservedShelf.bottles.findBottleLocations(recipe[i].name);
+            let loc = this.reservedShelf.findBottleLocations(recipe[i].bottleName);
             if(loc.length == 0 || typeof(loc) == 'undefined') {
                 // Bottle not present in the shelf configuration
                 isAvailable = false;
