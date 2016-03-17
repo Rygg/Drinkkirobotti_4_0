@@ -13,7 +13,7 @@ class Bottle {
         this.isAlcoholic = isAlcoholic; // Assumes boolean
     }
     fill() {
-        this.volume = 10; // Fill to 10cl.
+        this.volume = 100; // Fill to 100cl.
     }
 };
 

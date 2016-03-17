@@ -51,9 +51,10 @@ class Database {
             // Bottle in more than 1 place. Check from the number 0 onwards if it has enough.
             else {
                 for(let j = 0; j < loc.length; j++) {
-                    if(this.reservedShelf.bottles[loc[j]].volume > am) {
+                    if(this.reservedShelf.bottles[loc[j]].volume >= am) {
                         // Found an okay bottle:
                         this.reservedShelf.bottles[loc[j]].volume -= am;
+                        usedLocations.push(loc[j]);
                         break;
                     } // Not this round, repeat:       
                 }    
@@ -91,7 +92,7 @@ class Database {
     // has been completed.
     // rather simple but keeps the implementation more module.
     pourCompleted(location, amount) {
-        this.currentShelf[location].volume =- amount;
+        this.currentShelf.bottles[location].volume -= amount;
         return;
     }
     
@@ -127,7 +128,8 @@ class Database {
         return;
     }
     
-    // A function that checks availability of the drinks. To be used by main program when adding a drink to the database. 
+    // A function that checks availability of the drinks. 
+    // Has to be used by main program when adding a drink or adding/removing bottles in the database. 
     checkDrinkAvailability(drinkName) {
         // Create a variable for the drinks availability:
         let isAvailable = true;
@@ -164,7 +166,7 @@ class Database {
             } else {
                 // More than one bottle present.
                 for(let j = 0; j < loc.length; j++) {
-                    if(this.reservedShelf.bottles[loc[j]].volume > recipe[i].amount) {
+                    if(this.reservedShelf.bottles[loc[j]].volume >= recipe[i].amount) {
                         // Found an okay bottle:
                         isAvailable = true;
                         break;
