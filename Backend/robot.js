@@ -10,8 +10,6 @@ const EventEmitter = require('events');
 class RobotEmitterC extends EventEmitter {}
 const RobotEmitter = new RobotEmitterC;
 
-
-let timeout_occurred = false;
 // Serial Port configuration:
 const port = '/dev/ttyUSB0';
 
@@ -39,45 +37,45 @@ class Robot {
             }    
         })
     }
-
-    // Other functions for writing to the serial port for robot control - False is unable to comply.
+    
+       /*---------------------------------------------------------------------------------------------------
+                        Callable functions for writing to the serial port for robot control  
+       ---------------------------------------------------------------------------------------------------*/
+       
+       
+    // Grabbing the bottle from the bottleshelf. returns an instant false if unable to comply.
+    // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the lastCommand-variable.
+    // lastCommand == 'grabBottle' if succesful, 'failed' if not.
     grabBottle(location, type) {
-        if(!ableToMove) {
-            return false;
+        // Name the action.
+        let action = 'grabBottle';
+        
+        // Check if the robot is able to perform the action.
+        if(!ableToMove || !checkStatus(action)) {
+            return false; // Not.
         }
-        // Check possible last commands:
-        if(this.lastCommand == 'pourDrinks' || this.lastCommand == 'grabBottle') {
-            console.log("Unable to execute command: The robot is already holding a bottle");
-            return false;
-        }
-        // Robot should be able to perform the task:
-        this.communicating = true;
-        let command = 'grabBottle(' + location + ',' + type + ')';
-        this.lastCommand = 'grabBottle';
-
-        // Set the timeout calculator:
-        let timeout = setTimeout(function() {
-            RobotEmitter.emit('timeout_grabBottle');
-            }, 1000); // One second timeout.
-
+        
+        // Robot should be able to perform the task, prepare the action and format the command:
+        let timeout = prepareAction(action);
+        let command = action+'('+location+','+type+')';
         // Write the command to the serialport.
         writeSerial(command,timeout);
         
-        // Check if timeout happened.
-        RobotEmitter.once('timeout_grabBottle', function() {
-            // Something
-            console.log("grabBottle()-function timed out.");
-        });
+        // Check if the timeout happened.
+        let timeoutString = 'timeout_' + action;
+        RobotEmitter.once(timeoutString, timeoutHandler(action));
     }
     
-    // Pouring a drink from the grabbed bottle - (Boolean):
+    // Pouring a drink from the grabbed bottle: returns an instant false if unable to comply.
+    // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the lastCommand-variable.
+    // lastCommand == 'grabBottle' if succesful, 'failed' if not.
     pourDrinks(pourTime, howMany) {
-        
+
     }
     
     // Returning the grabbed bottle to the bottleshelf after pouring the drinks - (Boolean):
     returnBottle(location, type) {
-        
+
     }
     
     // Placing the grabbed bottle to the bottlechange-station - (Boolean):
@@ -91,9 +89,78 @@ class Robot {
     }
 
 
-    // Function to pack up the commonly used response handling.
+
+    /*-------------------------------------------------------------------------------------
+                  Member functions for event and serial communication handling
+    -------------------------------------------------------------------------------------*/
+    
+    timeoutHandler(action) {
+        // Set the lastCommand to 'failed' and emit a 'done'.
+        console.log(action+'()-function timed out.');
+        this.lastCommand = 'failed';
+        RobotEmitter.emit('done');
+    }
+
     
 };
+
+
+    /*-------------------------------------------------------------------------------------
+                 Functions for handling the serial communication:
+    -------------------------------------------------------------------------------------*/
+
+
+// Function to pack up the commonly used writing to serial.
+function writeSerial(command,timeout) {
+    // Write the command to the serial connection. 
+    serialPort.write(command, function(err,result) {
+        if(timeout || result != command.length) {
+            // Do not emit anything and exit. Results in a timeout 'done'.
+            return;
+        }
+        try {
+            responseHandler(err, result, timeout);
+        } catch(error) {
+            // Error occurred, set lastCommand to 'failed' and emit 'done'.
+            this.lastCommand = 'failed';
+            RobotEmitter.emit('done');
+            console.log("Error occurred while writing to serial: " + error);
+        }
+    });
+}
+
+// Function to pack up the commonly used response handling.
+function responseHandler(err,result,timeout) {
+    if(err) {
+        throw err;
+    }
+    console.log("Wrote to serial, waiting for response:");
+    serialPort.on('data', function(err, data){
+        if(timeout) {
+            // Do not emit anything and exit. Results in a timeout 'done'-emit.
+            return;
+        }
+        // Response read before timeout, clearing the timeout counter.
+        clearTimeout(timeout);
+        if(err) {
+            throw err;
+        }
+        if(data == 'working') { // To be changed to the actual command declared later on.
+            this.working = true;
+            this.communicating = false;
+            console.log("Robot is working");
+            RobotEmitter.emit('done');
+        } else {
+            this.working = false;
+            this.communicating = false;
+            this.lastCommand = 'failed';
+            console.log("Error: Robot couldn't execute the command.");
+            RobotEmitter.emit('done');
+        }   
+    })
+}
+
+// Helper functions:
 
 // Function to check if the robot is busy.
 function ableToMove() {
@@ -110,52 +177,71 @@ function ableToMove() {
     return true;
 }
 
-// Function to pack up the commonly used writing to serial.
-function writeSerial(command,timeout) {
-    // Write the command to the serial connection. 
-    serialPort.write(command, function(err,result) {
-        if(timeout || result != command.length) {
-            return;
-        }
-        clearTimeout(timeout);
-        try {
-            responseHandler(err, result);
-        } catch(error) {
-            console.log("Error occurred while writing to serial: " + error);
-        }
-    });
-}
-
-// Function to pack up the commonly used response handling.
-function responseHandler(err,result) {
-    if(err) {
-        throw err;
+// Function which checks if the robot is able to perform the required operation.
+function checkStatus(action) {
+    switch(action) {
+        // Check if the robot is able to grab a new bottle.
+        case grabBottle:
+            if(this.lastCommand == 'pourDrinks' || this.lastCommand == 'grabBottle') {
+                console.log("Unable to execute command: The robot is already holding a bottle");
+                return false;
+            }
+            return true;
+        // Check if the robot is able to pour a drink from the bottle.
+        case pourDrinks:
+            if(this.lastCommand != 'grabBottle') {
+                console.log("Unable to execute command: The robot has not grabbed a bottle.");
+                return false;
+            } 
+            return true;
+        // Check if the robot is holding a bottle.
+        case returnBottle:
+            if(this.lastCommand != 'grabBottle' || this.lastCommand != 'pourDrinks') {
+                console.log("Unable to execute command: The robot does not have a bottle.");
+                return false;
+            } 
+            return true;
+        // Check if the robot is holding a bottle.
+        case removeBottle:
+            if(this.lastCommand != 'grabBottle' || this.lastCommand != 'pourDrinks') {
+                console.log("Unable to execute command: The robot does not have a bottle.");
+                return false;
+            } 
+            return true;
+        // Check if the robot is NOT holding a bottle.
+        case getNewBottle:
+            if(this.lastCommand == 'pourDrinks' || this.lastCommand == 'grabBottle') {
+                console.log("Unable to execute command: The robot is already holding a bottle");
+                return false;
+            }
+            return true;
+        // Default behavior, invalid action.
+        default:
+            console.log("Error: Invalid action: " + action);
+            return false;    
     }
-    console.log("Wrote to serial, waiting for response:");
-    serialPort.on('data', function(err, data){
-        if(err) {
-            throw err;
-        }
-        if(data == 'working') { // To be changed to the actual command declared later on.
-            this.working = true;
-            this.communicating = false;
-            console.log("Robot is working");
-            RobotEmitter.emit('working_grabBottle');
-        } else {
-            this.working = false;
-            this.communicating = false;
-            console.log("Error: Robot couldn't execute the command.");
-            RobotEmitter.emit('failed_grabBottle');
-        }   
-    })
+}
+
+// Function which prepares the actions for writing the command to the serial port. Returns a timeout-object.
+function prepareAction(action) {
+    // Set the flag for communicating and the last action.
+    this.communicating = true;
+    this.lastCommand = action;
+
+    // Set the timeout calculator:
+    let timeout = setTimeout(function() {
+        let timeoutString = 'timeout_' + action;
+        RobotEmitter.emit(timeoutString);
+    }, 1000); // One second timeout.
+    
+    // Return a timeout-object to pass as a parameter.
+    return timeout;
 }
 
 
-let  i = 0;
 
 
 let Rob = new Robot();
-
 
 setTimeout(function(err) {
     Rob.grabBottle(5,'Bombay');
