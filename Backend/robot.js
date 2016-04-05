@@ -9,41 +9,33 @@ let timeout_occurred = false;
 // Serial Port configuration:
 const port = '/dev/ttyUSB0';
 
+// Create the serialport:
+let serialPort = new SerialPort.SerialPort(port, {
+    baudrate: 9600
+});
+
 class Robot { 
     // Construct the robot class:
     constructor() {
-        // Link the serialport to the robot-class as a member variable to export it outside:
-        this.serialPort = new SerialPort.SerialPort(port, {
-        baudrate: 9600
-        });
         // Set the flags for monitoring the robot process.
         this.communicating = false;
         this.working = false;
         this.lastCommand = 'none';
 
         // Open the Serial Port connection
-        this.serialPort.open(function(err) {
+        serialPort.open(function(err) {
             if(err) {
                 throw err; // Port failed to open:
             }
             // Open a test listening and writing to the port (TESTING PURPOSES) 
             else {
                 console.log("SerialPort connection to controller opened.");
-                this.serialPort.write("Ma ajan koko yon", function(err,res) {
-                    if(err) {
-                        throw err;
-                    } else {
-                        console.log("Wrote to serial, response: " + res);
-                    }
 
-                });
-                this.serialPort.on('data', function(data) {    
+                // Listening the first command for testing purposes.
+                serialPort.on('data', function(data) {    
                     console.log("Tuli dataa: ");
                     console.log(data);
-                    i++;
-                    this.serialPort.close();
-                });
-            }
+                });            }
         })
     }    
     
@@ -86,9 +78,10 @@ class Robot {
     // Grab a new bottle from the bottlechange-station - (Boolean):
     getNewBottle(location, type) {
         
-    } 
-    
-    
+    }
+
+
+    // Function to pack up the commonly used response handling.
     
 };
 
@@ -107,7 +100,7 @@ function ableToMove() {
     return true;
 }
 
-// Function to write to write a command to the serial port.
+// Function to pack up the commonly used writing to serial.
 function writeSerial(command) {
     // Set timeout calculator for the write operation (5 seconds for testing purposes):
     let timeout = setTimeout(function() {
@@ -115,11 +108,11 @@ function writeSerial(command) {
         console.log("Program timed out.");
     }, 5000);
     // Write the command to the serial connection. 
-    this.serialPort.write(command, function(err,result) {
+    serialPort.write(command, function(err,result) {
         if(timeout_occurred) {
             return;
         }
-        clearTimeout(timeout);
+    clearTimeout(timeout);
         try {
             responseHandler(err, result);
         } catch(error) {
@@ -128,17 +121,17 @@ function writeSerial(command) {
     });
 }
 
-// Function to be called if writing to port succeeds.
-function responseHandler(err, result, success) {
+// Function to pack up the commonly used response handling.
+function responseHandler(err,result) {
     if(err) {
         throw err;
     }
     console.log("Wrote to serial, waiting for response:");
-    this.serialPort.on('data', function(err, data){
+    serialPort.on('data', function(err, data){
         if(err) {
             throw err;
         }
-        if(data == 'working') {
+        if(data == 'working') { // To be changed to the actual command declared later on.
             this.working = true;
             this.communicating = false;
             console.log("Robot is working");
@@ -146,21 +139,25 @@ function responseHandler(err, result, success) {
             this.working = false;
             this.communicating = false;
             console.log("Error: Robot couldn't execute the command.");
-        }
+        }   
     })
-      
 }
 
 
-let i = 0;
+let  i = 0;
 
 
 let Rob = new Robot();
-Rob.grabBottle(5,'Bombay');
+
+
+setTimeout(function(err) {
+    Rob.grabBottle(5,'Bombay');
+}, 5000);
 
 
 //serialPort.close();
 
 
 // Export serialport connection and robot module
-module.exports = Robot;
+module.exports.Robot = Robot;
+module.exports.serialPort = serialPort;
