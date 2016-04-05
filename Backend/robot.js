@@ -63,11 +63,9 @@ class Robot {
         // Write the command to the serialport.
         writeSerial(command,timeout);
         
-        let func = grabBottle;
         // Check if timeout happened.
-        RobotEmitter.once('timeout_grabBottle', function(func) {
-            // Argument to return false.
-            func.return = false;
+        RobotEmitter.once('timeout_grabBottle', function() {
+            // Something
             console.log("grabBottle()-function timed out.");
         });
     }
