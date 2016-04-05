@@ -5,6 +5,12 @@
 // if problems -> sudo npm install --unsafe-perm serialport
 const SerialPort = require("serialport");
 
+// Create the eventEmitter for timeouts.
+const EventEmitter = require('events');
+class RobotEmitterC extends EventEmitter {}
+const RobotEmitter = new RobotEmitterC;
+
+
 let timeout_occurred = false;
 // Serial Port configuration:
 const port = '/dev/ttyUSB0';
@@ -27,21 +33,14 @@ class Robot {
             if(err) {
                 throw err; // Port failed to open:
             }
-            // Open a test listening and writing to the port (TESTING PURPOSES) 
+            // Port opened 
             else {
                 console.log("SerialPort connection to controller opened.");
-
-                // Listening the first command for testing purposes.
-                serialPort.on('data', function(data) {    
-                    console.log("Tuli dataa: ");
-                    console.log(data);
-                });            }
+            }    
         })
-    }    
-    
+    }
+
     // Other functions for writing to the serial port for robot control - False is unable to comply.
-    
-    // Grabbing a bottle from the shelf:
     grabBottle(location, type) {
         if(!ableToMove) {
             return false;
@@ -54,10 +53,23 @@ class Robot {
         // Robot should be able to perform the task:
         this.communicating = true;
         let command = 'grabBottle(' + location + ',' + type + ')';
-        
-        // Write the command to the serialport.
         this.lastCommand = 'grabBottle';
-        writeSerial(command);
+
+        // Set the timeout calculator:
+        let timeout = setTimeout(function() {
+            RobotEmitter.emit('timeout_grabBottle');
+            }, 1000); // One second timeout.
+
+        // Write the command to the serialport.
+        writeSerial(command,timeout);
+        
+        let func = grabBottle;
+        // Check if timeout happened.
+        RobotEmitter.once('timeout_grabBottle', function(func) {
+            // Argument to return false.
+            func.return = false;
+            console.log("grabBottle()-function timed out.");
+        });
     }
     
     // Pouring a drink from the grabbed bottle - (Boolean):
@@ -101,18 +113,13 @@ function ableToMove() {
 }
 
 // Function to pack up the commonly used writing to serial.
-function writeSerial(command) {
-    // Set timeout calculator for the write operation (5 seconds for testing purposes):
-    let timeout = setTimeout(function() {
-        timeout_occurred = true;
-        console.log("Program timed out.");
-    }, 5000);
+function writeSerial(command,timeout) {
     // Write the command to the serial connection. 
     serialPort.write(command, function(err,result) {
-        if(timeout_occurred) {
+        if(timeout || result != command.length) {
             return;
         }
-    clearTimeout(timeout);
+        clearTimeout(timeout);
         try {
             responseHandler(err, result);
         } catch(error) {
@@ -135,10 +142,12 @@ function responseHandler(err,result) {
             this.working = true;
             this.communicating = false;
             console.log("Robot is working");
+            RobotEmitter.emit('working_grabBottle');
         } else {
             this.working = false;
             this.communicating = false;
             console.log("Error: Robot couldn't execute the command.");
+            RobotEmitter.emit('failed_grabBottle');
         }   
     })
 }
@@ -152,7 +161,7 @@ let Rob = new Robot();
 
 setTimeout(function(err) {
     Rob.grabBottle(5,'Bombay');
-}, 5000);
+}, 2500);
 
 
 //serialPort.close();
@@ -161,3 +170,4 @@ setTimeout(function(err) {
 // Export serialport connection and robot module
 module.exports.Robot = Robot;
 module.exports.serialPort = serialPort;
+module.exports.RobotEmitter = RobotEmitter;
