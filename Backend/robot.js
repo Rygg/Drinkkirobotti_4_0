@@ -37,7 +37,7 @@ class Robot {
             else {
                 console.log("SerialPort connection to controller opened.");
                 // Test write:
-                serialPort.write('Moikka.', (err, res) => {
+                serialPort.write('Moikka!', (err, res) => {
                     console.log("kirjotettiin" + res + "merkkiä");
                 });
                 serialPort.on('data', (data) => {
@@ -251,7 +251,7 @@ class Robot {
 // Function to pack up the commonly used writing to serial.
 function writeSerial(command,timeout,that) {
     // Write the command to the serial connection.
-    serialPort.write(command, function(err,result) {
+    serialPort.write(Buffer(command, "utf8"), function(err,result) {
         console.log("Wrote to serial. " + result);
         if(timeout._called || result != command.length) {
             // Do not emit anything and exit. Results in a timeout 'done'.
@@ -274,7 +274,7 @@ function responseHandler(err,result,timeout,that) {
         throw err;
     }
     console.log("Wrote to serial, waiting for response:");
-    serialPort.on('data', function(err, data){
+    serialPort.once('data', function(err, data){
         if(timeout._called) {
             // Do not emit anything and exit. Results in a timeout 'done'-emit.
             console.log("Timeout when reading robots response.");
