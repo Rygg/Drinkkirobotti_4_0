@@ -146,7 +146,7 @@ class Robot {
         }
         
         // Set the action and command for the commHandler-function.
-        let action = 'getNewBottle';
+        let action = 'removeBottle';
         let command = action+'('+type+')';
 
         // Call the communications handler
@@ -320,15 +320,15 @@ function checkStatus(action,lastCommand) {
     // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
         if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle') {
-            console.log("Unable to execute command: The robot is already holding a bottle");
+            console.log("Unable to execute "+ action +": The robot is already holding a bottle");
             return false;
         }
         return true;
     }
     // Check if the robot is able to pour a drink from the bottle.
     else if(action == 'pourDrinks') {
-        if(lastCommand != 'grabBottle') {
-            console.log("Unable to execute command: The robot has not grabbed a bottle.");
+        if(lastCommand != 'grabBottle'  ||lastCommand != 'pourDrinks') {
+            console.log("Unable to execute "+ action +": The robot does not grabbed a bottle.");
             return false;
         } 
         return true;
@@ -336,7 +336,7 @@ function checkStatus(action,lastCommand) {
     // Check if the robot is holding a bottle.
     else if(action == 'returnBottle' || action == 'removeBottle') {
         if(lastCommand != 'grabBottle' || lastCommand != 'pourDrinks') {
-            console.log("Unable to execute command: The robot does not have a bottle.");
+            console.log("Unable to execute "+ action +": The robot does not have a bottle.");
             return false;
         } 
         return true;
