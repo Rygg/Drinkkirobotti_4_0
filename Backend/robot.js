@@ -78,13 +78,13 @@ class Robot {
             return false;
         }
         // Check if the parameters are correct:
-        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourtime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4) {
+        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourTime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4) {
             console.log("Error with pourDrinks()-parameters, Instruction not registered.");
             return false;
         }
         // Set the action and command for the commHandler-function.
         let action = 'pourDrinks';
-        let command = action+'('+location+','+type+')';
+        let command = action+'('+pourTime+','+howMany+')';
         
         // Call the communications handler
         if(!this.commHandler(action,command)) {
@@ -139,7 +139,7 @@ class Robot {
         
         // Set the action and command for the commHandler-function.
         let action = 'getNewBottle';
-        let command = action+'('+location+','+type+')';
+        let command = action+'('+type+')';
 
         // Call the communications handler
         if(!this.commHandler(action,command)) {
@@ -296,7 +296,7 @@ function responseHandler(err,result,timeout) {
 function checkStatus(action,lastCommand) {
 
     // Check if the robot is able to grab a new bottle.
-    if(action == 'pourDrinks' || action == 'grabBottle') {
+    if(action == 'getNewBottle' || action == 'grabBottle') {
         if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle') {
             console.log("Unable to execute command: The robot is already holding a bottle");
             return false;
@@ -351,16 +351,16 @@ setTimeout(function(err) {
     Rob.removeBottle('Bombay');
 }, 10000);
 
-// After 11 seconds, tell the good lad to do it properly and grab a bottle to remove it.
+// After 12 seconds, tell the good lad to do it properly and grab a bottle to remove it.
 setTimeout(function(err) {
     Rob.grabBottle(5,'Bombay');
     Rob.removeBottle('Bombay');
-}, 11000);
+}, 12000);
 
-// After 15 seconds, the bottle is switched and RobTheBot grabs the new one to a new location.
+// After 17 seconds, the bottle is switched and RobTheBot grabs the new one to a new location.
 setTimeout(function(err) {
     Rob.getNewBottle(5,'Muovijallu');
-},15000);
+},17000);
 
 
 
