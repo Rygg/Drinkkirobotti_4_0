@@ -315,8 +315,7 @@ function responseHandler(err,result,timeout,that) {
  * -----------------------------------------------------------------------------*/
 
 // checkStatus- a function which checks if the robot is able to perform the required operation.
-function checkStatus(action,lastCommand) {
-
+function checkStatus(action,lastCommand) { 
     // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
         if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle') {
@@ -325,17 +324,9 @@ function checkStatus(action,lastCommand) {
         }
         return true;
     }
-    // Check if the robot is able to pour a drink from the bottle.
-    else if(action == 'pourDrinks') {
-        if(lastCommand != 'grabBottle'  ||lastCommand != 'pourDrinks') {
-            console.log("Unable to execute "+ action +": The robot does not grabbed a bottle.");
-            return false;
-        } 
-        return true;
-    }
     // Check if the robot is holding a bottle.
-    else if(action == 'returnBottle' || action == 'removeBottle') {
-        if(lastCommand != 'grabBottle' || lastCommand != 'pourDrinks') {
+    else if(action == 'returnBottle' || action == 'removeBottle' || action == 'pourDrinks') {
+        if(lastCommand == 'returnBottle' || lastCommand == 'removeBottle' || lastCommand == 'getNewBottle') {
             console.log("Unable to execute "+ action +": The robot does not have a bottle.");
             return false;
         } 
@@ -375,7 +366,9 @@ setTimeout(function(err) {
 // After 12 seconds, tell the good lad to do it properly and grab a bottle to remove it.
 setTimeout(function(err) {
     Rob.grabBottle(5,'Bombay');
-    Rob.removeBottle('Bombay');
+    setTimeout(function(err) {
+        Rob.removeBottle('Bombay');     
+    },2000);
 }, 12000);
 
 // After 17 seconds, the bottle is switched and RobTheBot enthusiastically grabs the new one to a new location.
