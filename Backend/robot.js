@@ -251,9 +251,9 @@ class Robot {
 
 // Function to pack up the commonly used writing to serial.
 function writeSerial(command,timeout,that) {
+    console.log("Writing to serial: " + command);
     // Write the command to the serial connection.
     serialPort.write(Buffer(command, "utf8"), function(err,result) {
-        console.log("Wrote to serial. " + result);
         if(timeout._called || result != command.length) {
             // Do not emit anything and exit. Results in a timeout 'done'.
             return;
@@ -274,7 +274,7 @@ function responseHandler(err,result,timeout,that) {
     if(err) {
         throw error;
     }
-    console.log("Wrote to serial, waiting for response:");
+    console.log("Wrote "+result+" symbols to serial, waiting for response:");
     try {
         serialPort.once('data', function(err, data){
             if(timeout._called) {
@@ -388,7 +388,9 @@ setTimeout(function(err) {
 // Listen to Robs painful efforts:
 RobotEmitter.on('done', () => {
     console.log("A 'done'-event occurred!");
-    console.log("It seems that the last action was " + Rob.lastCommand);
+    let stringthing = "succeeded!";
+    if(Rob.failure) {stringthing = "failed!"}
+    console.log("It seems that the last action was " + Rob.lastCommand + " and it " + stringthing);
     console.log("The state of the robot: ");
     console.log(Rob);
 });
