@@ -41,10 +41,9 @@ class Robot {
     
        /*---------------------------------------------------------------------------------------------------
                         Callable functions for writing to the serial port for robot control  
-       ---------------------------------------------------------------------------------------------------*/
+       ---------------------------------------------------------------------------------------------------*/     
        
-       
-    // Grabbing the bottle from the bottleshelf. returns an instant false if unable to comply, true if reaches the end.
+    // grabBottle() - Grabbing the bottle from the bottleshelf. returns an instant false if unable to comply, true if reaches the end.
     // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the lastCommand-variable.
     // lastCommand == 'grabBottle' if succesful, 'failed' if not.
     grabBottle(location, type) {
@@ -54,11 +53,11 @@ class Robot {
         }
         // Check if the parameters are correct:
         if(typeof(location) != 'number' || location < 0 || location > 11  || typeof(type) != 'string') {
-            console.log("Error with parameters. grabBottle-command not registered.");
+            console.log("Error with grabBottle()-parameters. Instruction not registered.");
             return false;
         }
 
-        // Set the action and command for the serialHandler-function.
+        // Set the action and command for the commHandler-function.
         let action = 'grabBottle';
         let command = action+'('+location+','+type+')';
 
@@ -70,16 +69,57 @@ class Robot {
         return true; // All callbacks started.
     }
     
-    // Pouring a drink from the grabbed bottle: returns an instant false if unable to comply.
+    // pourDrinks() - Pouring a drink from the grabbed bottle: returns an instant false if unable to comply, true if the function reaches its end and starts all callbacks.
     // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the lastCommand-variable.
-    // lastCommand == 'grabBottle' if succesful, 'failed' if not.
+    // lastCommand == 'pourDrinks' if succesful, 'failed' if not.
     pourDrinks(pourTime, howMany) {
+        // Check if the robot is busy:
+        if(this.isBusy()) {
+            return false;
+        }
+        // Check if the parameters are correct:
+        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourtime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4) {
+            console.log("Error with pourDrinks()-parameters, Instruction not registered.");
+            return false;
+        }
+        // Set the action and command for the commHandler-function.
+        let action = 'pourDrinks';
+        let command = action+'('+location+','+type+')';
+        
+        // Call the communications handler
+        if(!this.commHandler(action,command)) {
+            console.log("The robot is not able to execute the command: " + command);
+            return false;
+        }
+        return true; // All callbacks started.
 
     }
     
-    // Returning the grabbed bottle to the bottleshelf after pouring the drinks - (Boolean):
+    // returnBottle() - Returning the grabbed bottle to the bottleshelf after (or before) pouring the drinks:
+    // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
+    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
+    // Success: lastCommand == 'returnBottle', Failure: lastCommand == 'failure'
     returnBottle(location, type) {
+        // Check if the robot is busy:
+        if(this.isBusy()) {
+            return false;
+        }
+        // Check if the parameters are correct:
+        if(typeof(location) != 'number' || location < 0 || location > 11  || typeof(type) != 'string') {
+            console.log("Error with returnBottle()-parameters. Instruction not registered.");
+            return false;
+        }
 
+        // Set the action and command for the commHandler-function.
+        let action = 'returnBottle';
+        let command = action+'('+location+','+type+')';
+
+        // Call the communications handler
+        if(!this.commHandler(action,command)) {
+            console.log("The robot is not able to execute the command: " + command);
+            return false;
+        }
+        return true; // All callbacks started.
     }
     
     // Placing the grabbed bottle to the bottlechange-station - (Boolean):
@@ -87,9 +127,32 @@ class Robot {
         
     }
     
-    // Grab a new bottle from the bottlechange-station - (Boolean):
+    // getNewBottle() - Grab a new bottle from the bottlechange-station:
+    // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
+    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
+    // Success: lastCommand == 'getNewBottle', Failure: lastCommand == 'failure'
     getNewBottle(location, type) {
-        
+        // Check if the robot is busy:
+        if(this.isBusy()) {
+            return false;
+        }
+        // Check if the parameters are correct:
+        if(typeof(location) != 'number' || location < 0 || location > 11  || typeof(type) != 'string') {
+            console.log("Error with getNewBottle()-parameters. instruction not registered.");
+            return false;
+        }
+
+        // Set the action and command for the commHandler-function.
+        let action = 'getNewBottle';
+        let command = action+'('+location+','+type+')';
+
+        // Call the communications handler
+        if(!this.commHandler(action,command)) {
+            console.log("The robot is not able to execute the command: " + command);
+            return false;
+        }
+        return true; // All callbacks started.
+    }
     }
 
 
@@ -97,7 +160,7 @@ class Robot {
      *            Member functions for event and serial communication handling
     -------------------------------------------------------------------------------------*/
 
-    // isBusy() -  Checks if the robot is already doing something: True if true.
+    // isBusy() -  Checks if the robot is already doing something: True if true (very surprisingly).
     isBusy() {
         if(this.communicating || this.working) {
             return true;
@@ -140,6 +203,11 @@ class Robot {
         });
 
         return true;
+    }
+    
+    // listenSerial() - Exportable listening function, perharps used in the main logic module.
+    listenSerial(callback) {
+        serialPort.on('data', callback);
     }
 
 };
@@ -242,10 +310,15 @@ function checkStatus(action,lastCommand) {
 // Create Rob the Bot
 let Rob = new Robot();
 
-// After 2,5seconds tell him to grab a bottle:
+// After 2,5seconds tell the poor sob to grab a bottle:
 setTimeout(function(err) {
     Rob.grabBottle(5,'Bombay');
 }, 2500);
+
+// After 5 seconds, tell the weasel to pour a drink from it.
+setTimeout(function(err) {
+    Rob.pourDrinks(4000,2);
+}, 5000);
 
 
 // Listen to Robs painful efforts:
