@@ -19,6 +19,7 @@ let serialPort = new SerialPort.SerialPort(port, {
     baudrate: baudrate
 });
 
+
 class Robot { 
     // Construct the robot class:
     constructor() {
@@ -35,6 +36,13 @@ class Robot {
             // Port opened 
             else {
                 console.log("SerialPort connection to controller opened.");
+                // Test write:
+                serialPort.write('Moikka.', (err, res) => {
+                    console.log("kirjotettiin" + res + "merkkiä");
+                });
+                serialPort.on('data', (data) => {
+                    console.log('Tuli dataa ' + data);
+                });
             }    
         })
     }
@@ -208,18 +216,20 @@ class Robot {
         let timeoutString = 'timeout_' + action;
         // Set the timeout calculator:
         let timeout = setTimeout(function() {
+            console.log("Timeout occurred while sending "+ command);
             RobotEmitter.emit(timeoutString);
-        }, 1000); // One second timeout.
+        }, 1000);// One second timeout.
 
         // Write the command to the serial port:
-        writeSerial(command,timeout);
+        let that = this;
+        writeSerial(command,timeout, that);
 
         // Check for the timeout:
-        let that = this;
+        let thatb = this;
         RobotEmitter.once(timeoutString, function() {
-            that.lastCommand = 'failed';
-            that.communicating = false;
-            console.log(action+'()-function timed out.');
+            thatb.lastCommand = 'failed';
+            thatb.communicating = false;
+            console.log(action+'()-function failed.');
             RobotEmitter.emit('done');
         });
 
@@ -239,18 +249,19 @@ class Robot {
 
 
 // Function to pack up the commonly used writing to serial.
-function writeSerial(command,timeout) {
-    // Write the command to the serial connection. 
+function writeSerial(command,timeout,that) {
+    // Write the command to the serial connection.
     serialPort.write(command, function(err,result) {
-        if(timeout || result != command.length) {
+        console.log("Wrote to serial. " + result);
+        if(timeout._called || result != command.length) {
             // Do not emit anything and exit. Results in a timeout 'done'.
             return;
         }
         try {
-            responseHandler(err, result, timeout);
+            responseHandler(err, result, timeout, that);
         } catch(error) {
             // Error occurred, set lastCommand to 'failed' and emit 'done'.
-            this.lastCommand = 'failed';
+            that.lastCommand = 'failed';
             RobotEmitter.emit('done');
             console.log("Error occurred while writing to serial: " + error);
         }
@@ -258,14 +269,15 @@ function writeSerial(command,timeout) {
 }
 
 // Function to pack up the commonly used response handling.
-function responseHandler(err,result,timeout) {
+function responseHandler(err,result,timeout,that) {
     if(err) {
         throw err;
     }
     console.log("Wrote to serial, waiting for response:");
     serialPort.on('data', function(err, data){
-        if(timeout) {
+        if(timeout._called) {
             // Do not emit anything and exit. Results in a timeout 'done'-emit.
+            console.log("Timeout when reading robots response.");
             return;
         }
         // Response read before timeout, clearing the timeout counter.
@@ -274,14 +286,14 @@ function responseHandler(err,result,timeout) {
             throw err;
         }
         if(data == 'working') { // To be changed to the actual command declared later on.
-            this.working = true;
-            this.communicating = false;
+            that.working = true;
+            that.communicating = false;
             console.log("Robot is working");
             RobotEmitter.emit('done');
         } else {
-            this.working = false;
-            this.communicating = false;
-            this.lastCommand = 'failed';
+            that.working = false;
+            that.communicating = false;
+            that.lastCommand = 'failed';
             console.log("Error: Robot couldn't execute the command.");
             RobotEmitter.emit('done');
         }   
