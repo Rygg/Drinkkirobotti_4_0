@@ -191,6 +191,7 @@ class Robot {
 
     // isBusy() -  Checks if the robot is already doing something: True if true (very surprisingly).
     isBusy() {
+        console.log("") // Print an empty row in the beginning to clear out the output.
         if(this.communicating || this.working) {
             return true;
         }
@@ -217,7 +218,7 @@ class Robot {
         let timeoutString = 'timeout_' + action;
         // Set the timeout calculator:
         let timeout = setTimeout(function() {
-            console.log("Timeout occurred while sending "+ command);
+            console.log("Timeout occurred in: "+ command);
             RobotEmitter.emit(timeoutString);
         }, 1000);// One second timeout.
 
@@ -387,12 +388,14 @@ setTimeout(function(err) {
 
 // Listen to Robs painful efforts:
 RobotEmitter.on('done', () => {
+    console.log("");
     console.log("A 'done'-event occurred!");
     let stringthing = "succeeded!";
     if(Rob.failure) {stringthing = "failed!"}
     console.log("It seems that the last action was " + Rob.lastCommand + " and it " + stringthing);
     console.log("The state of the robot: ");
     console.log(Rob);
+    console.log("");
 });
 
 
