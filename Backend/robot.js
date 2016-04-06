@@ -122,15 +122,37 @@ class Robot {
         return true; // All callbacks started.
     }
     
-    // Placing the grabbed bottle to the bottlechange-station - (Boolean):
+    // removeBottle() - Placing the grabbed bottle to the bottlechange-station.
+    // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
+    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
+    // Success: lastCommand == 'removeBottle', Failure: lastCommand == 'failed'
     removeBottle(type) {
+        // Check if the robot is busy:
+        if(this.isBusy()) {
+            return false;
+        }
+        // Check if the parameters are correct:
+        if(typeof(type) != 'string') {
+            console.log("Error with getNewBottle()-parameters. instruction not registered.");
+            return false;
+        }
         
+        // Set the action and command for the commHandler-function.
+        let action = 'getNewBottle';
+        let command = action+'('+location+','+type+')';
+
+        // Call the communications handler
+        if(!this.commHandler(action,command)) {
+            console.log("The robot is not able to execute the command: " + command);
+            return false;
+        }
+        return true; // All callbacks started.   
     }
     
     // getNewBottle() - Grab a new bottle from the bottlechange-station:
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
     // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
-    // Success: lastCommand == 'getNewBottle', Failure: lastCommand == 'failure'
+    // Success: lastCommand == 'getNewBottle', Failure: lastCommand == 'failed'
     getNewBottle(location, type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
@@ -152,7 +174,6 @@ class Robot {
             return false;
         }
         return true; // All callbacks started.
-    }
     }
 
 
@@ -319,6 +340,29 @@ setTimeout(function(err) {
 setTimeout(function(err) {
     Rob.pourDrinks(4000,2);
 }, 5000);
+
+// After 7,5 seconds, tell the good lad put the bottle back to the shelf.
+setTimeout(function(err) {
+    Rob.returnBottle(5,'Bombay');
+}, 7500);
+
+// After 10 seconds, tell the good lad remove a bottle he doesn't have.
+setTimeout(function(err) {
+    Rob.removeBottle('Bombay');
+}, 10000);
+
+// After 11 seconds, tell the good lad to do it properly and grab a bottle to remove it.
+setTimeout(function(err) {
+    Rob.grabBottle(5,'Bombay');
+    Rob.removeBottle('Bombay');
+}, 11000);
+
+// After 15 seconds, the bottle is switched and RobTheBot grabs the new one to a new location.
+setTimeout(function(err) {
+    Rob.getNewBottle(5,'Muovijallu');
+},15000);
+
+
 
 
 // Listen to Robs painful efforts:
