@@ -37,13 +37,13 @@ class Robot {
             // Port opened 
             else {
                 console.log("SerialPort connection to controller opened.");
-                // Test write:
+                /*// Test write:
                 serialPort.write('Moikka!', (err, res) => {
                     console.log("kirjoitettiin " + res + " merkkiä");
                 });
                 serialPort.on('data', (data) => {
-                    console.log('Tuli dataa ' + data);
-                });
+                    console.log('Tuli dataa ' + data); 
+                }); */
             }    
         })
     }
@@ -53,7 +53,7 @@ class Robot {
        ---------------------------------------------------------------------------------------------------*/     
        
     // grabBottle() - Grabbing the bottle from the bottleshelf. returns an instant false if unable to comply, true if reaches the end.
-    // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the failure-variable.
+    // Emits a RobotEmitter 'grabBottle_done' once fully done with callbacks. the result of the process is stored in the failure-variable.
     // failure == false if succesful, true if not.
     grabBottle(location, type) {
         // Check if the robot is busy:
@@ -79,7 +79,7 @@ class Robot {
     }
     
     // pourDrinks() - Pouring a drink from the grabbed bottle: returns an instant false if unable to comply, true if the function reaches its end and starts all callbacks.
-    // Emits a RobotEmitter 'done' once fully done with callbacks. the result of the process is stored in the failure-variable.
+    // Emits a RobotEmitter 'pourDrinks_done' once fully done with callbacks. the result of the process is stored in the failure-variable.
     // failure == false if succesful, true if not.
     pourDrinks(pourTime, howMany) {
         // Check if the robot is busy:
@@ -105,7 +105,7 @@ class Robot {
     
     // returnBottle() - Returning the grabbed bottle to the bottleshelf after (or before) pouring the drinks:
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
-    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
+    // Emits a RobotEmitter 'returnBottle_done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
     // Success: failure == false, Failure: failure == true
     returnBottle(location, type) {
         // Check if the robot is busy:
@@ -132,7 +132,7 @@ class Robot {
     
     // removeBottle() - Placing the grabbed bottle to the bottlechange-station.
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
-    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
+    // Emits a RobotEmitter 'removeBottle_done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
     // Success: failure == false, Failure: failure == true
     removeBottle(type) {
         // Check if the robot is busy:
@@ -159,7 +159,7 @@ class Robot {
     
     // getNewBottle() - Grab a new bottle from the bottlechange-station:
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
-    // Emits a RobotEmitter 'done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
+    // Emits a RobotEmitter 'getNewBottle_done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
     // Success: failure == false, Failure: failure == true
     getNewBottle(location, type) {
         // Check if the robot is busy:
@@ -206,7 +206,7 @@ class Robot {
     // returns false unable to execute, true if all the callbacks are initiated.
     commHandler(action,command) {
         // Check if the robot is able to perform the current action.
-        if(!checkStatus(action, this.lastCommand)) {
+        if(!checkStatus(action, this.lastCommand, this.failure)) {
             return false; // Not.
         }
         
@@ -224,7 +224,7 @@ class Robot {
 
         // Write the command to the serial port:
         let that = this;
-        writeSerial(command,timeout, that);
+        writeSerial(action,command,timeout, that);
 
         // Check for the timeout:
         let thatb = this;
@@ -232,7 +232,7 @@ class Robot {
             thatb.failure = true;
             thatb.communicating = false;
             console.log(action+'()-function failed.');
-            RobotEmitter.emit('done');
+            RobotEmitter.emit(action+'_done');
         });
 
         return true;
@@ -251,7 +251,7 @@ class Robot {
 
 
 // Function to pack up the commonly used writing to serial.
-function writeSerial(command,timeout,that) {
+function writeSerial(action,command,timeout,that) {
     console.log("Writing to serial: " + command);
     // Write the command to the serial connection.
     serialPort.write(Buffer(command, "utf8"), function(err,result) {
@@ -260,18 +260,18 @@ function writeSerial(command,timeout,that) {
             return;
         }
         try {
-            responseHandler(err, result, timeout, that);
+            responseHandler(err, result, action, timeout, that);
         } catch(error) {
-            // Error occurred, set failure to true and emit 'done'.
+            // Error occurred, set failure to true and emit '<action>_done'.
             that.failure = true;
             console.log("Error occurred while writing to serial: " + error);
-            RobotEmitter.emit('done');
+            RobotEmitter.emit(action+'_done');
         }
     });
 }
 
 // Function to pack up the commonly used response handling.
-function responseHandler(err,result,timeout,that) {
+function responseHandler(err,result,action,timeout,that) {
     if(err) {
         throw error;
     }
@@ -292,21 +292,21 @@ function responseHandler(err,result,timeout,that) {
                 that.working = true;
                 that.communicating = false;
                 console.log("Robot started working");
-                RobotEmitter.emit('done');
+                RobotEmitter.emit(action+'_done');
             } else {
                 // The robot returned a wrong command, reset writing and set failure.
                 that.working = false;
                 that.communicating = false;
                 that.failure = true;
                 console.log("Error: Robot couldn't execute the command.");
-                RobotEmitter.emit('done');
+                RobotEmitter.emit(action+'_done');
             }   
         });
     } catch(err) {
         // Error occurred, set failure to true and emit 'done'
         that.failure = true;
         console.log("Error occurred while writing to serial: " + err);
-        RobotEmitter.emit('done');
+        RobotEmitter.emit(action+'_done');
     }
 }
 
@@ -315,17 +315,23 @@ function responseHandler(err,result,timeout,that) {
  * -----------------------------------------------------------------------------*/
 
 // checkStatus- a function which checks if the robot is able to perform the required operation.
-function checkStatus(action,lastCommand) { 
+function checkStatus(action,lastCommand,failure) { 
+    // Check if the robot is trying to perform the same task again.
+    if(failure && lastCommand == action) {
+        // Return true: otherwise with failure, always false.
+        return true;
+    }
+    
     // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
-        if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle') {
+        if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle' || failure) {
             console.log("Unable to execute "+ action +": The robot is already holding a bottle");
             return false;
         }
         return true;
     }
-    // Check if the robot is holding a bottle.
-    else if(action == 'returnBottle' || action == 'removeBottle' || action == 'pourDrinks') {
+    // Check if the robot is holding a bottle
+    else if(action == 'returnBottle' || action == 'removeBottle' || action == 'pourDrinks' || failure) {
         if(lastCommand == 'returnBottle' || lastCommand == 'removeBottle' || lastCommand == 'getNewBottle') {
             console.log("Unable to execute "+ action +": The robot does not have a bottle.");
             return false;
@@ -375,23 +381,6 @@ setTimeout(function(err) {
 setTimeout(function(err) {
     Rob.getNewBottle(5,'Muovijallu');
 },17000);
-
-
-
-
-// Listen to Robs painful efforts:
-RobotEmitter.on('done', () => {
-    console.log("");
-    console.log("A 'done'-event occurred!");
-    let stringthing = "succeeded!";
-    if(Rob.failure) {stringthing = "failed!"}
-    console.log("It seems that the last action was " + Rob.lastCommand + " and it " + stringthing);
-    console.log("The state of the robot: ");
-    console.log(Rob);
-    console.log("");
-});
-
-
 
 
 // Export serialport connection and robot module

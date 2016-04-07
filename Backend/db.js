@@ -130,6 +130,7 @@ class Database {
     
     // A function that checks availability of the drinks. 
     // Has to be used by main program when adding a drink or adding/removing bottles in the database. 
+    // Changes the value for the drink in the database and returns the result.
     checkDrinkAvailability(drinkName) {
         // Create a variable for the drinks availability:
         let isAvailable = true;
@@ -178,7 +179,7 @@ class Database {
         // Set the availability value for the drink:
         this.drinkDB.drinks[drinkLocation].available = isAvailable;
         
-        return; // Exit.
+        return isAvailable; // Exit and return the result.
     }
     
 };
