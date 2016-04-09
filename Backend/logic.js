@@ -20,6 +20,7 @@ class ControlLogic {
         this.queue = []; // The queue of QueueObjects for the logics own use.
         this.orderQueue = []; // The queue from the website.
         this.running = false; // The variable for monitoring if the robot pour cycle is running.
+        this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
            
         // Initialize the database.
         Database.importDB();
@@ -32,6 +33,13 @@ class ControlLogic {
     
     //processOrder() - the function which adds a new object to the queue if possible. Should be called when user orders a drink.
     processOrder(newOrder) {
+        // Parse the order to an object format.
+        try {
+            JSON.parse(newOrder);
+        } catch (err) {
+            console.log("Error parsing the newOrder parameter.");
+            return false; // Mitä tässä halutaan tapahtuvan?
+        }
         // Doublecheck the orders format.
         if(!checkOrderFormat(newOrder)) {
             return false; // Mitä tässä halutaan tapahtuvan?
@@ -80,6 +88,8 @@ class ControlLogic {
                 return false; // The IDs of the objects in the same places in queues didn't match.
                 // << INSERT MASSIVE ERROR EMIT HERE >>
             } else {
+                // Add the qObject back to the reserved shelf:
+                Database.cancelDrink(queue[index]);
                 // Remove the objects from the queues:
                 queue.splice(index,0);
                 orderQueue.splice(index,0);
@@ -93,7 +103,38 @@ class ControlLogic {
    
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
     run() {
-        console.log("Starting the pouring cycle:");   
+        // Double check if there is stuff in the queue.
+        if(queue.length < 1) {
+            return false;
+        }
+        
+        console.log("Starting the pouring cycle:");
+        // Count the number of orders for the same drink (max 4).
+        let howMany = 1;
+        for(let i = 1; i < 4; i++) {
+            if(this.queue[0].drink.name == this.queue[i].drink.name) {
+                howMany++;
+            }
+        }
+        // Pop the location of the first bottle.
+        let location = this.queue[0].location.shift();
+        // Pop the first portion of the recipe.
+        let portion = this.queue[0].drink.recipe.shift();
+        // Calculate the pourTime:
+        let pourTime = countPourTime(location,portion);
+        
+        // Grab the first bottle.
+        Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+        // Call the grabHandler.
+        try {
+            this.grabHandler(location,howMany,pourTime);
+        } catch(err) {
+            console.log("Error occurred in the grabHandler().")
+            return false;
+        }
+        
+        return true; // The cycle is started.
+        
     }
     
     
@@ -102,12 +143,47 @@ class ControlLogic {
     // The event handler functions:
     
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
-    grabHandler() {
-        
+    grabHandler(location, howMany, pourTime) {
+        // Wait for the emit happening.
+        RobotEmitter.on('grabBottle_done', function(err, result) {
+            // Check if the event was succesfull.
+            if(Robot.failure) {
+                // The message wasn't delivered. Try again.
+                this.errorCount++;
+                Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+                if(errorCount > 9) {
+                    console.log("The grabBottle-message failed to deliver too many times.")
+                    // <<INSERT MASSIVE ERROR EMIT HERE>>
+                    return false;
+                }
+                Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+                // There was no error, continue with the routine.
+            } else {
+                let that = this;
+                // Wait for the move completed message from the robot.
+                serialPort.once('data', function(err,data) {
+                    // See if there was an error.
+                    if(err) {
+                        throw err;
+                    }
+                    if(data == 'completed') {
+                        // The action was completed. Call for the pourDrink action and the handler.
+                        Robot.pourDrinks(pourTime,howMany);
+                        that.pourHandler(howMany);
+                    } 
+                    else {
+                        console.log("Error happened with the grab-cycle.")
+                        // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        return false;
+                    }
+                })
+                
+            }
+        });
     }
     
     // pourHandler() - Executed after pouring action is called upon.
-    pourHandler() {
+    pourHandler(howMany) {
         
     }
     
@@ -128,6 +204,8 @@ class ControlLogic {
 };
 
 // Helpful functions to be used in the main program cycle.
+
+// checkOrderFormat() - Checks the format of the order. Used to double check if the order is actually useable.
 function checkOrderFormat(order) {
     // Check if the types of the order are correct.
     if(typeof(order.ID) == 'number' && typeof(order.drinkName) == 'string' && typeof(order.orderer) == 'string') {
@@ -138,6 +216,7 @@ function checkOrderFormat(order) {
     return false;
 }
 
+// addToQueues() - Used to check the place of the queue the order is to be placed at.
 function addToQueues(queue, orderQueue, drinkName, newOrder, QueueObject) {
     if(queue.length != orderQueue.length) {
         return false; // Queues do not match.
@@ -164,3 +243,25 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, QueueObject) {
         return true;
     }
 }
+
+
+// countPourTime() - The function calculating the pouring time based on the pouring speed and recipe.
+function countPourTime(location,portion) {
+    // Get the pourspeed of the bottle and the needed amount:
+    let pourSpeed = Database.reservedShelf.bottles[location].pourSpeed;
+    let amount = portion.amount;
+    let howLong;
+    // The calculation for the pouring time: Assumes pourSpeed in cl/s and amount in cl.
+    // Formula of amount / pourSpeed -> seconds needed.
+    let seconds = amount/pourSpeed;
+    let ms = 1000*seconds;
+    // Return the value in milliseconds.
+    return ms;
+}
+
+
+
+
+// Create the object.
+let ProgramLogic = new ControlLogic();
+ProgramLogic.run();
