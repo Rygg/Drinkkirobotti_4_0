@@ -174,8 +174,8 @@ class ControlLogic {
                     }
                     if(data == 'completed') {
                         // The action was completed. Call for the pourDrink action and the handler.
-                        Robot.pourDrinks(pourTime,howMany);
                         that.pourHandler(howMany);
+                        Robot.pourDrinks(pourTime,howMany);
                         return true; // Return true as all the necessary functions have been called.
                     } 
                     else {
@@ -183,8 +183,7 @@ class ControlLogic {
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
-                })
-                
+                });   
             }
         });
     }
