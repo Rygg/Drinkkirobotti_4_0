@@ -4,13 +4,17 @@
 "use strict"
 
 // Import the constructed database.
-const Database = require('db.js');
+const DB = require('./db.js');
+let Database = new DB();
+
 // The actual robot class with its functionality.
-const Robot = require('robot.js').Robot;
+const Rob = require('./robot.js').Robot;
+let Robot = new Rob();
+
 // The used serial port.
-const serialPort = require('robot.js').serialPort;
+let serialPort = require('./robot.js').serialPort;
 // The emitter used to handle the events by the robot.
-const RobotEmitter = require('robot.js').RobotEmitter;
+let RobotEmitter = require('./robot.js').RobotEmitter;
 
 // The class for the robots control logic.
 class ControlLogic {
@@ -75,7 +79,7 @@ class ControlLogic {
         }
         // Find the index for the ID.
         let index = -1;
-        for(let i = 0; i < queue.length; i++) {
+        for(let i = 0; i < this.queue.length; i++) {
             if(this.queue == ID) {
                 index = i;
             }
@@ -104,7 +108,7 @@ class ControlLogic {
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
     run() {
         // Double check if there is stuff in the queue.
-        if(queue.length < 1) {
+        if(this.queue.length < 1) {
             return false;
         }
         
@@ -145,20 +149,22 @@ class ControlLogic {
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
     grabHandler(location, howMany, pourTime) {
         // Wait for the emit happening.
-        RobotEmitter.on('grabBottle_done', function(err, result) {
+        RobotEmitter.once('grabBottle_done', function(err, result) {
             // Check if the event was succesfull.
             if(Robot.failure) {
                 // The message wasn't delivered. Try again.
                 this.errorCount++;
-                Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
                 if(errorCount > 9) {
                     console.log("The grabBottle-message failed to deliver too many times.")
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
                 Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+                this.grabHandler(location,howMany,pourTime); // Call the current function recursively.
+                return true;
                 // There was no error, continue with the routine.
             } else {
+                this.errorCount = 0;
                 let that = this;
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(err,data) {
@@ -170,6 +176,7 @@ class ControlLogic {
                         // The action was completed. Call for the pourDrink action and the handler.
                         Robot.pourDrinks(pourTime,howMany);
                         that.pourHandler(howMany);
+                        return true; // Return true as all the necessary functions have been called.
                     } 
                     else {
                         console.log("Error happened with the grab-cycle.")
