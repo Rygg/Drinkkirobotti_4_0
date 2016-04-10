@@ -185,6 +185,7 @@ class ControlLogic {
             }
             return true;    
         }
+        console.log("Error: The bottleshelf location was occupied.");
         return false; // The location was not empty.
     }
     
@@ -534,13 +535,13 @@ setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
-},10000);
+},15000);
 
 setTimeout(function() {
     console.log("Putting a new Bottle to a reserved space in the bottleshelf.");
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
-},15000);
+},20000);
 
 
 module.exports = ControlLogic;
