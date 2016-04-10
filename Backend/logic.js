@@ -274,9 +274,12 @@ function countPourTime(location,portion) {
 
 // Create the object.
 let ProgramLogic = new ControlLogic();
-ProgramLogic.database.drinkDB.addDrink('{"name":"GT","available":true,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}');
+ProgramLogic.database.drinkDB.addDrink("GT",'[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}');
 ProgramLogic.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 ProgramLogic.database.currentShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 ProgramLogic.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 ProgramLogic.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
-ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":43}');
+// Wait for a second and process a new order.
+setTimeout(function(err) {
+    ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":43}');
+},1000);
