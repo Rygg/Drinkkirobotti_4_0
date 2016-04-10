@@ -16,6 +16,10 @@ let serialPort = require('./robot.js').serialPort;
 // The emitter used to handle the events by the robot.
 let RobotEmitter = require('./robot.js').RobotEmitter;
 
+// Some constants for the logic:
+const MAX_ERRORS = 10; // The maximum amount that the message sending can fail.
+const MIN_VOLUME = 6; // The minimum volume to be remaining in the bottle before it's removed.
+
 // The class for the robots control logic.
 class ControlLogic {
     // Constructor, construct the designed API
@@ -25,6 +29,7 @@ class ControlLogic {
         this.orderQueue = []; // The queue from the website.
         this.running = false; // The variable for monitoring if the robot pour cycle is running.
         this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
+        this.newBottle = [false,'unknown','unknown']; // The flag which is checked in beginning of every cycle if there's a new bottle to be grabbed.
         
         // Add member variables for the Database and the Robot.
         this.database = new DB();
@@ -112,8 +117,17 @@ class ControlLogic {
    
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
     run() {
+        // Check if there is a newBottle to be grabbed:
+        if(this.newBottle[0]) {
+            this.robot.getNewBottle(newBottle[1],newBottle[2]);
+            this.getNewHandler(newBottle[1],newBottle[2],newBottle[3]);
+            return true;
+        }
+        // Otherwise start the drink pouring cycle.
+
         // Double check if there is stuff in the queue.
         if(this.queue.length < 1) {
+            this.running = false;
             return false;
         }
         
@@ -133,16 +147,23 @@ class ControlLogic {
         let location = this.queue[0].locations.shift();
         // Pop the first portion of the recipe.
         let portion = this.queue[0].drink.recipe.shift();
+        let amount = portion.amount;
         // Find the pourSpeed of the bottle.
         let pourSpeed = this.database.reservedShelf.bottles[location].pourSpeed;
         // Calculate the pourTime:
         let pourTime = countPourTime(pourSpeed,portion);
-        
+        // Save a temporary queue to pass as an argument to the handlers.
+        let pourQueue = this.queue;
+        // Remove the to-be-poured items from the queue.
+        for(let i = 0; i < howMany; i++) {
+            this.queue.shift();
+            this.orderQueue.shift();
+        }
         // Grab the first bottle.
         this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type);
         // Call the grabHandler.
         try {
-            this.grabHandler(location,howMany,pourTime);
+            this.grabHandler(location,howMany,pourTime,amount,pourQueue);
         } catch(err) {
             console.log("Error occurred in the grabHandler()." +err);
             return false;
@@ -151,27 +172,43 @@ class ControlLogic {
     }
     
     
+    // newBottleReady() - Function which sets the flag for grabbing a new bottle next.
+    newBottleReady(location,type,bottleString) {
+        // Check if the location is empty:
+        if(this.database.currentShelf.bottles[0] == 'empty') {
+            this.newBottle[0] = true;
+            this.newBottle[1] = location;
+            this.newBottle[2] = type;
+            this.newBottle[3] = bottleString;
+            if(!this.running) {
+                this.run;
+            }
+            return true;    
+        }
+        return false; // The location was not empty.
+    }
+    
     
     
     // The event handler functions:
     
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
-    grabHandler(location, howMany, pourTime) {
-        console.log('Grab handler started.');
+    grabHandler(location, howMany, pourTime, amount, pourQueue) {
+        console.log('grabHandler() started.');
         let that = this;
         // Wait for the emit happening.
-        RobotEmitter.once('grabBottle_done', function(err, result) {
+        RobotEmitter.once('grabBottle_done', function() {
             // Check if the event was succesfull.
             if(that.robot.failure) {
                 // The message wasn't delivered. Try again.
                 that.errorCount++;
-                if(that.errorCount > 9) {
+                if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The grabBottle-message failed to deliver too many times.")
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
                 that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type);
-                that.grabHandler(location,howMany,pourTime); // Call the current function recursively.
+                that.grabHandler(location,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
                 return true;
                 // There was no error, continue with the routine.
             } else {
@@ -182,11 +219,14 @@ class ControlLogic {
                     if(err) {
                         throw err;
                     }
-                    if(data == 'completed') {
+                    if(data == 'completed') { // Whatever the message will be.
                         // The action was completed. Call for the pourDrink action and the handler.
                         that.robot.pourDrinks(pourTime,howMany);
-                        that.pourHandler(howMany);
-
+                        try {
+                            that.pourHandler(pourTime,howMany,location,amount,pourQueue);
+                        } catch(err) {
+                            console.log("Error occurred: " + err);       
+                        }
                         return true; // Return true as all the necessary functions have been called.
                     } 
                     else {
@@ -201,25 +241,223 @@ class ControlLogic {
     
     
     // pourHandler() - Executed after pouring action is called upon.
-    pourHandler(howMany) {
+    pourHandler(pourTime,howMany,location,amount,pourQueue) {
+        console.log("pourHandler()-started.");
+        let that = this;
+        // Wait for the emit to happen.
+        RobotEmitter.once('pourDrinks_done', function() {
+            if(that.robot.failure) {
+                // The message wasn't delivered, Try again:
+                that.errorCount++;
+                 if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
+                    console.log("The grabBottle-message failed to deliver too many times.")
+                    // <<INSERT MASSIVE ERROR EMIT HERE>>
+                    return false;
+                }
+                that.robot.pourDrinks(pourTime,howMany); // Try again and call the current function recursively.
+                that.pourHandler(pourTime,howMany);
+                return true;   
+            } else {
+                // No failure occurred.
+                that.errorCount = 0;
+                serialPort.once('data', function(err,data) {
+                    if(err) {
+                        throw err;
+                    }
+                    if(data == 'completed') {
+                        // Call the pourCompleted()-function,
+                        that.database.pourCompleted(location,amount);
+                        // See if the bottle got empty, depending on that call the next command.
+                        if(that.database.currentShelf.bottles[location].volume < MIN_VOLUME) { // Minimum value for the bottle before changing it.
+                            console.log('Current bottle got empty. Removing it.'); 
+                            that.robot.removeBottle(that.database.currentShelf.bottles[location].type);
+                            that.removeHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                            return true;
+                        } else {
+                            // The bottle has still enough liquid left, return it to the bottleshelf.
+                            that.robot.returnBottle(location,that.database.currentShelf.bottles[location].type);
+                            that.returnHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                            return true;
+                        }
+                    } else {
+                        console.log("Error happened with the pour-cycle.")
+                        // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        return false;
+                    }
+                });
+            }    
+        });
         
     }
     
     // returnHandler() - Executed after a bottle is called to be returned to the station.
-    returnHandler() {
-        
+    returnHandler(location, type, howMany, pourQueue) {
+        console.log('returnHandler() started.');
+        let that = this;
+        // Wait for the emit to happen:
+        RobotEmitter.once('returnBottle_done', function() {
+            // Check for failure:
+            if(that.robot.failure) {
+                // The message wasn't delivered, Try again:
+                that.errorCount++;
+                 if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
+                    console.log("The returnBottle-message failed to deliver too many times.")
+                    // <<INSERT MASSIVE ERROR EMIT HERE>>
+                    return false;
+                }
+                that.robot.returnBottle(location,type); // Try again and call the current function recursively.
+                that.returnHandler(location, type, pourQueue);
+                return true;
+            } else {
+                that.errorCount = 0;
+                // No errors occurred, wait for the completion message.
+                serialPort.once('data', function(err,data) {
+                    if(err) {
+                        throw err;
+                    }
+                    // No error occurred, the bottle has been returned to the bottleshelf.
+                    if(data == 'completed') {
+                        // See if there are still ingredients left for the drink.
+                        if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
+                            // There were.
+                            let location2 = pourQueue[0].locations.shift(); // Pop the location of the new bottle.
+                            let portion = pourQueue[0].drink.recipe.shift(); // Pop the next portion of the recipe.
+                            let amount = portion.amount; // Save the amount and find the amount needed.
+                            let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
+                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
+                            // Call the robot to grab the new bottle.
+                            that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type);
+                            // Call the grabHandler.
+                            try {
+                                that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
+                            } catch(err) {
+                                console.log("Error occurred in the grabHandler()." +err);
+                                return false;
+                            }
+                            return true; // A new pouring cycle was started.    
+                        } else {
+                            // The drink has been completely poured.
+                            // Restart the cycle:
+                            that.run();
+                        }
+                        
+                    } else {
+                        console.log("Error happened with the return-cycle.")
+                        // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        return false;
+                    }
+                })
+            }  
+        });
     }
     
     // removeHandler() - Executed after a bottle is called to be removed to the bottle-changing station.
-    removeHandler() {
-        
+    removeHandler(location, type, pourQueue) {
+        console.log('removeHandler() started.');
+        let that = this;
+        // Wait for the emit to happen:
+        RobotEmitter.once('removeBottle_done', function() {
+            // Check for failure:
+            if(that.robot.failure) {
+                // The message wasn't delivered, Try again:
+                that.errorCount++;
+                 if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
+                    console.log("The removeBottle-message failed to deliver too many times.")
+                    // <<INSERT MASSIVE ERROR EMIT HERE>>
+                    return false;
+                }
+                that.robot.removeBottle(location,type); // Try again and call the current function recursively.
+                that.removeHandler(location, type, pourQueue);
+                return true;
+            } else {
+                that.errorCount = 0;
+                // No errors occurred, wait for the completion message.
+                serialPort.once('data', function(err,data) {
+                    if(err) {
+                        throw err;
+                    }
+                    // No error occurred, the bottle has been returned to the bottleshelf.
+                    if(data == 'completed') {
+                        // See if there are still ingredients left for the drink.
+                        if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
+                            // There were.
+                            let location2 = pourQueue[0].locations.shift(); // Pop the location of the new bottle.
+                            let portion = pourQueue[0].drink.recipe.shift(); // Pop the next portion of the recipe.
+                            let amount = portion.amount; // Save the amount and find the amount needed.
+                            let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
+                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
+                            // Call the robot to grab the new bottle.
+                            that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type);
+                            // Call the grabHandler.
+                            try {
+                                that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
+                            } catch(err) {
+                                console.log("Error occurred in the grabHandler()." +err);
+                                return false;
+                            }
+                            return true; // A new pouring cycle was started.    
+                        } else {
+                            // The drink has been completely poured.
+                            // Restart the cycle:
+                            that.run();
+                        }
+                    } else {
+                        console.log("Error happened with the remove-cycle.")
+                        // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        return false;
+                    }
+                })
+            }  
+        });
     }
+
     
     // getNewHandler() - Executed after the bottle  is called to be fetched from the bottle-changing station.
-    getNewHandler() {
-        
+    getNewHandler(location,type,bottleString) {
+        console.log("getNewHandler() started.");
+        let that = this;
+        // Listen for the emit:
+        RobotEmitter.once('getNewBottle_done', function() {
+            if(that.robot.failure) {
+                // The message wasn't delivered, Try again:
+                that.errorCount++;
+                 if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
+                    console.log("The getNewHandler-message failed to deliver too many times.")
+                    // <<INSERT MASSIVE ERROR EMIT HERE>>
+                    return false;
+                }
+                that.robot.getNewBottle(location,type); // Try again and call the current function recursively.
+                that.getNewHandler(location, type, bottleString);
+            } else {
+                // No failure occurred:
+                // Listen for the completion message.
+                serialPort.once('data', function(err,data) {
+                    if(err) {
+                        throw err; // Error occurred.
+                    } 
+                    if(data == 'completed') {
+                        // The action was carried out completely.
+                        // Add the bottle to the bottleshelfs:
+                        that.database.currentShelf.addBottle(bottleString,location);
+                        that.database.reservedShelf.addBottle(bottleString,location);
+                        that.newBottle[0] = false; // Set the flags accordingly.
+                        that.newBottle[1] = 'unknown';
+                        that.newBottle[2] = 'unknown';
+                        that.newBottle[3] = 'unknown';
+                        // Restart the cycle:
+                        that.run();
+                    } else {
+                        console.log("Error happened with the getNew-cycle.")
+                        // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        return false;
+                    }
+                });
+            }  
+        });
     }
-};
+    
+}; // End of the class and logic definition.
+
 
 // Helpful functions to be used in the main program cycle.
 
@@ -268,7 +506,6 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, QueueObject) {
 function countPourTime(pourSpeed,portion) {
     // Get the pourspeed of the bottle and the needed amount:
     let amount = portion.amount;
-    let howLong;
     // The calculation for the pouring time: Assumes pourSpeed in cl/s and amount in cl.
     // Formula of amount / pourSpeed -> seconds needed.
     let seconds = amount/pourSpeed;
@@ -280,7 +517,7 @@ function countPourTime(pourSpeed,portion) {
 
 
 
-// Create the object.
+// Create the test-object.
 let ProgramLogic = new ControlLogic();
 ProgramLogic.database.drinkDB.addDrink("GT",'[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]');
 ProgramLogic.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
@@ -292,3 +529,18 @@ setTimeout(function(err) {
     console.log("Trying to process order.");
     ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":43}');
 },1000);
+
+setTimeout(function() {
+    console.log("Putting a new Bottle to the bottlestation.");
+    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
+    ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
+},10000);
+
+setTimeout(function() {
+    console.log("Putting a new Bottle to a reserved space in the bottleshelf.");
+    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
+    ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
+},15000);
+
+
+module.exports = ControlLogic;
