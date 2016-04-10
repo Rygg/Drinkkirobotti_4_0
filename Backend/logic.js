@@ -150,6 +150,7 @@ class ControlLogic {
     
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
     grabHandler(location, howMany, pourTime) {
+        console.log('Grab handler started.');
         // Wait for the emit happening.
         RobotEmitter.once('grabBottle_done', function(err, result) {
             // Check if the event was succesfull.
