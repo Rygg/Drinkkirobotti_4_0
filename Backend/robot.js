@@ -58,6 +58,7 @@ class Robot {
     grabBottle(location, type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
+            console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
@@ -84,6 +85,7 @@ class Robot {
     pourDrinks(pourTime, howMany) {
         // Check if the robot is busy:
         if(this.isBusy()) {
+            console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
@@ -110,6 +112,7 @@ class Robot {
     returnBottle(location, type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
+            console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
@@ -137,6 +140,7 @@ class Robot {
     removeBottle(type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
+            console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
@@ -164,6 +168,7 @@ class Robot {
     getNewBottle(location, type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
+            console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
