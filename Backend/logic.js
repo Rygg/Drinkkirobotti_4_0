@@ -354,7 +354,7 @@ class ControlLogic {
     }
     
     // removeHandler() - Executed after a bottle is called to be removed to the bottle-changing station.
-    removeHandler(location, type, pourQueue) {
+    removeHandler(location, type, howMany, pourQueue) {
         console.log('removeHandler() started.');
         let that = this;
         // Wait for the emit to happen:
@@ -476,7 +476,7 @@ function checkOrderFormat(order) {
 }
 
 // addToQueues() - Used to check the place of the queue the order is to be placed at.
-function addToQueues(queue, orderQueue, drinkName, newOrder, QueueObject) {
+function addToQueues(queue, orderQueue, drinkName, newOrder, queueObject) {
     if(queue.length != orderQueue.length) {
         return false; // Queues do not match.
     }
@@ -491,13 +491,13 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, QueueObject) {
     // Check if the number of the drinks ordered in the queue is divisible by four.
     if(found.length % 4 == 0) {
         // Because the number of the drinks is divisible by 4, all the packs of four are full. Add the drink to the end of the queues.
-        queue.push(QueueObject);
+        queue.push(queueObject);
         orderQueue.push(newOrder);
         return true;
     } else {
         // Insert the item into the index behind the last item in the find array, as there is room behind it in the queue (for the batches of 4).
         let index = found.length - 1;
-        queue.splice(index,0,QueueObject);
+        queue.splice(index,0,queueObject);
         orderQueue.splice(index,0,newOrder);
         return true;
     }
