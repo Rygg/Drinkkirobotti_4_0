@@ -535,6 +535,7 @@ setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");
     ProgramLogic.robot.failure = false;
     ProgramLogic.robot.lastCommand = 'none';
+    ProgramLogic.running = false;
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
 },15000);
@@ -543,6 +544,7 @@ setTimeout(function() {
     console.log("Putting a new Bottle to a reserved space in the bottleshelf.");
     ProgramLogic.robot.failure = false;
     ProgramLogic.robot.lastCommand = 'none';
+    ProgramLogic.running = false;
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
 },20000);
