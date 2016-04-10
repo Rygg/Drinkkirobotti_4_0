@@ -282,5 +282,6 @@ ProgramLogic.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volum
 ProgramLogic.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 // Wait for a second and process a new order.
 setTimeout(function(err) {
+    console.log("Trying to process order.");
     ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":43}');
 },1000);
