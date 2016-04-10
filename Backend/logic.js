@@ -270,4 +270,4 @@ function countPourTime(location,portion) {
 
 // Create the object.
 let ProgramLogic = new ControlLogic();
-ProgramLogic.run();
+ProgramLogic.processOrder('{drink:"GinTonic",orderer:"Matti",id:43}');
