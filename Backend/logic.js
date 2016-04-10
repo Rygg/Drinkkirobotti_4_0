@@ -45,7 +45,7 @@ class ControlLogic {
         try {
             JSON.parse(newOrder);
         } catch (err) {
-            console.log("Error parsing the newOrder parameter.");
+            console.log("Error parsing the newOrder parameter." + err);
             return false; // Mitä tässä halutaan tapahtuvan?
         }
         // Doublecheck the orders format.
