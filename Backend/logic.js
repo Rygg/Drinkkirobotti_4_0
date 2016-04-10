@@ -5,11 +5,11 @@
 
 // Import the constructed database.
 const DB = require('./db.js');
-let Database = new DB();
+//let Database = new DB();
 
 // The actual robot class with its functionality.
-const Rob = require('./robot.js').Robot;
-let Robot = new Rob();
+const Robot = require('./robot.js').Robot;
+//let Robot = new Rob();
 
 // The used serial port.
 let serialPort = require('./robot.js').serialPort;
@@ -25,9 +25,13 @@ class ControlLogic {
         this.orderQueue = []; // The queue from the website.
         this.running = false; // The variable for monitoring if the robot pour cycle is running.
         this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
-           
+        
+        // Add member variables for the Database and the Robot.
+        this.database = new DB();
+        this.robot = new Robot();     
+            
         // Initialize the database.
-        Database.importDB();
+        this.database.importDB();
         
             
     }
@@ -49,12 +53,12 @@ class ControlLogic {
             return false; // Mitä tässä halutaan tapahtuvan?
         }
         // The order is in correct format, check if the drink is available (Should be or the order should not have been able to be placed).
-        if(!Database.checkDrinkAvailability(newOrder.drinkName)) {
+        if(!this.database.checkDrinkAvailability(newOrder.drinkName)) {
             // If not, the Order is not processed.
             return false;
         }
         // Reserve the drink. Should change availability if need be.
-        let QueueObject = Database.reserveDrink(newOrder.drinkName, newOrder.ID);
+        let QueueObject = this.database.reserveDrink(newOrder.drinkName, newOrder.ID);
         if(!QueueObject) {
             return false; // QueueObject was not reserved.
         }
@@ -93,10 +97,10 @@ class ControlLogic {
                 // << INSERT MASSIVE ERROR EMIT HERE >>
             } else {
                 // Add the qObject back to the reserved shelf:
-                Database.cancelDrink(queue[index]);
+                this.database.cancelDrink(queue[index]);
                 // Remove the objects from the queues:
-                queue.splice(index,0);
-                orderQueue.splice(index,0);
+                this.queue.splice(index,0);
+                this.orderQueue.splice(index,0);
                 return true;
             }
         }
@@ -128,7 +132,7 @@ class ControlLogic {
         let pourTime = countPourTime(location,portion);
         
         // Grab the first bottle.
-        Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+        this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type);
         // Call the grabHandler.
         try {
             this.grabHandler(location,howMany,pourTime);
@@ -149,7 +153,7 @@ class ControlLogic {
         // Wait for the emit happening.
         RobotEmitter.once('grabBottle_done', function(err, result) {
             // Check if the event was succesfull.
-            if(Robot.failure) {
+            if(this.robot.failure) {
                 // The message wasn't delivered. Try again.
                 this.errorCount++;
                 if(errorCount > 9) {
@@ -157,7 +161,7 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                Robot.grabBottle(location,Database.reservedShelf.bottles[location].type);
+                this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type);
                 this.grabHandler(location,howMany,pourTime); // Call the current function recursively.
                 return true;
                 // There was no error, continue with the routine.
@@ -172,7 +176,7 @@ class ControlLogic {
                     }
                     if(data == 'completed') {
                         // The action was completed. Call for the pourDrink action and the handler.
-                        Robot.pourDrinks(pourTime,howMany);
+                        that.robot.pourDrinks(pourTime,howMany);
                         that.pourHandler(howMany);
 
                         return true; // Return true as all the necessary functions have been called.
@@ -270,4 +274,9 @@ function countPourTime(location,portion) {
 
 // Create the object.
 let ProgramLogic = new ControlLogic();
-ProgramLogic.processOrder('{drink:"GinTonic",orderer:"Matti",id:43}');
+ProgramLogic.database.drinkDB.addDrink('{"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}');
+ProgramLogic.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}')
+ProgramLogic.database.currentShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}')
+ProgramLogic.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}')
+ProgramLogic.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}')
+ProgramLogic.processOrder('{drink":"GT","orderer":"Matti","id":43}');
