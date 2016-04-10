@@ -119,6 +119,7 @@ class ControlLogic {
     run() {
         // Check if there is a newBottle to be grabbed:
         if(this.newBottle[0]) {
+            console.log("Starting to grab a new Bottle.");
             this.robot.getNewBottle(newBottle[1],newBottle[2]);
             this.getNewHandler(newBottle[1],newBottle[2],newBottle[3]);
             return true;
@@ -175,7 +176,7 @@ class ControlLogic {
     // newBottleReady() - Function which sets the flag for grabbing a new bottle next.
     newBottleReady(location,type,bottleString) {
         // Check if the location is empty:
-        if(this.database.currentShelf.bottles[0] == 'empty') {
+        if(this.database.currentShelf.bottles[location] == 'empty') {
             this.newBottle[0] = true;
             this.newBottle[1] = location;
             this.newBottle[2] = type;
