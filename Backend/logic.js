@@ -133,12 +133,10 @@ class ControlLogic {
         try {
             this.grabHandler(location,howMany,pourTime);
         } catch(err) {
-            console.log("Error occurred in the grabHandler().")
+            console.log("Error occurred in the grabHandler()." +err);
             return false;
         }
-        
-        return true; // The cycle is started.
-        
+        return true; // The cycle is started.     
     }
     
     
@@ -174,8 +172,9 @@ class ControlLogic {
                     }
                     if(data == 'completed') {
                         // The action was completed. Call for the pourDrink action and the handler.
-                        that.pourHandler(howMany);
                         Robot.pourDrinks(pourTime,howMany);
+                        that.pourHandler(howMany);
+
                         return true; // Return true as all the necessary functions have been called.
                     } 
                     else {
@@ -187,6 +186,7 @@ class ControlLogic {
             }
         });
     }
+    
     
     // pourHandler() - Executed after pouring action is called upon.
     pourHandler(howMany) {
