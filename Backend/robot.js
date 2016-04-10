@@ -345,7 +345,7 @@ function checkStatus(action,lastCommand,failure) {
         return false;
     }
 }
-
+/*
 // Create Rob the Bot
 let Rob = new Robot();
 
@@ -381,7 +381,7 @@ setTimeout(function(err) {
 setTimeout(function(err) {
     Rob.getNewBottle(5,'Muovijallu');
 },17000);
-
+*/
 
 // Export serialport connection and robot module
 module.exports.Robot = Robot;
