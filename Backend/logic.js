@@ -120,8 +120,8 @@ class ControlLogic {
         // Check if there is a newBottle to be grabbed:
         if(this.newBottle[0]) {
             console.log("Starting to grab a new Bottle.");
-            this.robot.getNewBottle(newBottle[1],newBottle[2]);
-            this.getNewHandler(newBottle[1],newBottle[2],newBottle[3]);
+            this.robot.getNewBottle(this.newBottle[1],this.newBottle[2]);
+            this.getNewHandler(this.newBottle[1],this.newBottle[2],this.newBottle[3]);
             return true;
         }
         // Otherwise start the drink pouring cycle.
@@ -182,7 +182,7 @@ class ControlLogic {
             this.newBottle[2] = type;
             this.newBottle[3] = bottleString;
             if(!this.running) {
-                this.run;
+                this.run();
             }
             return true;    
         }
