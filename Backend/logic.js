@@ -30,7 +30,8 @@ class ControlLogic {
         this.running = false; // The variable for monitoring if the robot pour cycle is running.
         this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
         this.newBottle = [false,'unknown','unknown']; // The flag which is checked in beginning of every cycle if there's a new bottle to be grabbed.
-        
+        this.beingPoured = []; // The variable which keeps track of the drink currently being poured.
+
         // Add member variables for the Database and the Robot.
         this.database = new DB();
         this.robot = new Robot();     
@@ -157,6 +158,7 @@ class ControlLogic {
         let pourQueue = this.queue;
         // Remove the to-be-poured items from the queue.
         for(let i = 0; i < howMany; i++) {
+            this.beingPoured.push(this.orderQueue[i]); // To be tested.
             this.queue.shift();
             this.orderQueue.shift();
         }
@@ -340,6 +342,7 @@ class ControlLogic {
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
+                            that.beingPoured = []; // Clear the info of what is being poured.
                             that.run();
                         }
                         
@@ -401,6 +404,7 @@ class ControlLogic {
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
+                            that.beingPoured = []; // Clear what is being poured.
                             that.run();
                         }
                     } else {
