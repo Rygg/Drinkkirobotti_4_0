@@ -217,13 +217,17 @@ class ControlLogic {
                 // There was no error, continue with the routine.
             } else {
                 that.errorCount = 0;
+                let expected = "grabBottle("+location+","+that.database.reservedShelf.bottles[location].type+");";
+                expected = editCommandLength(expected); // Reached this far, error impossible.
+                expected = expected +";complete";
+                
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(err,data) {
                     // See if there was an error.
                     if(err) {
                         throw err;
                     }
-                    if(data == 'completed') { // Whatever the message will be.
+                    if(data == expected) { // Whatever the message will be.
                         // The action was completed. Call for the pourDrink action and the handler.
                         that.robot.pourDrinks(pourTime,howMany);
                         try {
@@ -264,11 +268,14 @@ class ControlLogic {
             } else {
                 // No failure occurred.
                 that.errorCount = 0;
+                let expected = "pourDrinks("+pourTime+","+howMany+");";
+                expected = editCommandLength(expected); // Reached this far, error impossible.
+                expected = expected +";complete";
                 serialPort.once('data', function(err,data) {
                     if(err) {
                         throw err;
                     }
-                    if(data == 'completed') {
+                    if(data == expected) {
                         // Call the pourCompleted()-function,
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
@@ -314,13 +321,16 @@ class ControlLogic {
                 return true;
             } else {
                 that.errorCount = 0;
+                let expected = "returnBottle("+location+","+type+");";
+                expected = editCommandLength(expected); // Reached this far, error impossible.
+                expected = expected +";complete";
                 // No errors occurred, wait for the completion message.
                 serialPort.once('data', function(err,data) {
                     if(err) {
                         throw err;
                     }
                     // No error occurred, the bottle has been returned to the bottleshelf.
-                    if(data == 'completed') {
+                    if(data == expected) {
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -371,18 +381,21 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.removeBottle(location,type); // Try again and call the current function recursively.
+                that.robot.removeBottle(type); // Try again and call the current function recursively.
                 that.removeHandler(location, type, pourQueue);
                 return true;
             } else {
                 that.errorCount = 0;
+                let expected = "removeBottle("+type+");";
+                expected = editCommandLength(expected); // Reached this far, error impossible.
+                expected = expected +";complete";
                 // No errors occurred, wait for the completion message.
                 serialPort.once('data', function(err,data) {
                     if(err) {
                         throw err;
                     }
                     // No error occurred, the bottle has been returned to the bottleshelf.
-                    if(data == 'completed') {
+                    if(data == expected) {
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -394,6 +407,10 @@ class ControlLogic {
                             // Call the robot to grab the new bottle.
                             that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type);
                             // Call the grabHandler.
+                            
+                            // TODO:
+                            // POISTA PULLO DB:stä.
+                            
                             try {
                                 that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
                             } catch(err) {
@@ -437,11 +454,14 @@ class ControlLogic {
             } else {
                 // No failure occurred:
                 // Listen for the completion message.
+                let expected = "getNewBottle("+location+","+type+");";
+                expected = editCommandLength(expected); // Reached this far, error impossible.
+                expected = expected +";complete";
                 serialPort.once('data', function(err,data) {
                     if(err) {
                         throw err; // Error occurred.
                     } 
-                    if(data == 'completed') {
+                    if(data == expected) {
                         // The action was carried out completely.
                         // Add the bottle to the bottleshelfs:
                         that.database.currentShelf.addBottle(bottleString,location);
@@ -520,7 +540,21 @@ function countPourTime(pourSpeed,portion) {
     return ms;
 }
 
-
+// Edits the command length to 30.
+function editCommandLength(command) {
+    if(command.length < 30) {
+        let times = 30 - command.length;
+        for(let i = 0; i < times; i++) {
+            command.concat(" "); // Append the command to 30 symbols.
+        }
+    }
+    else if (command.length > 30) {
+        console.log("Command was too long for the robot.");
+        return false;
+    }
+     
+    return command;
+}
 
 
 // Create the test-object.
