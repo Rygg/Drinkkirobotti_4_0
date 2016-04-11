@@ -545,7 +545,7 @@ function editCommandLength(command) {
     if(command.length < 30) {
         let times = 30 - command.length;
         for(let i = 0; i < times; i++) {
-            command.concat(" "); // Append the command to 30 symbols.
+            command = command + "-"; // Append the command to 30 symbols.
         }
     }
     else if (command.length > 30) {
