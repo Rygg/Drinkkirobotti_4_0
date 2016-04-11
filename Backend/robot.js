@@ -69,8 +69,12 @@ class Robot {
 
         // Set the action and command for the commHandler-function.
         let action = 'grabBottle';
-        let command = action+'('+location+','+type+')';
+        let command = action+'('+location+','+type+');';
 
+        command = editCommandLength(command); // Edit the length to 30.
+        if(!command) {
+            return false;
+        }
         // Call the communications handler
         if(!this.commHandler(action,command)) {
             console.log("The robot is not able to execute the command: " + command);
@@ -95,8 +99,12 @@ class Robot {
         }
         // Set the action and command for the commHandler-function.
         let action = 'pourDrinks';
-        let command = action+'('+pourTime+','+howMany+')';
+        let command = action+'('+pourTime+','+howMany+');';
         
+        command = editCommandLength(command); // Edit the length to 30.
+        if(!command) {
+            return false;
+        }
         // Call the communications handler
         if(!this.commHandler(action,command)) {
             console.log("The robot is not able to execute the command: " + command);
@@ -123,8 +131,12 @@ class Robot {
 
         // Set the action and command for the commHandler-function.
         let action = 'returnBottle';
-        let command = action+'('+location+','+type+')';
+        let command = action+'('+location+','+type+');';
 
+        command = editCommandLength(command); // Edit the length to 30.
+        if(!command) {
+            return false;
+        }
         // Call the communications handler
         if(!this.commHandler(action,command)) {
             console.log("The robot is not able to execute the command: " + command);
@@ -151,8 +163,12 @@ class Robot {
         
         // Set the action and command for the commHandler-function.
         let action = 'removeBottle';
-        let command = action+'('+type+')';
+        let command = action+'('+type+');';
 
+        command = editCommandLength(command); // Edit the length to 30.
+        if(!command) {
+            return false;
+        }
         // Call the communications handler
         if(!this.commHandler(action,command)) {
             console.log("The robot is not able to execute the command: " + command);
@@ -179,8 +195,11 @@ class Robot {
 
         // Set the action and command for the commHandler-function.
         let action = 'getNewBottle';
-        let command = action+'('+location+','+type+')';
-
+        let command = action+'('+location+','+type+');';
+        command = editCommandLength(command); // Edit the length to 30.
+        if(!command) {
+            return false;
+        }
         // Call the communications handler
         if(!this.commHandler(action,command)) {
             console.log("The robot is not able to execute the command: " + command);
@@ -264,7 +283,7 @@ function writeSerial(action,command,timeout,that) {
             return;
         }
         try {
-            responseHandler(err, result, action, timeout, that);
+            responseHandler(err, result, command, action, timeout, that);
         } catch(error) {
             // Error occurred, set failure to true and emit '<action>_done'.
             that.failure = true;
@@ -275,7 +294,7 @@ function writeSerial(action,command,timeout,that) {
 }
 
 // Function to pack up the commonly used response handling.
-function responseHandler(err,result,action,timeout,that) {
+function responseHandler(err,result,command,action,timeout,that) {
     if(err) {
         throw error;
     }
@@ -292,7 +311,8 @@ function responseHandler(err,result,action,timeout,that) {
             if(err) {
                 throw err;
             }
-            if(data == 'working') { // To be changed to the actual command declared later on.
+            let expected = command+";ok";
+            if(data == expected) { // To be changed to the actual command declared later on.
                 that.working = true;
                 that.communicating = false;
                 console.log("Robot started working");
@@ -348,6 +368,22 @@ function checkStatus(action,lastCommand,failure) {
         console.log("Error: Invalid action: " + action);
         return false;
     }
+}
+
+// Edits the command length to 30.
+function editCommandLength(command) {
+    if(command.length < 30) {
+        let times = 30 - command.length;
+        for(let i = 0; i < times; i++;) {
+            command.concat(" "); // Append the command to 30 symbols.
+        }
+    }
+    else if (command.length > 30) {
+        console.log("Command was too long for the robot.");
+        return false;
+    }
+     
+    return command;
 }
 /*
 // Create Rob the Bot
