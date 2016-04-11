@@ -39,8 +39,6 @@ class ControlLogic {
         // Initialize the database.
         this.database.importDB();
         
-        // Start the runHandler()
-        this.runHandler();
             
     }
     
@@ -84,8 +82,7 @@ class ControlLogic {
         
         // Afterwards, Start the pouring routine if not running already.
         if (!this.running) {
-            RobotEmitter.emit('run');
-            return true;
+            this.run();
         }
         return true; // not started.
     }
@@ -125,77 +122,75 @@ class ControlLogic {
     // The other functions for the functionality of the logic. 
    
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
-    runHandler() {
-        let that = this;
-        RobotEmitter.on('run', function() {
-            // Check if already running:
-            if(that.running) {
-                return false;
+    run() {
+        // Check if already running:
+        if(this.running) {
+            return false;
+        }
+        // Check if there is a newBottle to be grabbed:
+        if(this.newBottle[0]) {
+            this.running = true;
+            console.log("Starting to grab a new Bottle.");
+            if(this.robot.getNewBottle(this.newBottle[1],this.newBottle[2])) {
+                this.getNewHandler(this.newBottle[1],this.newBottle[2],this.newBottle[3]);
+                return true;
             }
-            // Check if there is a newBottle to be grabbed:
-            if(that.newBottle[0]) {
-                that.running = true;
-                console.log("Starting to grab a new Bottle.");
-                if(that.robot.getNewBottle(that.newBottle[1],that.newBottle[2])) {
-                    that.getNewHandler(that.newBottle[1],that.newBottle[2],that.newBottle[3]);
-                    return true;
-                }
-            }
-            // Otherwise start the drink pouring cycle.
+        }
+        // Otherwise start the drink pouring cycle.
 
-            // Double check if there is stuff in the queue.
-            if(that.queue.length < 1) {
-                that.running = false;
+        // Double check if there is stuff in the queue.
+        if(this.queue.length < 1) {
+            console.log("Queue is empty, waiting..");
+            this.running = false;
                 return false;
             }
         
-            console.log("Starting the pouring cycle:");
+        console.log("Starting the pouring cycle:");
         // Count the number of orders for the same drink (max 4).
-            let howMany = 1;
-            let condition = 4;
-            if(that.queue.length < 4) {
-                condition = that.queue.length;
+        let howMany = 1;
+        let condition = 4;
+        if(this.queue.length < 4) {
+            condition = this.queue.length;
+        }
+        for(let i = 1; i < condition; i++) {
+            if(this.queue[0].drink.name == this.queue[i].drink.name) {
+            howMany++;
             }
-            for(let i = 1; i < condition; i++) {
-                if(that.queue[0].drink.name == that.queue[i].drink.name) {
-                howMany++;
-                }
-            }   
-            // Pop the location of the first bottle.
-            console.log(that.queue);
-            let location = that.queue[0].locations.shift();
-            // Pop the first portion of the recipe.
-            let portion = that.queue[0].drink.recipe.shift();
-            let amount = portion.amount;
-            // Find the pourSpeed of the bottle.
-            let pourSpeed = that.database.reservedShelf.bottles[location].pourSpeed;
-            // Calculate the pourTime:
-            let pourTime = countPourTime(pourSpeed,portion);
-            // Save a temporary queue to pass as an argument to the handlers.
-            let pourQueue = that.queue.slice(0);
-            // Remove the to-be-poured items from the queue.
-            for(let i = 0; i < howMany; i++) {
-                that.beingPoured.push(that.orderQueue[i]); // To be tested.
-                that.queue.shift();
-                that.orderQueue.shift();
+        }   
+        // Create a temporary queue so we do not touch to objects. Also pass this as the parameter.
+        let pourQueue = this.queue.slice(0);
+        // Pop the location of the first bottle.
+        let location = pourQueue[0].locations.shift();
+        // Pop the first portion of the recipe.
+        let portion = pourQueue[0].drink.recipe.shift();
+        let amount = portion.amount;
+        // Find the pourSpeed of the bottle.
+        let pourSpeed = this.database.reservedShelf.bottles[location].pourSpeed;
+        // Calculate the pourTime:
+        let pourTime = countPourTime(pourSpeed,portion);
+        // Remove the to-be-poured items from the queue.
+        for(let i = 0; i < howMany; i++) {
+            this.beingPoured.push(this.orderQueue[i]); // To be tested.
+            this.queue.shift();
+            this.orderQueue.shift();
+        }
+        // Grab the first bottle.
+        if(this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type)) {
+            // Call the grabHandler if executed.
+            try {
+                this.grabHandler(location,howMany,pourTime,amount,pourQueue);
+            } catch(err) {
+                console.log("Error occurred in the grabHandler()." +err);
+                return false;
             }
-            // Grab the first bottle.
-            if(that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type)) {
-                // Call the grabHandler if executed.
-                try {
-                    that.grabHandler(location,howMany,pourTime,amount,pourQueue);
-                } catch(err) {
-                    console.log("Error occurred in the grabHandler()." +err);
-                    return false;
-                }
-                that.running = true;
-                return true; // The cycle is started.     
-            }
-            // grabBottle command didn't execute.
-            that.running = false;
-            return false;
-        });
+            this.running = true;
+            return true; // The cycle is started.     
+        }
+        // grabBottle command didn't execute.
+        this.running = false;
+        return false;
     }
+    
     
     
     // newBottleReady() - Function which sets the flag for grabbing a new bottle next.
@@ -207,7 +202,8 @@ class ControlLogic {
             this.newBottle[2] = type;
             this.newBottle[3] = bottleString;
             if(!this.running) {
-                RobotEmitter.emit('run');
+                this.run();
+                console.log("Run() started from newBottleReady();");
             }
             return true;    
         }
@@ -290,7 +286,7 @@ class ControlLogic {
                 }
                 if(that.robot.pourDrinks(pourTime,howMany)) {
                     // Try again and call the current function recursively.
-                    that.pourHandler(pourTime,howMany);
+                    that.pourHandler(pourTime,howMany,location,amount,pourQueue);
                     return true;
                 }
             } else {
@@ -309,9 +305,10 @@ class ControlLogic {
                         // See if the bottle got empty, depending on that call the next command.
                         if(that.database.currentShelf.bottles[location].volume < MIN_VOLUME) { // Minimum value for the bottle before changing it.
                             console.log('Current bottle got empty. Removing it.'); 
-                            that.robot.removeBottle(that.database.currentShelf.bottles[location].type);
-                            that.removeHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
-                            return true;
+                            if(that.robot.removeBottle(that.database.currentShelf.bottles[location].type)) {
+                                that.removeHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                                return true;
+                            }
                         } else {
                             // The bottle has still enough liquid left, return it to the bottleshelf.
                             if(that.robot.returnBottle(location,that.database.currentShelf.bottles[location].type)) {
@@ -390,7 +387,8 @@ class ControlLogic {
                             // The drink has been completely poured.
                             // Restart the cycle:
                             that.beingPoured = []; // Clear the info of what is being poured.
-                            RobotEmitter.emit('run');
+                            that.running = false; // The system is no longer running.
+                            that.run();
                             return true;
                         }
                         
@@ -461,7 +459,9 @@ class ControlLogic {
                             // The drink has been completely poured.
                             // Restart the cycle:
                             that.beingPoured = []; // Clear what is being poured.
-                            RobotEmitter.emit('run');
+                            that.running = false; // The system is no longer running.
+                            that.run();
+                            return true;
                         }
                     } else {
                         console.log("Error happened with the remove-cycle.")
@@ -514,7 +514,9 @@ class ControlLogic {
                         that.newBottle[2] = 'unknown';
                         that.newBottle[3] = 'unknown';
                         // Restart the cycle:
-                        RobotEmitter.emit('run');
+                        that.running = false; // All actions completed.
+                        that.run();
+                        return true;
                     } else {
                         console.log("Error happened with the getNew-cycle.")
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
@@ -554,6 +556,7 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, queueObject) {
     for(let i = 0; i < queue.length; i++) {
         if(queue[i].drinkName == drinkName) {
             // The drink was already in the queue, add the positions to the array.
+            console.log("Drink already in queue while adding.");
             found.push(i);
         }
     } // Gone trough all the queue.
@@ -629,6 +632,7 @@ setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
+    console.log("Bottle placed in the changing station.");
 },15000);
 
 setTimeout(function() {
@@ -636,6 +640,11 @@ setTimeout(function() {
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
 },20000);
+
+setTimeout(function() {
+    console.log("Adding a new GT to the queue after one minute.");
+    ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":45}');
+},60000);
 
 
 module.exports = ControlLogic;
