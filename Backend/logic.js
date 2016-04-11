@@ -39,6 +39,8 @@ class ControlLogic {
         // Initialize the database.
         this.database.importDB();
         
+        // Start the runHandler()
+        this.runHandler();
             
     }
     
@@ -49,6 +51,7 @@ class ControlLogic {
     processOrder(newOrder) {
         // Parse the order to an object format.
         let new_Order;
+        console.log("Processing Order:");
         try {
             new_Order = JSON.parse(newOrder);
         } catch (err) {
@@ -62,24 +65,29 @@ class ControlLogic {
         // The order is in correct format, check if the drink is available (Should be or the order should not have been able to be placed).
         if(!this.database.checkDrinkAvailability(new_Order.drinkName)) {
             // If not, the Order is not processed.
+            console.log("Drink not available.");
             return false;
         }
         // Reserve the drink. Should change availability if need be.
         let QueueObject = this.database.reserveDrink(new_Order.drinkName, new_Order.ID);
         if(!QueueObject) {
+            console.log("QueueObject not reserved.");
             return false; // QueueObject was not reserved.
         }
         // Add the drink to the queues.
         if(!addToQueues(this.queue, this.orderQueue, new_Order.drinkName, new_Order, QueueObject)) {
-            return false; // The queues do not match.
+            // The queues do not match.
+            console.log("Queues did not match.");
+            return false;
             // << INSERT MASSIVE ERROR EMIT HERE >>
         }
         
         // Afterwards, Start the pouring routine if not running already.
         if (!this.running) {
-            this.run();
+            RobotEmitter.emit('run');
+            return true;
         }
-        return true;
+        return true; // not started.
     }
         
     //removeOrder() - The function which removes a certain object based on it's the ID  from both queues, should be used when a drink is cancelled from the UI.
@@ -117,61 +125,75 @@ class ControlLogic {
     // The other functions for the functionality of the logic. 
    
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
-    run() {
-        // Check if there is a newBottle to be grabbed:
-        if(this.newBottle[0]) {
-            console.log("Starting to grab a new Bottle.");
-            this.robot.getNewBottle(this.newBottle[1],this.newBottle[2]);
-            this.getNewHandler(this.newBottle[1],this.newBottle[2],this.newBottle[3]);
-            return true;
-        }
-        // Otherwise start the drink pouring cycle.
-
-        // Double check if there is stuff in the queue.
-        if(this.queue.length < 1) {
-            this.running = false;
-            return false;
-        }
-        
-        console.log("Starting the pouring cycle:");
-        // Count the number of orders for the same drink (max 4).
-        let howMany = 1;
-        let condition = 4;
-        if(this.queue.length < 4) {
-            condition = this.queue.length;
-        }
-        for(let i = 1; i < condition; i++) {
-            if(this.queue[0].drink.name == this.queue[i].drink.name) {
-                howMany++;
+    runHandler() {
+        let that = this;
+        RobotEmitter.on('run', function() {
+            // Check if already running:
+            if(that.running) {
+                return false;
             }
-        }
-        // Pop the location of the first bottle.
-        let location = this.queue[0].locations.shift();
-        // Pop the first portion of the recipe.
-        let portion = this.queue[0].drink.recipe.shift();
-        let amount = portion.amount;
-        // Find the pourSpeed of the bottle.
-        let pourSpeed = this.database.reservedShelf.bottles[location].pourSpeed;
-        // Calculate the pourTime:
-        let pourTime = countPourTime(pourSpeed,portion);
-        // Save a temporary queue to pass as an argument to the handlers.
-        let pourQueue = this.queue;
-        // Remove the to-be-poured items from the queue.
-        for(let i = 0; i < howMany; i++) {
-            this.beingPoured.push(this.orderQueue[i]); // To be tested.
-            this.queue.shift();
-            this.orderQueue.shift();
-        }
-        // Grab the first bottle.
-        this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type);
-        // Call the grabHandler.
-        try {
-            this.grabHandler(location,howMany,pourTime,amount,pourQueue);
-        } catch(err) {
-            console.log("Error occurred in the grabHandler()." +err);
+            // Check if there is a newBottle to be grabbed:
+            if(that.newBottle[0]) {
+                that.running = true;
+                console.log("Starting to grab a new Bottle.");
+                if(that.robot.getNewBottle(that.newBottle[1],that.newBottle[2])) {
+                    that.getNewHandler(that.newBottle[1],that.newBottle[2],that.newBottle[3]);
+                    return true;
+                }
+            }
+            // Otherwise start the drink pouring cycle.
+
+            // Double check if there is stuff in the queue.
+            if(that.queue.length < 1) {
+                that.running = false;
+                return false;
+            }
+        
+            console.log("Starting the pouring cycle:");
+        // Count the number of orders for the same drink (max 4).
+            let howMany = 1;
+            let condition = 4;
+            if(that.queue.length < 4) {
+                condition = that.queue.length;
+            }
+            for(let i = 1; i < condition; i++) {
+                if(that.queue[0].drink.name == that.queue[i].drink.name) {
+                howMany++;
+                }
+            }   
+            // Pop the location of the first bottle.
+            let location = that.queue[0].locations.shift();
+            // Pop the first portion of the recipe.
+            let portion = that.queue[0].drink.recipe.shift();
+            let amount = portion.amount;
+            // Find the pourSpeed of the bottle.
+            let pourSpeed = that.database.reservedShelf.bottles[location].pourSpeed;
+            // Calculate the pourTime:
+            let pourTime = countPourTime(pourSpeed,portion);
+            // Save a temporary queue to pass as an argument to the handlers.
+            let pourQueue = that.queue.slice(0);
+            // Remove the to-be-poured items from the queue.
+            for(let i = 0; i < howMany; i++) {
+                that.beingPoured.push(that.orderQueue[i]); // To be tested.
+                that.queue.shift();
+                that.orderQueue.shift();
+            }
+            // Grab the first bottle.
+            if(that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type)) {
+                // Call the grabHandler if executed.
+                try {
+                    that.grabHandler(location,howMany,pourTime,amount,pourQueue);
+                } catch(err) {
+                    console.log("Error occurred in the grabHandler()." +err);
+                    return false;
+                }
+                that.running = true;
+                return true; // The cycle is started.     
+            }
+            // grabBottle command didn't execute.
+            that.running = false;
             return false;
-        }
-        return true; // The cycle is started.     
+        });
     }
     
     
@@ -184,7 +206,7 @@ class ControlLogic {
             this.newBottle[2] = type;
             this.newBottle[3] = bottleString;
             if(!this.running) {
-                this.run();
+                RobotEmitter.emit('run');
             }
             return true;    
         }
@@ -211,39 +233,42 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type);
-                that.grabHandler(location,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
-                return true;
+                if(that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type)) {
+                    that.grabHandler(location,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
+                    return true;
+                }
                 // There was no error, continue with the routine.
             } else {
                 that.errorCount = 0;
                 let expected = "grabBottle("+location+","+that.database.reservedShelf.bottles[location].type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
-                expected = expected +";complete";
+                expected = expected +";c"; // TODO
                 
                 // Wait for the move completed message from the robot.
-                serialPort.once('data', function(err,data) {
-                    // See if there was an error.
-                    if(err) {
-                        throw err;
-                    }
+                serialPort.once('data', function(data) {
                     if(data == expected) { // Whatever the message will be.
                         // The action was completed. Call for the pourDrink action and the handler.
-                        that.robot.pourDrinks(pourTime,howMany);
-                        try {
-                            that.pourHandler(pourTime,howMany,location,amount,pourQueue);
-                        } catch(err) {
-                            console.log("Error occurred: " + err);       
+                        console.log("Action: "+data+" completed!"); 
+                        that.robot.working = false;
+                        if(that.robot.pourDrinks(pourTime,howMany)) {
+                            try {
+                                that.pourHandler(pourTime,howMany,location,amount,pourQueue);
+                            } catch(err) {
+                                console.log("Error occurred: " + err);       
+                            }
+                            return true; // Return true as all the necessary functions have been called.
                         }
-                        return true; // Return true as all the necessary functions have been called.
-                    } 
+                    }
                     else {
-                        console.log("Error happened with the grab-cycle.")
+                        console.log("Error happened with the grab-cycle.");
+                        console.log("Got:      "+data);
+                        console.log("Expected: "+expected);
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
                 });   
             }
+            // What happens if grabBottle fails in retry.? Is it even possible? insert here.
         });
     }
     
@@ -262,20 +287,22 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.pourDrinks(pourTime,howMany); // Try again and call the current function recursively.
-                that.pourHandler(pourTime,howMany);
-                return true;   
+                if(that.robot.pourDrinks(pourTime,howMany)) {
+                    // Try again and call the current function recursively.
+                    that.pourHandler(pourTime,howMany);
+                    return true;
+                }
             } else {
                 // No failure occurred.
                 that.errorCount = 0;
                 let expected = "pourDrinks("+pourTime+","+howMany+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
-                expected = expected +";complete";
-                serialPort.once('data', function(err,data) {
-                    if(err) {
-                        throw err;
-                    }
+                expected = expected +";c"; // TODO
+                serialPort.once('data', function(data) {
                     if(data == expected) {
+                        console.log("Action: "+data+" completed!"); 
+                 
+                        that.robot.working = false;
                         // Call the pourCompleted()-function,
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
@@ -286,17 +313,21 @@ class ControlLogic {
                             return true;
                         } else {
                             // The bottle has still enough liquid left, return it to the bottleshelf.
-                            that.robot.returnBottle(location,that.database.currentShelf.bottles[location].type);
-                            that.returnHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
-                            return true;
+                            if(that.robot.returnBottle(location,that.database.currentShelf.bottles[location].type)) {
+                                that.returnHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                                return true;
+                            }
                         }
                     } else {
                         console.log("Error happened with the pour-cycle.")
+                        console.log("Got:      "+data);
+                        console.log("Expected: "+expected);
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
                 });
-            }    
+            }
+            // ?????????????
         });
         
     }
@@ -316,21 +347,22 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.returnBottle(location,type); // Try again and call the current function recursively.
-                that.returnHandler(location, type, pourQueue);
-                return true;
+                if(that.robot.returnBottle(location,type)) {
+                    // Try again and call the current function recursively.
+                    that.returnHandler(location, type, howMany, pourQueue);
+                    return true;
+                }
             } else {
                 that.errorCount = 0;
                 let expected = "returnBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
-                expected = expected +";complete";
+                expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
-                serialPort.once('data', function(err,data) {
-                    if(err) {
-                        throw err;
-                    }
+                serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
+                        console.log("Action: "+data+" completed!");
+                        that.robot.working = false;
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -340,20 +372,24 @@ class ControlLogic {
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
                             let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
                             // Call the robot to grab the new bottle.
-                            that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type);
-                            // Call the grabHandler.
-                            try {
-                                that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
-                            } catch(err) {
-                                console.log("Error occurred in the grabHandler()." +err);
-                                return false;
+                            if(that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type)) {
+                                // Call the grabHandler.
+                                try {
+                                    that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
+                                    return true; // A new bottle is to be grabbed.
+                                } catch(err) {
+                                    console.log("Error occurred in the grabHandler()." +err);
+                                    console.log("Got:      "+data);
+                                    console.log("Expected: "+expected);
+                                    return false;
+                                }
                             }
-                            return true; // A new pouring cycle was started.    
+                            
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
                             that.beingPoured = []; // Clear the info of what is being poured.
-                            that.run();
+                            RobotEmitter.emit('run');
                         }
                         
                     } else {
@@ -381,21 +417,25 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.removeBottle(type); // Try again and call the current function recursively.
-                that.removeHandler(location, type, pourQueue);
-                return true;
+                if(that.robot.removeBottle(type)) {
+                    // Try again and call the current function recursively.
+                    that.removeHandler(location, type, pourQueue);
+                    return true;
+                }
             } else {
                 that.errorCount = 0;
                 let expected = "removeBottle("+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
-                expected = expected +";complete";
+                expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
-                serialPort.once('data', function(err,data) {
-                    if(err) {
-                        throw err;
-                    }
+                serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
+                        console.log("Action: "+data+" completed!");
+                        that.robot.working = false;
+                        // TODO
+                        // POISTA PULLO DB:stä
+                        //
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -405,27 +445,26 @@ class ControlLogic {
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
                             let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
                             // Call the robot to grab the new bottle.
-                            that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type);
-                            // Call the grabHandler.
-                            
-                            // TODO:
-                            // POISTA PULLO DB:stä.
-                            
-                            try {
-                                that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
-                            } catch(err) {
-                                console.log("Error occurred in the grabHandler()." +err);
-                                return false;
+                            if(that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type)) {
+                                // Call the grabHandler.
+                                try {
+                                    that.grabHandler(location2,howMany,pourTime,amount,pourQueue);
+                                    return true;
+                                } catch(err) {
+                                    console.log("Error occurred in the grabHandler()." +err);
+                                    return false;
+                                }
                             }
-                            return true; // A new pouring cycle was started.    
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
                             that.beingPoured = []; // Clear what is being poured.
-                            that.run();
+                            RobotEmitter.emit('run');
                         }
                     } else {
                         console.log("Error happened with the remove-cycle.")
+                        console.log("Got:      "+data);
+                        console.log("Expected: "+expected);
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
@@ -449,19 +488,21 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                that.robot.getNewBottle(location,type); // Try again and call the current function recursively.
-                that.getNewHandler(location, type, bottleString);
+                if(that.robot.getNewBottle(location,type)) {
+                    // Try again and call the current function recursively.
+                    that.getNewHandler(location, type, bottleString);
+                    return true;
+                }
             } else {
                 // No failure occurred:
                 // Listen for the completion message.
                 let expected = "getNewBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
-                expected = expected +";complete";
-                serialPort.once('data', function(err,data) {
-                    if(err) {
-                        throw err; // Error occurred.
-                    } 
+                expected = expected +";c"; // TODO
+                serialPort.once('data', function(data) {
                     if(data == expected) {
+                        console.log("Action: "+data+" completed!");
+                        that.robot.working = false;
                         // The action was carried out completely.
                         // Add the bottle to the bottleshelfs:
                         that.database.currentShelf.addBottle(bottleString,location);
@@ -471,10 +512,12 @@ class ControlLogic {
                         that.newBottle[2] = 'unknown';
                         that.newBottle[3] = 'unknown';
                         // Restart the cycle:
-                        that.run();
+                        RobotEmitter.emit('run');
                     } else {
                         console.log("Error happened with the getNew-cycle.")
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
+                        console.log("Got:      "+data);
+                        console.log("Expected: "+expected);
                         return false;
                     }
                 });
@@ -569,6 +612,20 @@ setTimeout(function(err) {
     console.log("Trying to process order.");
     ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":43}');
 },1000);
+
+setTimeout(function(err) {
+    console.log("Adding two more gin tonics to the queue.");
+    if(ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":44}')) {
+        console.log("Added one.");
+        console.log("Printing queue.");
+        console.log(ProgramLogic.queue);
+    }
+    if(ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":45}')) {
+        console.log("Added the second.");
+        console.log("Printing queue:");
+        console.log(ProgramLogic.queue);
+    }
+},5000);
 
 setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");

@@ -300,7 +300,7 @@ function responseHandler(err,result,command,action,timeout,that) {
     }
     console.log("Wrote "+result+" symbols to serial, waiting for response:");
     try {
-        serialPort.once('data', function(err, data){
+        serialPort.once('data', function(data){
             if(timeout._called) {
                 // Do not emit anything and exit. Results in a timeout 'done'-emit.
                 console.log("Timeout when reading robots response.");
@@ -308,10 +308,7 @@ function responseHandler(err,result,command,action,timeout,that) {
             }
             // Response read before timeout, clearing the timeout counter.
             clearTimeout(timeout);
-            if(err) {
-                throw err;
-            }
-            let expected = command+";ok";
+            let expected = command+";s";
             if(data == expected) { // To be changed to the actual command declared later on.
                 that.working = true;
                 that.communicating = false;
@@ -323,6 +320,8 @@ function responseHandler(err,result,command,action,timeout,that) {
                 that.communicating = false;
                 that.failure = true;
                 console.log("Error: Robot couldn't execute the command.");
+                console.log("Got response: "+data);
+                console.log("Expected:     "+expected);
                 RobotEmitter.emit(action+'_done');
             }   
         });
