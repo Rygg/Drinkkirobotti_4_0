@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>Drinkrobot</title>
-    <link rel="stylesheet" href="ui_customer.css">
+    <link rel="stylesheet" type="text/css" href="ui_customer.css">
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
   <header>
@@ -11,6 +13,28 @@
 
     Order a drink you prefer from the list. If you want to get your drink faster, order a
     drink which is already on the order list and is not full of orderers!</p>
+  <div class="orderinfo">
+    <div id="popupContact">
+      <div id="abc">
+      <!-- Popup Div Starts Here -->
+      <div id="popupContact">
+      <!-- Contact Us Form -->
+      <div id="form" name="form">
+      <img id="close" src="images/3.png" onclick ="div_hide()">
+      <h2 id="orderName">Oletko varma?</h2>
+      <hr>
+      <form id="chat-form">
+        <input id="chat-input"/>
+      </form>
+      <button onclick="orderselected()">YES</button>
+      <button onclick= "div_hide()">NO</button>
+    </div>
+      </div>
+      <!-- Popup Div Ends Here -->
+      </div>
+      <!-- Display Popup Button -->
+</div>
+  </div>
   </header>
   <div id="contentleft">
     <h1>Being prepared:</h1>
@@ -26,17 +50,17 @@
 
     <hr>
     <h1>Next order:</h1>
-    <ol>
+    <ol id=orderlist>
       <li class="batch">Vodka Apple
-        <ol>
-          <li>Mikko</li>
-          <li>Aleksi</li>
-          <li>-</li>
-          <li>-</li>
+        <ol id="batch1">
+          <li class="orderer1">Mikko</li>
+          <li class="orderer2">Aleksi</li>
+          <li class="orderer3">-</li>
+          <li class="orderer4">-</li>
         </ol>
       </li>
       <li class="batch">Screwdriver
-        <ol>
+        <ol id="batch2">
           <li>Max</li>
           <li>-</li>
           <li>-</li>
@@ -44,7 +68,7 @@
         </ol>
       </li>
       <li class="batch">Green Widow
-        <ol>
+        <ol id="batch3">
           <li>Joonas</li>
           <li>Konsta</li>
           <li>-</li>
@@ -52,7 +76,7 @@
         </ol>
       </li>
       <li class="batch">Cranberry Lime Virgin
-        <ol>
+        <ol id="batch4">
           <li>Tatu</li>
           <li>-</li>
           <li>-</li>
@@ -65,19 +89,31 @@
   <div id="contentmiddle">
   </div>
   <div id="contentright">
-    <button class="drink" onclick="move_pallet23()">
-      <img src="Drinkit\Screwdriver.jpg">
+    <button class="drink" onclick="show_info('Screwdriver')">
+      <img src="Screwdriver.jpg">
     </button><br>
     <div id="drinklist" class="panel">
-    <button class="drink" onclick="move_pallet12()">
-      <img src="Drinkit\Apple Juice.jpg">
+    <button class="drink" onclick="show_info('Apple Juice')">
+      <img src="Apple Juice.jpg">
     </button><br>
-    <button class="drink" onclick="move_pallet23()">
-      <img src="Drinkit\Green Widow.jpg">
+    <button class="drink" onclick="show_info('Green Widow')">
+      <img src="Green Widow.jpg">
     </button><br>
 
     </div>
   </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+<script src="cookies.js"></script>
+<script src="popup.js"></script>
+<script>
+function order(drinkName){
+  //window.alert(drinkName);
+  socket.emit('orderDrink', drinkName);
+};
+</script>
+
   </body>
 
   </html>
