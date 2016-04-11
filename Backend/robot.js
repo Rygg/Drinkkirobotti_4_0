@@ -232,10 +232,9 @@ class Robot {
         writeSerial(action,command,timeout, that);
 
         // Check for the timeout:
-        let thatb = this;
         RobotEmitter.once(timeoutString, function() {
-            thatb.failure = true;
-            thatb.communicating = false;
+            that.failure = true;
+            that.communicating = false;
             console.log(action+'()-function failed.');
             RobotEmitter.emit(action+'_done');
         });
