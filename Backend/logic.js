@@ -162,6 +162,7 @@ class ControlLogic {
                 }
             }   
             // Pop the location of the first bottle.
+            console.log(that.queue);
             let location = that.queue[0].locations.shift();
             // Pop the first portion of the recipe.
             let portion = that.queue[0].drink.recipe.shift();
@@ -390,6 +391,7 @@ class ControlLogic {
                             // Restart the cycle:
                             that.beingPoured = []; // Clear the info of what is being poured.
                             RobotEmitter.emit('run');
+                            return true;
                         }
                         
                     } else {
@@ -617,30 +619,20 @@ setTimeout(function(err) {
     console.log("Adding two more gin tonics to the queue.");
     if(ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":44}')) {
         console.log("Added one.");
-        console.log("Printing queue.");
-        console.log(ProgramLogic.queue);
     }
     if(ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":45}')) {
         console.log("Added the second.");
-        console.log("Printing queue:");
-        console.log(ProgramLogic.queue);
     }
 },5000);
 
 setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");
-    ProgramLogic.robot.failure = false;
-    ProgramLogic.robot.lastCommand = 'none';
-    ProgramLogic.running = false;
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
 },15000);
 
 setTimeout(function() {
     console.log("Putting a new Bottle to a reserved space in the bottleshelf.");
-    ProgramLogic.robot.failure = false;
-    ProgramLogic.robot.lastCommand = 'none';
-    ProgramLogic.running = false;
     let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
     ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
 },20000);
