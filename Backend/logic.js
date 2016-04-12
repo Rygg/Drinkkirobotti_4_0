@@ -604,7 +604,7 @@ function editCommandLength(command) {
     return command;
 }
 
-
+/*
 // Create the test-object.
 let ProgramLogic = new ControlLogic();
 ProgramLogic.database.drinkDB.addDrink("GT",'[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]');
@@ -646,5 +646,6 @@ setTimeout(function() {
     ProgramLogic.processOrder('{"drinkName":"GT","orderer":"Matti","ID":45}');
 },60000);
 
+*/
 
 module.exports = ControlLogic;

@@ -5,6 +5,9 @@ socket.on('initializeList', refreshQueue);
 
 function refreshQueue(orderQueue){
   // Lisää listan eka drinkki
+  if(orderQueue.length == 0) {
+      return;
+  }
   let drinkName = orderQueue[0].drinkName;
   let orderID = drinkName + orderQueue[0].id;
   addDrink(drinkName, orderID);
