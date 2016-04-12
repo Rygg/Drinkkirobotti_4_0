@@ -1,28 +1,60 @@
 var socket = io();
 
-socket.on('msg', onMessage);
 socket.on('drinkOrdered', addDrink);
-socket.on('initializeList', addDrink);
+socket.on('initializeList', refreshQueue);
 
 function refreshQueue(orderQueue){
-  drinkName = orderQueue[0].drinkName;
-  addDrink(drinkName);
+  // Lisää listan eka drinkki
+  let drinkName = orderQueue[0].drinkName;
+  let orderID = drinkName + orderQueue[0].id;
+  addDrink(drinkName, orderID);
 
-  for (i=1; i < 5; i ++){
-    if (orderQueue[0].drinkName==drinkName){
-      addOrderer(i)
+  // käy läpi tilaajat
+  for (i=0; i < orderQueue.length; i++){
+  // jos tilaajalla sama drinkki, lisää nimi samaan erään
+    if (orderQueue[i].drinkName==drinkName){
+        addOrderer(orderQueue[i].orderer, orderID)
+  // muuten lisää uusi drinkki
     }else{
-      break;
+      drinkName = orderQueue[i].drinkName;
+      orderID = drinkName + orderQueue[i].id;
+      addDrink(drinkName, orderID);
+      addOrderer(orderQueue[i].orderer, orderID)
     }
   }
 }
 
+function addDrink(drinkName, batchID) {
+  // tee li elementti
+  let mainlist = document.getElementById('orderlist');
+  let li_el = document.createElement('li');
+  let li_ID = 'batch_' + batchID;
+  li_el.setAttribute("id", li_ID);
+  li_el.setAttribute("class", "batch");
+
+  li_el.innerHTML = drinkName;
+  mainlist.appendChild(li_el);
+  // tee ol elementti li elementin sisään nimiä varten
+  let ol_el = document.createElement('ol');
+  ol_el.setAttribute("id", batchID);
+  document.getElementById(li_ID).appendChild(ol_el);
+
+
+};
+
+function addOrderer(name, batchID) {
+  let list = document.getElementById(batchID);
+  let el = document.createElement('li');
+  el.innerHTML = name;
+  list.appendChild(el);
+};
+
 function orderselected() {
   // Hae tilatun juoman nimi
-  var drinkName = document.getElementById('orderName').innerHTML;
+  let drinkName = document.getElementById('orderName').innerHTML;
   // Hae tilaajan nimi
-  var input = document.getElementById('chat-input');
-  var orderer = input.value;
+  let input = document.getElementById('chat-input');
+  let orderer = input.value;
   socket.emit('giveorder', drinkName, orderer);
 
   // tyhjennä kentät ja sulje ruutu
@@ -30,19 +62,7 @@ function orderselected() {
   document.getElementById('abc').style.display = "none";
 };
 
-function addDrink(drinkName) {
-  var list = document.getElementById('orderlist');
-  var el = document.createElement('li');
-  el.innerHTML = drinkName;
-  list.appendChild(el);
-};
 
-function addOrderer(text, batchnumber) {
-  var list = document.getElementById('batch1');
-  var el = document.createElement('li');
-  el.innerHTML = text;
-  list.appendChild(el);
-};
 
 
 
