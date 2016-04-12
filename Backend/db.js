@@ -4,6 +4,7 @@
 // Imported the already defined classes placed in the db_lib folder:
 let DrinkDB = require('./db_lib/drinkdb.js');
 let BottleShelf = require ('./db_lib/bottleshelf.js');
+let Drink = require('./db_lib/drink.js');
 
 // Define the class for the database and it's operations:
 class Database {
@@ -20,12 +21,14 @@ class Database {
     // Implementation for ID parameter is missing, assuming parameter.
     reserveDrink(drinkName, id) {        
         // Search the drink from the database.
-        let usedDrink;
+        let usedDrink = new Drink();
         for (let i = 0; i < this.drinkDB.drinks.length; i++) {
             if (this.drinkDB.drinks[i].name == drinkName) {
                 // Drink found, find the bottles used:
                 if (this.drinkDB.drinks[i].available) {
-                    usedDrink = this.drinkDB.drinks[i];
+                    usedDrink.name = this.drinkDB.drinks[i].name;
+                    usedDrink.available = this.drinkDB.drinks[i].available;
+                    usedDrink.recipe = this.drinkDB.drinks[i].recipe.slice(0);
                 } else {
                     // Drink not found in the database
                     console.log("Drink not available in the database.");
