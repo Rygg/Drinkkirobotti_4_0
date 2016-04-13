@@ -1,0 +1,76 @@
+@media only screen and (min-width : 150px) and (max-width : 1500px)
+
+{
+  body {
+    width: 90%;
+    margin: 0 auto;
+    font-size: 125%;
+  }
+
+  h1, h2 {
+    font-size: 120%;
+  }
+
+  li, #prepared p {
+    font-size: 130%;
+  }
+
+  #contentleft {
+    position: absolute;
+    left: 5%;
+    width: 200px;
+  }
+
+  #contentright {
+    background: #C1C1C1;
+    width: 100%;
+    overflow: hidden;
+    float: right;
+  }
+  .drink {
+  margin-left: 200px;
+  width: 60%;
+  }
+
+  div#popupContact {
+position:absolute;
+left:13%;
+top:17%;
+margin-left:0px;
+font-family:'Raleway',sans-serif
+}
+
+#form {
+max-width:500px;
+  width:500px;
+min-width:250px;
+  height:400px;
+padding:10px 50px;
+border:2px solid gray;
+border-radius:10px;
+font-family:raleway;
+background-color:#fff;
+}
+
+  #form button{
+    padding: 15%;
+  }
+
+  input {
+width:64%;
+padding:10px;
+margin:30px 0px;
+border:1px solid #ccc;
+padding-left:40px;
+font-size:16px;
+font-family:raleway
+}
+
+}
+
+@media only screen and (min-width : 150px) and (max-width : 600px){
+  .drink {
+  width: 50%;
+  }
+
+}
