@@ -23,7 +23,7 @@ const MIN_VOLUME = 6; // The minimum volume to be remaining in the bottle before
 // The class for the robots control logic.
 class ControlLogic {
     // Constructor, construct the designed API
-    constructor() {
+    constructor(drinkDB,bottleShelf) {
         // Construct the variables for the logic.
         this.queue = []; // The queue of QueueObjects for the logics own use.
         this.orderQueue = []; // The queue from the website.
@@ -37,7 +37,7 @@ class ControlLogic {
         this.robot = new Robot();     
             
         // Initialize the database.
-        this.database.importDB();
+        this.database.importDB(drinkDB,bottleShelf);
         
             
     }
