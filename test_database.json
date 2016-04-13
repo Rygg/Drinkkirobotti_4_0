@@ -1,11 +1,13 @@
 [
-    {"name":"VodkaCranberry","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"CranberryJuice","amount":10}]},
-    {"name":"CranberryJuice","available":false,"recipe":[{"bottleName":"CranberryJuice","amount":14}]},
-    {"name":"OrangeJuice","available":false,"recipe":[{"bottleName":"OrangeJuice","amount":14}]},
+    {"name":"Vodka Cranberry","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"CranberryJuice","amount":10}]},
+    {"name":"Cranberry Juice","available":false,"recipe":[{"bottleName":"CranberryJuice","amount":14}]},
+    {"name":"Orange Juice","available":false,"recipe":[{"bottleName":"OrangeJuice","amount":14}]},
     {"name":"Screwdriver","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"OrangeJuice","amount":10}]},
-    {"name":"GreenWidow","available":false,"recipe":[{"bottleName":"OrangeJuice","amount":8},{"bottleName":"Curacao","amount":6}]},
-    {"name":"VodkaApple","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"AppleJuice","amount":10}]},
-    {"name":"StrawberryJuice","available":false,"recipe":[{"bottleName":"StrawberryJuice","amount":14}]},
-    {"name":"PearJuice","available":false,"recipe":[{"bottleName":"PearJuice","amount":14}]},
-    {"name":"NokiaSpecial","available":false,"recipe":[{"bottleName":"Jaloviina","amount":14}]}
+    {"name":"Green Widow","available":false,"recipe":[{"bottleName":"OrangeJuice","amount":8},{"bottleName":"Curacao","amount":6}]},
+    {"name":"Vodka Apple","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"AppleJuice","amount":10}]},
+    {"name":"Strawberry Juice","available":false,"recipe":[{"bottleName":"StrawberryJuice","amount":14}]},
+    {"name":"Pear Juice","available":false,"recipe":[{"bottleName":"PearJuice","amount":14}]},
+    {"name":"Nokia Special","available":false,"recipe":[{"bottleName":"Jaloviina","amount":14}]},
+    {"name":"Apple Juice","available":false,"recipe":[{"bottleName":"Apple Juice","amount":14}]}
+
 ]
