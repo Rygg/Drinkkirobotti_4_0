@@ -1,0 +1,13 @@
+[
+    {"name":"Vodka","type":"Tasavalta","volume":100,"pourSpeed":1,"isAlcoholic":true},
+    {"name":"CranberryJuice","type":"Tasavalta","volume":100,"pourSpeed":2,"isAlcoholic":false},
+    {"name":"Vodka","type":"Tasavalta","volume":100,"pourSpeed":1,"isAlcoholic":true},
+    {"name":"OrangeJuice","type":"Tasavalta","volume":100,"pourSpeed":2,"isAlcoholic":false},  {"name":"PearJuice","type":"Tasavalta","volume":100,"pourSpeed":2,"isAlcoholic":false},
+    {"name":"Jaloviina","type":"Muovijallu","volume":50,"pourSpeed":4,"isAlcoholic":true},
+    {"name":"Curacao","type":"Tasavalta","volume":100,"pourSpeed":1,"isAlcoholic":true},
+    {"name":"StrawberryJuice","type":"Tasavalta","volume":100,"pourSpeed":2,"isAlcoholic":false},
+    {"name":"Jaloviina","type":"Muovijallu","volume":50,"pourSpeed":4,"isAlcoholic":true},
+    "empty",
+    "empty",
+    "empty"
+    ]
