@@ -57,7 +57,7 @@ io.on('connection', function(socket){
 		console.log('new order!');
 		ID = ID+1;
                 console.log("Tilattiin "+drinkName+", tarjoillaan GT.");
-                order = { "ID": ID, "drinkName": "GT", "orderer":ordererName }
+                order = { "ID": ID, "drinkName": drinkName, "orderer":ordererName }
                 console.log(order);
                 JSONI = JSON.stringify(order);
 		backend.processOrder(JSONI);
