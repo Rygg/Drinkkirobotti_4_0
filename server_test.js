@@ -13,7 +13,7 @@ var io = socketio(server);
 
 
 
-server.listen(3000, function(){
+server.listen(8080, function(){
 	console.log("Started");
 });
 
@@ -53,7 +53,7 @@ app.get('/operator', function (req, res) {
   res.sendFile(__dirname + '/ui_operator.html');
 });
 var exec = require('child_process').exec;
-exec('explorer "http://localhost:3000/"', function(error, stdout, stderr) {
+exec('explorer "http://localhost:8080/"', function(error, stdout, stderr) {
 });
 //
 
