@@ -9,7 +9,7 @@ var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
 
-var backend = new Logic();
+var backend = new Logic('test_database.json', 'test_bottleshelf.json');
 
 server.listen(3000, function(){
 	console.log("Started");
@@ -26,11 +26,11 @@ app.use(express.static(__dirname + '/Backend/logic.js'));
 var ID = 0;
 var orderQueue = backend.orderQueue;
 // Testipullot:
-backend.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
+/*backend.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 backend.database.currentShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 backend.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 backend.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
-
+*/
 /*orderQueue.push( { id: 1, drinkName: "ScrewDriver", orderer: "Matti" } );
 orderQueue.push( { id: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
 orderQueue.push( { id: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
