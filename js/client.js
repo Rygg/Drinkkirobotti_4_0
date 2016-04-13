@@ -7,16 +7,13 @@ function refreshQueue(orderQueue){
   if(orderQueue.length == 0) {
       return;
   }
-
-  // Tuhoa vanha ja tee uusi samanlainen elementti
+  // Tuhoa vanha ja tee uusi lista
   removeElement("contentleft", "orderlist");
   appendElement("contentleft", "ol", "orderlist");
-
-  // Lisää listan eka drinkki
+  // Lisää listan eka drinkki.
   let drinkName = orderQueue[0].drinkName;
   let orderID = drinkName + orderQueue[0].ID;
   addDrink(drinkName, orderID);
-
   // käy läpi tilaajat
   for (i=0; i < orderQueue.length; i++){
   // jos tilaajalla sama drinkki, lisää nimi samaan erään
