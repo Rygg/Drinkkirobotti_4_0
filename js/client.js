@@ -4,53 +4,66 @@ socket.on('drinkOrdered', addDrink);
 socket.on('initializeList', refreshQueue);
 
 function refreshQueue(orderQueue){
-  // Lisää listan eka drinkki
   if(orderQueue.length == 0) {
       return;
   }
+
+  // Tuhoa vanha ja tee uusi samanlainen elementti
+  removeElement("contentleft", "orderlist");
+  appendElement("contentleft", "ol", "orderlist");
+
+  // Lisää listan eka drinkki
   let drinkName = orderQueue[0].drinkName;
-  let orderID = drinkName + orderQueue[0].id;
+  let orderID = drinkName + orderQueue[0].ID;
   addDrink(drinkName, orderID);
 
   // käy läpi tilaajat
   for (i=0; i < orderQueue.length; i++){
   // jos tilaajalla sama drinkki, lisää nimi samaan erään
     if (orderQueue[i].drinkName==drinkName){
-        addOrderer(orderQueue[i].orderer, orderID)
+        addOrderer(orderQueue[i].orderer, orderQueue[i].ID, orderID)
   // muuten lisää uusi drinkki
     }else{
       drinkName = orderQueue[i].drinkName;
-      orderID = drinkName + orderQueue[i].id;
+      orderID = drinkName + orderQueue[i].ID;
       addDrink(drinkName, orderID);
-      addOrderer(orderQueue[i].orderer, orderID)
+      addOrderer(orderQueue[i].orderer,orderQueue[i].ID, orderID)
     }
   }
 }
 
 function addDrink(drinkName, batchID) {
-  // tee li elementti
-  let mainlist = document.getElementById('orderlist');
-  let li_el = document.createElement('li');
-  let li_ID = 'batch_' + batchID;
-  li_el.setAttribute("id", li_ID);
-  li_el.setAttribute("class", "batch");
-
-  li_el.innerHTML = drinkName;
-  mainlist.appendChild(li_el);
-  // tee ol elementti li elementin sisään nimiä varten
-  let ol_el = document.createElement('ol');
-  ol_el.setAttribute("id", batchID);
-  document.getElementById(li_ID).appendChild(ol_el);
-
-
+  li_ID = "li_" + batchID;
+  appendElement('orderlist',"li",li_ID, "batch");
+  writeToElement(li_ID,drinkName);
+  appendElement(li_ID,"ol",batchID);
 };
 
-function addOrderer(name, batchID) {
-  let list = document.getElementById(batchID);
-  let el = document.createElement('li');
-  el.innerHTML = name;
-  list.appendChild(el);
+function addOrderer(ordererName,uniqueID, batchID) {
+  appendElement(batchID,"li",uniqueID)
+  writeToElement(uniqueID,ordererName)
 };
+
+// Hyödyllinen funktio elementin poistoon
+function removeElement(parentID, childID){
+  let parent = document.getElementById(parentID);
+  let child = document.getElementById(childID);
+  parent.removeChild(child);
+}
+
+// Hyödyllinen funktio uuden elementin lisäämiseen
+function appendElement(parentID, childElement, childIDName, childClassName){
+  let parent = document.getElementById(parentID);
+  let child = document.createElement(childElement);
+  if (childIDName !== undefined) {child.setAttribute("id", childIDName)};
+  if (childClassName !== undefined) {child.setAttribute("class", childClassName)};
+  parent.appendChild(child);
+}
+
+function writeToElement(elementID, text){
+  let el = document.getElementById(elementID);
+  el.innerHTML = text;
+}
 
 function orderselected() {
   // Hae tilatun juoman nimi

@@ -64,12 +64,19 @@ io.on('connection', function(socket){
 	socket.on('giveorder', function(drinkName, ordererName) {
 		console.log('new order!');
 		ID = ID+1;
-                console.log("Tilattiin "+drinkName+", tarjoillaan GT.");
-                order = { "ID": ID, "drinkName": "GT", "orderer":ordererName };
+                //console.log("Tilattiin "+drinkName+", tarjoillaan GT.");
+                order = { "ID": ID, "drinkName": drinkName, "orderer":ordererName };
                 console.log(order);
-                JSONI = JSON.stringify(order);
-								orderQueue.push(JSONI); //testi
+                //JSONI = JSON.stringify(order); // ota pois testeis
+								//orderQueue.push(JSONI);
+								orderQueue.push(order); //includaa testeis
+								//socket.emit('initializeList', orderQueue);
 		//backend.processOrder(JSONI);
 	});
-
 });
+
+setInterval(function () {
+	io.emit('initializeList', orderQueue);
+	console.log('update');
+	//console.log(socket.listeners('initializeList').lenght);
+}, 3000);
