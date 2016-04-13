@@ -1,0 +1,3 @@
+!tarkistus onko pullonvaihtopisteessä pulloa sitä poistettaessa.
+jonon järjestyksen testaaminen
+juomakarusellin pyöräytys?
