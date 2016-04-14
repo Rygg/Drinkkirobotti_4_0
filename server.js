@@ -64,3 +64,9 @@ io.on('connection', function(socket){
 	});
 
 });
+
+setInterval(function () {
+	io.emit('initializeList', orderQueue);
+	console.log('UI updated..');
+	//console.log(socket.listeners('initializeList').lenght);
+}, 3000);
