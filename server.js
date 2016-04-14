@@ -58,7 +58,7 @@ app.get('/operator', function (req, res) {
 
 io.on('connection', function(socket){
 	socket.emit('initializeList', orderQueue);
-	socket.emit('initializeDrinklist',drinkList);
+	socket.emit('initializeDrinkList',drinkList);
 	console.log('a user connected');
 
 	socket.on('giveorder', function(drinkName, ordererName) {
