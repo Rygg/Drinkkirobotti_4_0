@@ -15,8 +15,6 @@ server.listen(3000, function(){
 });
 
 //
-backend.database.drinkDB.drinks // onko database pienellä vai isolla?
-
 
 // Käytettävät kansiot
 app.use(express.static(__dirname + '/css'));
@@ -28,7 +26,7 @@ app.use(express.static(__dirname + '/Backend/logic.js'));
 // servun muuttujat
 var ID = 0;
 var orderQueue = backend.orderQueue;
-var drinkList = backend.database.drinkDB.drinks;
+var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
 
 // Testipullot:
 /*backend.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
