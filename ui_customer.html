@@ -21,20 +21,19 @@
       <div id="popupContact">
       <!-- Contact Us Form -->
       <div id="form" name="form">
-      <img id="close" src="images/3.png" onclick ="div_hide()">
-      <h2 id="orderName">Oletko varma?</h2>
-      <hr>
-      <form id="chat-form">
-        <input id="chat-input"/>
-      </form>
-      <button onclick="orderselected()">YES</button>
-      <button onclick= "div_hide()">NO</button>
-    </div>
+        <h2 id="orderName">Oletko varma?</h2>
+        <hr>
+        <form id="chat-form">
+          <input id="chat-input"/>
+        </form>
+        <button onclick="orderselected()">YES</button>
+        <button onclick= "hide_info()">NO</button>
+      </div>
       </div>
       <!-- Popup Div Ends Here -->
       </div>
       <!-- Display Popup Button -->
-</div>
+    </div>
   </div>
   </header>
   <div id="contentleft">
@@ -92,24 +91,23 @@
   <div id="contentmiddle">
   </div>
   <div id="contentright">
-    <button class="drink" onclick="show_info('Screwdriver')">
+    <div id="drinkList" class="panel">
+    <!-- <button class="drink" onclick="show_info('Screwdriver')">
       <img src="Screwdriver.jpg">
     </button><br>
-    <div id="drinklist" class="panel">
     <button class="drink" onclick="show_info('Apple Juice')">
       <img src="Apple Juice.jpg">
     </button><br>
     <button class="drink" onclick="show_info('Green Widow')">
       <img src="Green Widow.jpg">
-    </button><br>
-
+    </button><br> -->
     </div>
   </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="client.js"></script>
 <script src="cookies.js"></script>
-<script src="popup.js"></script>git
+<script src="popup.js"></script>
 
   </body>
 

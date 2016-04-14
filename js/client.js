@@ -2,6 +2,21 @@ var socket = io();
 
 socket.on('drinkOrdered', addDrink);
 socket.on('initializeList', refreshQueue);
+socket.on('initializeDrinkList', refreshDrinkList);
+
+function refreshDrinkList(drinkList){
+  // Tuhoa vanha ja tee uusi lista
+  removeElement("contentright", "drinkList");
+  appendElement("contentright", "div", "drinkList");
+
+  if(drinkList.length == 0) {
+      appendElement(contentright, 'h1', 'noDrinks');
+      writeToElement('noDrinks', 'Error reading drinks from database!')
+  }
+  for (i=0; i < drinkList.length; i++){
+    createOrderButton(drinkList[i],i);
+  }
+}
 
 function refreshQueue(orderQueue){
   if(orderQueue.length == 0) {
@@ -12,19 +27,19 @@ function refreshQueue(orderQueue){
   appendElement("contentleft", "ol", "orderlist");
   // Lisää listan eka drinkki.
   let drinkName = orderQueue[0].drinkName;
-  let orderID = drinkName + orderQueue[0].ID;
-  addDrink(drinkName, orderID);
+  let batchID = drinkName + orderQueue[0].ID;
+  addDrink(drinkName, batchID);
   // käy läpi tilaajat
   for (i=0; i < orderQueue.length; i++){
-  // jos tilaajalla sama drinkki, lisää nimi samaan erään
+  // jos tilaajalla sama drinkki kuin edellisellä, lisää nimi samaan erään
     if (orderQueue[i].drinkName==drinkName){
-        addOrderer(orderQueue[i].orderer, orderQueue[i].ID, orderID)
+        addOrderer(orderQueue[i].orderer, orderQueue[i].ID, batchID)
   // muuten lisää uusi drinkki
     }else{
       drinkName = orderQueue[i].drinkName;
-      orderID = drinkName + orderQueue[i].ID;
-      addDrink(drinkName, orderID);
-      addOrderer(orderQueue[i].orderer,orderQueue[i].ID, orderID)
+      batchID = drinkName + orderQueue[i].ID;
+      addDrink(drinkName, batchID);
+      addOrderer(orderQueue[i].orderer,orderQueue[i].ID, batchID)
     }
   }
 }
@@ -39,6 +54,19 @@ function addDrink(drinkName, batchID) {
 function addOrderer(ordererName,uniqueID, batchID) {
   appendElement(batchID,"li",uniqueID)
   writeToElement(uniqueID,ordererName)
+};
+
+function orderselected() {
+  // Hae tilatun juoman nimi
+  let drinkName = document.getElementById('orderName').innerHTML;
+  // Hae tilaajan nimi
+  let input = document.getElementById('chat-input');
+  let orderer = input.value;
+  socket.emit('giveorder', drinkName, orderer);
+
+  // tyhjennä kentät ja sulje ruutu
+  input.value = '';
+  document.getElementById('abc').style.display = "none";
 };
 
 // Hyödyllinen funktio elementin poistoon
@@ -62,22 +90,56 @@ function writeToElement(elementID, text){
   el.innerHTML = text;
 }
 
-function orderselected() {
-  // Hae tilatun juoman nimi
-  let drinkName = document.getElementById('orderName').innerHTML;
-  // Hae tilaajan nimi
-  let input = document.getElementById('chat-input');
-  let orderer = input.value;
-  socket.emit('giveorder', drinkName, orderer);
+function createOrderButton(drinkName,buttonIndex){
+  let buttonID="orderButton_"+buttonIndex;
+  appendElement('drinkList',"button",buttonID,"drink")
+  configureButtonElement(buttonID,drinkName);
+}
 
-  // tyhjennä kentät ja sulje ruutu
-  input.value = '';
-  document.getElementById('abc').style.display = "none";
-};
+// lisää tilausnappulaan kuvan ja funktion
+function configureButtonElement(elementID, drinkName){
+  let el = document.getElementById(elementID);
+  let functionality = "show_info('"+drinkName+"')";
+  el.setAttribute("onclick", functionality);
+  // luodaan kuva
+  let img = document.createElement("img");
+  let url = drinkName + ".jpg";
+  if (imageExists(url)) {img.src = url;}
+  else {
+    let url = "default.jpg";
+    img.src=url;
+  }
+  el.appendChild(img);
+}
 
+function imageExists(image_url){
+    var http = new XMLHttpRequest();
+    http.open('HEAD', image_url, false);
+    http.send();
 
+    return http.status != 404;
 
+}
 
+function validate() {
+    if (document.myForm.name.value == "") {
+        alert("Enter a name");
+        document.myForm.name.focus();
+        return false;
+    }
+    if (!/^[a-zA-Z]*$/g.test(document.myForm.name.value)) {
+        alert("Invalid characters");
+        document.myForm.name.focus();
+        return false;
+    }
+}
+
+function ImageExist(url)
+{
+   var img = new Image();
+   img.src = url;
+   return img.height != 0;
+}
 
 // var form = document.getElementById('chat-form');
 // form.addEventListener('submit', function(e) {

@@ -8,12 +8,15 @@ var Logic = require('./Backend/logic.js');
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
-
 var backend = new Logic('test_database.json', 'test_bottleshelf.json');
 
 server.listen(3000, function(){
 	console.log("Started");
 });
+
+//
+backend.database.drinkDB.drinks // onko database pienellä vai isolla?
+
 
 // Käytettävät kansiot
 app.use(express.static(__dirname + '/css'));
@@ -25,6 +28,8 @@ app.use(express.static(__dirname + '/Backend/logic.js'));
 // servun muuttujat
 var ID = 0;
 var orderQueue = backend.orderQueue;
+var drinkList = backend.database.drinkDB.drinks;
+
 // Testipullot:
 /*backend.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 backend.database.currentShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
@@ -44,13 +49,18 @@ orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/ui_customer.html');
 });
-var exec = require('child_process').exec;
-exec('explorer "http://localhost:3000/"', function(error, stdout, stderr) {
+app.get('/operator', function (req, res) {
+  res.sendFile(__dirname + '/ui_operator.html');
 });
+// UI:n aukaisu automaattisesti
+// var exec = require('child_process').exec;
+// exec('explorer "http://localhost:3000/"', function(error, stdout, stderr) {
+// });
 //
 
 io.on('connection', function(socket){
 	socket.emit('initializeList', orderQueue);
+	socket.emit('initializeDrinklist',drinkList);
 	console.log('a user connected');
 
 	socket.on('giveorder', function(drinkName, ordererName) {

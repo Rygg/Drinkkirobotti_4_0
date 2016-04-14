@@ -34,6 +34,7 @@ var ID = 0;
 // backend.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 
 var orderQueue = [];
+var drinkList = ["Screwdriver","Apple Juice","Green Widow"];
 /*orderQueue.push( { id: 1, drinkName: "ScrewDriver", orderer: "Matti" } );
 orderQueue.push( { id: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
 orderQueue.push( { id: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
@@ -45,19 +46,21 @@ orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
 */
 // autentikointi
 
-// UI:n aukaisu automaattisesti
+
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/ui_customer.html');
 });
 app.get('/operator', function (req, res) {
   res.sendFile(__dirname + '/ui_operator.html');
 });
-var exec = require('child_process').exec;
-exec('explorer "http://localhost:8080/"', function(error, stdout, stderr) {
-});
+// UI:n aukaisu automaattisesti servua käynnistäessä
+// var exec = require('child_process').exec;
+// exec('explorer "http://localhost:8080/"', function(error, stdout, stderr) {
+// });
 //
 
 io.on('connection', function(socket){
+	socket.emit('initializeDrinkList',drinkList);
 	socket.emit('initializeList', orderQueue);
 	console.log('a user connected');
 
