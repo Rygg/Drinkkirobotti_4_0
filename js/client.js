@@ -134,13 +134,6 @@ function validate() {
     }
 }
 
-function ImageExist(url)
-{
-   var img = new Image();
-   img.src = url;
-   return img.height != 0;
-}
-
 // var form = document.getElementById('chat-form');
 // form.addEventListener('submit', function(e) {
 //   var input = document.getElementById('chat-input');
@@ -151,9 +144,9 @@ function ImageExist(url)
 //   document.getElementById('abc').style.display = "none";
 // });
 
-function show_info(drinkName) {
+function show_info(headLine) {
 document.getElementById('abc').style.display = "block";
-document.getElementById('orderName').innerHTML = drinkName;
+document.getElementById('orderName').innerHTML = headLine;
 };
 //Function to Hide Popup
 function hide_info(){

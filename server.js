@@ -46,6 +46,7 @@ orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
 // UI:n aukaisu automaattisesti
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/ui_customer.html');
+	res.sendFile(__dirname + '/dynamic_test.html');
 });
 app.get('/operator', function (req, res) {
   res.sendFile(__dirname + '/ui_operator.html');
