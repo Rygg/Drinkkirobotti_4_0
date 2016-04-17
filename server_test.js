@@ -11,8 +11,6 @@ var server = http.createServer(app);
 var io = socketio(server);
 //var backend = new Logic();
 
-
-
 server.listen(8080, function(){
 	console.log("Started");
 });
@@ -24,8 +22,6 @@ app.use(express.static(__dirname + '/js'));
 app.use(express.static(__dirname + '/Backend/logic.js'));
 //
 
-// servun muuttujat
-var ID = 0;
 // var orderQueue = backend.orderQueue;
 // Testipullot:
 // backend.database.currentShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
@@ -33,19 +29,9 @@ var ID = 0;
 // backend.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 // backend.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 
-var orderQueue = [];
-var drinkList = ["Screwdriver","Apple Juice","Green Widow"];
-/*orderQueue.push( { id: 1, drinkName: "ScrewDriver", orderer: "Matti" } );
-orderQueue.push( { id: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
-orderQueue.push( { id: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
-orderQueue.push( { id: 5, drinkName: "ScrewDriver", orderer: "Ville" } );
-orderQueue.push( { id: 4, drinkName: "Apple Juice", orderer: "Jori" } );
-orderQueue.push( { id: 6, drinkName: "Apple Juice", orderer: "Jakke" } );
-orderQueue.push( { id: 7, drinkName: "Apple Juice", orderer: "Sepi" } );
-orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
-*/
-// autentikointi
-
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////// SIVUT /////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/ui_customer.html');
@@ -53,11 +39,38 @@ app.get('/', function (req, res) {
 app.get('/operator', function (req, res) {
   res.sendFile(__dirname + '/ui_operator.html');
 });
-// UI:n aukaisu automaattisesti servua käynnistäessä
-// var exec = require('child_process').exec;
-// exec('explorer "http://localhost:8080/"', function(error, stdout, stderr) {
-// });
-//
+
+/////////////////////////////////////////////////////////////////////////
+//////////////////////////TESTAUS TYNGÄT ////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+var orderQueue = [];
+var drinkList = ["Screwdriver","Apple Juice","Green Widow"];
+// backend.database.BottleShelf.getBottles();
+var backend_getbottles = ["Vodka","Water","OrangeJuice","Water"];
+// backend.database.BottleShelf.findBottleLocations(bottles[i])
+function backend_findBottleLocations(bottle){
+	if (bottle == "Vodka"){
+		return [0];
+	} else if (bottle == "Water") {
+		return [1,4];
+	} else if (bottle == "OrangeJuice") {
+		return [2,3,5,6,7,8,9,11];
+	} else {
+		return [];
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////
+////////////////////////// Servun muuttujat /////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+var ID = 0;
+var addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
+var nextBottlePlace = -1;
+
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////// Socket IO /////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
 io.on('connection', function(socket){
 	socket.emit('initializeDrinkList',drinkList);
@@ -76,10 +89,57 @@ io.on('connection', function(socket){
 								//socket.emit('initializeList', orderQueue);
 		//backend.processOrder(JSONI);
 	});
+	socket.on('bottleadded', function(content,shape,volume) {
+		nextBottlePlace = getFreeShelfPlace();
+		if (nextBottlePlace != -1){
+			addedBottle = { "name": content, "type": shape, "volume":volume,"pourSpeed":1,"isAlcoholic":true};
+			JSONI = JSON.stringify(addedBottle);
+			//backend.addBottle(JSONI,place);
+			bottlestatus = JSONI + " is reserved for place: " + nextBottlePlace;
+			socket.emit('addedBottleStatus', bottlestatus)
+		} else {
+			bottlestatus = "Shelf is full! Cannot add a new bottle!"
+			socket.emit('addedBottleStatus', bottlestatus);
+		};
+	});
+	socket.on('loadBottle', function() {
+		if (addedBottle.type != undefined){
+			JSONI = JSON.stringify(addedBottle);
+			console.log("newBottleReady: " + nextBottlePlace + ", " + addedBottle.type + ", " + JSONI);
+			//backend.newBottleReady(nextBottlePlace,addedBottle.type,JSONI);
+		} else {
+			// Joku
+		}
+	});
 });
 
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
-	console.log('update');
+	//console.log('update');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
+
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////// Apufunktiot ///////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+// Funktio hakee vapaan paikan hyllystä. Jos vapaata paikkaa ei löydä palauttaa -1
+function getFreeShelfPlace() {
+
+	bottles = backend_getbottles;
+	reserved_places = [];
+	// Hae varatut paikat ja lisää ne reserved_places listaan.
+	for (i = 0; i < bottles.length; i++){
+		bottle_locations = backend_findBottleLocations(bottles[i]);
+		for (j = 0; j < bottle_locations.length; j++){
+			reserved_places.push(bottle_locations[j]);
+		}
+	};
+	//käy läpi paikat 0-12 ja palauta heti, jos paikka vapaana
+	for (i = 0; i < 12; i++){
+		if (reserved_places.indexOf(i) == -1){
+			return i;
+		}
+	}
+	return -1;
+};

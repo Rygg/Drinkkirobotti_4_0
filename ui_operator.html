@@ -14,9 +14,9 @@
       <p>Hello operator!</p>
       <button class="operatorButton" onclick="fillBottleInfo()">Add bottle</button>
     </div>
-    <p>Bottle waiting for robot:
-    <span id="addedBottle">No Bottle!</span></p>
-    <button class="operatorButton" onclick="fetchBottle()">Load Bottle</button><br>
+    <p>Bottle Status:
+    <span id="addedBottle"></span></p>
+    <button class="operatorButton" onclick="loadBottle()">Load Bottle</button><br>
     <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
     <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
@@ -30,39 +30,32 @@
       <div id="form2" name="form">
         <h2>Add Bottle</h2>
         <hr>
-        <h3>Select bottle content:<h3>
-        <form id="content_form">
+        <form id="bottleinfo_form">
+          <h3>Select bottle content:<h3>
           <input type="radio" name="content" value="Water" id="Water">
           <label for="Water">Water</label><br>
           <input type="radio" name="content" value="Vodka" id="Vodka">
           <label for="Vodka">Vodka</label><br>
           <input type="radio" name="content" value="OrangeJuice" id="OrangeJuice">
           <label for="OrangeJuice">Orange Juice</label><br>
-        </form>
-        <h3>Select bottle shape:<h3>
-        <form id="shape_form">
+          <h3>Select bottle shape:<h3>
           <input type="radio" name="shape" value="FinlandiaVodka" id=FinlandiaVodka>
           <label for="FinlandiaVodka">Finlandia Vodka</label><br>
           <input type="radio" name="shape" value="Muovijallu" id=Muovijallu>
           <label for="Muovijallu">Muovijallu</label><br>
           <input type="radio" name="shape" value="Tasavalta" id=Tasavalta>
           <label for="Tasavalta">Tasavalta</label><br>
-        </form>
-        <h3>Select volume:<h3>
-        <form id="volume_form">
+          <h3>Select volume:<h3>
           <input type="radio" name="volume" value="100" id="100volume">
           <label for="100volume">100cl</label><br>
           <input type="radio" name="volume" value="50" id="50volume">
           <label for="50volume">50cl</label><br>
         </form>
-        <button onclick="addBottle()">YES</button>
-        <button onclick= "hideBottleFill()">NO</button>
+        <button type="button" class="operatorButton" onclick="addBottle()">YES</button>
+        <button type="button" class="operatorButton" onclick= "hideBottleFill()">NO</button>
       </div>
-      <!-- Popup Div Ends Here -->
       </div>
-      <!-- Display Popup Button -->
-    </div>
-        <!-- Display Popup Button -->
+      </div>
     </div>
 
     <div class="orderinfo">
