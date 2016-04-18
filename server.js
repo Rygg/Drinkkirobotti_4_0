@@ -65,7 +65,7 @@ setTimeout(function(){
 	var nextBottlePlace = -1;
 	var orderQueue = backend.orderQueue;
 	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
-},1500);
+
 
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Socket IO /////////////////////////////////
@@ -138,3 +138,5 @@ function getFreeShelfPlace() {
 	}
 	return -1;
 };
+
+},1500);
