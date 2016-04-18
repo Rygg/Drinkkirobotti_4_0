@@ -64,7 +64,6 @@ setTimeout(function(){
 	var nextBottlePlace = -1;
 	var orderQueue = backend.orderQueue;
 	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
-  console.log(drinkList);
 
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Socket IO /////////////////////////////////
@@ -110,7 +109,7 @@ io.on('connection', function(socket){
 
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
-	console.log('UI updated..');
+	//console.log('UI updated..');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
 
@@ -123,9 +122,9 @@ function getFreeShelfPlace() {
 	let bottles = backend.database.currentShelf.getBottles();
 	let reserved_places = [];
 	// Hae varatut paikat ja lisää ne reserved_places listaan.
-	for (let i = 0; i <= bottles.length; i++){
+	for (let i = 0; i < bottles.length; i++){
 		let bottle_locations = backend.database.currentShelf.findBottleLocations(bottles[i]);
-		for (let j = 0; j <= bottle_locations.length; j++){
+		for (let j = 0; j < bottle_locations.length; j++){
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
