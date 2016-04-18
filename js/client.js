@@ -1,7 +1,12 @@
+//
+//                        Client.js
+// sisältää operatorille ja customerille yhteiset funktiot
+//
+//
+
 var socket = io();
 
 socket.on('drinkOrdered', addDrink);
-socket.on('initializeList', refreshQueue);
 socket.on('initializeDrinkList', refreshDrinkList);
 
 function refreshDrinkList(drinkList){
@@ -15,32 +20,6 @@ function refreshDrinkList(drinkList){
   }
   for (i=0; i < drinkList.length; i++){
     createOrderButton(drinkList[i],i);
-  }
-}
-
-function refreshQueue(orderQueue){
-  if(orderQueue.length == 0) {
-      return;
-  }
-  // Tuhoa vanha ja tee uusi lista
-  removeElement("contentleft", "orderlist");
-  appendElement("contentleft", "ol", "orderlist");
-  // Lisää listan eka drinkki.
-  let drinkName = orderQueue[0].drinkName;
-  let batchID = drinkName + orderQueue[0].ID;
-  addDrink(drinkName, batchID);
-  // käy läpi tilaajat
-  for (i=0; i < orderQueue.length; i++){
-  // jos tilaajalla sama drinkki kuin edellisellä, lisää nimi samaan erään
-    if (orderQueue[i].drinkName==drinkName){
-        addOrderer(orderQueue[i].orderer, orderQueue[i].ID, batchID)
-  // muuten lisää uusi drinkki
-    }else{
-      drinkName = orderQueue[i].drinkName;
-      batchID = drinkName + orderQueue[i].ID;
-      addDrink(drinkName, batchID);
-      addOrderer(orderQueue[i].orderer,orderQueue[i].ID, batchID)
-    }
   }
 }
 

@@ -57,11 +57,13 @@ orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
 /////////////////////////////////////////////////////////////////////////
 ////////////////////////// Servun muuttujat /////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-var ID = 0;
-var addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
-var nextBottlePlace = -1;
-var orderQueue = backend.orderQueue;
-var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
+setTimeout(function(){
+	var ID = 0;
+	var addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
+	var nextBottlePlace = -1;
+	var orderQueue = backend.orderQueue;
+	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
+},1500);
 
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Socket IO /////////////////////////////////
