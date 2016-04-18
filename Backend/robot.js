@@ -347,6 +347,9 @@ function checkStatus(action,lastCommand,failure) {
         // Return true: otherwise with failure, always false.
         return true;
     }
+    if(failure) {
+        return false;
+    }
     
     // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
