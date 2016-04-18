@@ -694,8 +694,8 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, queueObject) {
     }
     let found = [];
     // Search the queue for the current drinkName.
-    for(let i = 0; i < queue.length; i++) {
-        if(queue[i].drinkName == drinkName) {
+    for(let i = 0; i < orderQueue.length; i++) {
+        if(orderQueue[i].drinkName == drinkName) {
             // The drink was already in the queue, add the positions to the array.
             console.log("Drink already in queue while adding.");
             found.push(i);
