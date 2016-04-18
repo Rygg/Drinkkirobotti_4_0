@@ -131,6 +131,8 @@ function getFreeShelfPlace() {
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
+	console.log(reserved_places);
+	console.log(reserved_places.indexOf(2));
 	//käy läpi paikat 0-12 ja palauta heti, jos paikka vapaana
 	for (let i = 0; i < 12; i++){
 		if (reserved_places.indexOf(i) == -1){
