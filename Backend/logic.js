@@ -594,9 +594,12 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        this.robot.grabBottle(location,type);
-        this.grabHandler();
-        return true;
+        if(this.robot.grabBottle(location,type)) {
+            this.grabHandler();
+            return true;    
+        }
+        return false;
+        
     }
 
     pausePour(pourTime, howMany) {
@@ -605,9 +608,11 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        this.robot.pourDrinks(pourTime,howMany);
-        this.pourHandler();
-        return true;
+        if(this.robot.pourDrinks(pourTime,howMany)) {
+            this.pourHandler();
+            return true;    
+        }
+        return false;
     }
 
     pauseReturn(location, type) {
@@ -616,9 +621,11 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        this.robot.returnBottle(location,type);
-        this.returnHandler();
-        return true;
+        if(this.robot.returnBottle(location,type)) {
+            this.returnHandler();
+            return true;
+        }
+        return false;
     }
 
     pauseRemove(location, type) {
@@ -627,9 +634,11 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        this.robot.removeBottle(type);
-        this.removeHandler(location);
-        return true;
+        if(this.robot.removeBottle(type)) {
+             this.removeHandler(location);
+            return true;    
+        }
+        return false;
     }
 
     pauseGetNew(location, type) {
@@ -638,9 +647,11 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        this.robot.getNewBottle(location,type);
-        this.getNewHandler();
-        return true;
+        if(this.robot.getNewBottle(location,type)) {
+            this.getNewHandler();
+            return true;    
+        }
+        return false;
     }
 
 }; // End of the class and logic definition.
