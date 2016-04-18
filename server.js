@@ -78,7 +78,7 @@ io.on('connection', function(socket){
 	// Tilauksen käsittely
 	socket.on('giveorder', function(drinkName, ordererName) {
 		ID = ID+1;
-    order = { "ID": ID, "drinkName": drinkName, "orderer":ordererName }
+    let order = { "ID": ID, "drinkName": drinkName, "orderer":ordererName }
     JSONI = JSON.stringify(order);
 		backend.processOrder(JSONI);
 	});
