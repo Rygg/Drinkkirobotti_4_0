@@ -186,10 +186,11 @@ class ControlLogic {
             this.orderQueue.shift();
         }
         // Grab the first bottle.
-        if(this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type)) {
+        let type = this.database.reservedShelf.bottles[location].type;
+        if(this.robot.grabBottle(location,type)) {
             // Call the grabHandler if executed.
             try {
-                this.grabHandler(location,howMany,pourTime,amount,pourQueue);
+                this.grabHandler(location,type,howMany,pourTime,amount,pourQueue);
             } catch(err) {
                 console.log("Error occurred in the grabHandler()." +err);
                 return false;
@@ -227,7 +228,7 @@ class ControlLogic {
     // The event handler functions:
 
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
-    grabHandler(location, howMany, pourTime, amount, pourQueue) {
+    grabHandler(location, type, howMany, pourTime, amount, pourQueue) {
         console.log('grabHandler() started.');
         this.startable = false; // The cycle is not able to start from this position.
         let that = this;
@@ -245,14 +246,14 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                if(that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type)) {
-                    that.grabHandler(location,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
+                if(that.robot.grabBottle(location,type)) {
+                    that.grabHandler(location,type,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
                     return true;
                 }
                 // There was no error, continue with the routine.
             } else {
                 that.errorCount = 0;
-                let expected = "grabBottle("+location+","+that.database.reservedShelf.bottles[location].type+");";
+                let expected = "grabBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
 
@@ -610,7 +611,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.grabBottle(location,type)) {
-            this.grabHandler();
+            this.grabHandler(location,type);
             return true;    
         }
         return false;
@@ -624,7 +625,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.pourDrinks(pourTime,howMany)) {
-            this.pourHandler();
+            this.pourHandler(pourTime,howMany);
             return true;    
         }
         return false;
@@ -637,7 +638,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.returnBottle(location,type)) {
-            this.returnHandler();
+            this.returnHandler(location,type);
             return true;
         }
         return false;
@@ -650,7 +651,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.removeBottle(type)) {
-             this.removeHandler(location);
+             this.removeHandler(location,type);
             return true;    
         }
         return false;
@@ -693,8 +694,8 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, queueObject) {
     }
     let found = [];
     // Search the queue for the current drinkName.
-    for(let i = 0; i < queue.length; i++) {
-        if(queue[i].drinkName == drinkName) {
+    for(let i = 0; i < orderQueue.length; i++) {
+        if(orderQueue[i].drinkName == drinkName) {
             // The drink was already in the queue, add the positions to the array.
             console.log("Drink already in queue while adding.");
             found.push(i);
