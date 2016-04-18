@@ -186,10 +186,11 @@ class ControlLogic {
             this.orderQueue.shift();
         }
         // Grab the first bottle.
-        if(this.robot.grabBottle(location,this.database.reservedShelf.bottles[location].type)) {
+        let type = this.database.reservedShelf.bottles[location].type;
+        if(this.robot.grabBottle(location,type)) {
             // Call the grabHandler if executed.
             try {
-                this.grabHandler(location,howMany,pourTime,amount,pourQueue);
+                this.grabHandler(location,type,howMany,pourTime,amount,pourQueue);
             } catch(err) {
                 console.log("Error occurred in the grabHandler()." +err);
                 return false;
@@ -227,7 +228,7 @@ class ControlLogic {
     // The event handler functions:
 
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
-    grabHandler(location, howMany, pourTime, amount, pourQueue) {
+    grabHandler(location, type, howMany, pourTime, amount, pourQueue) {
         console.log('grabHandler() started.');
         this.startable = false; // The cycle is not able to start from this position.
         let that = this;
@@ -245,14 +246,14 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                if(that.robot.grabBottle(location,that.database.reservedShelf.bottles[location].type)) {
-                    that.grabHandler(location,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
+                if(that.robot.grabBottle(location,type)) {
+                    that.grabHandler(location,type,howMany,pourTime,amount,pourQueue); // Call the current function recursively.
                     return true;
                 }
                 // There was no error, continue with the routine.
             } else {
                 that.errorCount = 0;
-                let expected = "grabBottle("+location+","+that.database.reservedShelf.bottles[location].type+");";
+                let expected = "grabBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
 
@@ -610,7 +611,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.grabBottle(location,type)) {
-            this.grabHandler(location);
+            this.grabHandler(location,type);
             return true;    
         }
         return false;
