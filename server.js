@@ -89,6 +89,7 @@ io.on('connection', function(socket){
 		if (nextBottlePlace != -1){
 			addedBottle = { "name": content, "type": shape, "volume":volume,"pourSpeed":1,"isAlcoholic":true};
 			let msg = content + "-" + shape + "-" + volume + " is reserved for place: " + nextBottlePlace;
+			console.log(msg);
 			socket.emit('addedBottleStatus', msg)
 		} else {
 			let msg = "Shelf is full! Cannot add a new bottle!"
