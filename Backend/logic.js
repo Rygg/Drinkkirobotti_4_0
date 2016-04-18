@@ -31,6 +31,8 @@ class ControlLogic {
         this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
         this.newBottle = [false,'unknown','unknown']; // The flag which is checked in beginning of every cycle if there's a new bottle to be grabbed.
         this.beingPoured = []; // The variable which keeps track of the drink currently being poured.
+        this.paused = false;
+        this.startable = true;
 
         // Add member variables for the Database and the Robot.
         this.database = new DB();
@@ -127,6 +129,15 @@ class ControlLogic {
         if(this.running) {
             return false;
         }
+        // Check if the system is paused.
+        if(this.paused) {
+            return false;
+        }
+        // Check if the robot is not startable.
+        if(!this.startable) {
+            return false;
+        }
+        // Check if the robot is in the correct 
         // Check if there is a newBottle to be grabbed:
         if(this.newBottle[0]) {
             this.running = true;
@@ -218,6 +229,7 @@ class ControlLogic {
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
     grabHandler(location, howMany, pourTime, amount, pourQueue) {
         console.log('grabHandler() started.');
+        this.startable = false; // The cycle is not able to start from this position.
         let that = this;
         // Wait for the emit happening.
         RobotEmitter.once('grabBottle_done', function() {
@@ -244,9 +256,12 @@ class ControlLogic {
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(data) {
                     if(data == expected) { // Whatever the message will be.
-                        // The action was completed. Call for the pourDrink action and the handler.
+                        // The action was completed. If the robot is not paused, Call for the pourDrink action and the handler.
                         console.log("Action: "+data+" completed!"); 
                         that.robot.working = false;
+                        if(that.paused) {
+                            return true; // Completed in case the robot is paused.
+                        }
                         if(that.robot.pourDrinks(pourTime,howMany)) {
                             try {
                                 that.pourHandler(pourTime,howMany,location,amount,pourQueue);
@@ -273,6 +288,7 @@ class ControlLogic {
     // pourHandler() - Executed after pouring action is called upon.
     pourHandler(pourTime,howMany,location,amount,pourQueue) {
         console.log("pourHandler()-started.");
+        this.startable = false; // The robot is not able to start from this position;
         let that = this;
         // Wait for the emit to happen.
         RobotEmitter.once('pourDrinks_done', function() {
@@ -303,6 +319,10 @@ class ControlLogic {
                         // Call the pourCompleted()-function,
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
+                        // Also check if the robot is paused, and if so, don't call anything.
+                        if(that.paused) {
+                            return true;
+                        }
                         if(that.database.currentShelf.bottles[location].volume < MIN_VOLUME) { // Minimum value for the bottle before changing it.
                             console.log('Current bottle got empty. Removing it.'); 
                             if(that.robot.removeBottle(that.database.currentShelf.bottles[location].type)) {
@@ -333,6 +353,7 @@ class ControlLogic {
     // returnHandler() - Executed after a bottle is called to be returned to the station.
     returnHandler(location, type, howMany, pourQueue) {
         console.log('returnHandler() started.');
+        this.startable = false; // The robot is not yet able to start a new cycle from this position.
         let that = this;
         // Wait for the emit to happen:
         RobotEmitter.once('returnBottle_done', function() {
@@ -361,6 +382,11 @@ class ControlLogic {
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
                         that.robot.working = false;
+                        that.startable = true; // The robot can start a new cycle from this position.
+                        // See if the robot is paused. return true if yes.
+                        if(that.paused) {
+                            return true;
+                        }
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -433,9 +459,14 @@ class ControlLogic {
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
                         that.robot.working = false;
-                        // TODO
-                        // POISTA PULLO DB:stä
-                        //
+                        // Remove bottle from the database:
+                        that.database.currentShelf.removeBottle(location);
+                        that.database.reservedShelf.removeBottle(location);
+                        that.startable = true; // The robot can start a new cycle from this position.
+                        // See if the program is paused.
+                        if(that.paused) {
+                            return true;
+                        }
                         // See if there are still ingredients left for the drink.
                         if(pourQueue[0].locations.length > 0 && pourQueue[0].drink.recipe.length > 0) {
                             // There were.
@@ -513,8 +544,15 @@ class ControlLogic {
                         that.newBottle[1] = 'unknown';
                         that.newBottle[2] = 'unknown';
                         that.newBottle[3] = 'unknown';
-                        // Restart the cycle:
-                        that.running = false; // All actions completed.
+                        
+                        that.running = false;
+                        that.startable = true; // The robot can start a new cycle from this position.
+                        // Restart the cycle if the program is not paused:
+                        if(that.paused) {
+                            return true;
+                        }
+                        // If not, restart the cycle.
+                         // All actions completed.
                         that.run();
                         return true;
                     } else {
@@ -527,6 +565,82 @@ class ControlLogic {
                 });
             }  
         });
+    }
+
+    // Functions for manual control of the robot from the operator UI.
+    pause() {
+        this.paused = true;
+        console.log("Program cycle paused. Finishing current action.");
+        // Örr?
+    };
+    
+    unpause() {
+        // Unpause and restart the cycle.
+        // Check if the robot is able to continue the cycle
+        // (is in the middle position with no bottle.)
+        if(!this.startable) {
+            console.log("The robot is not in the proper position to unpause.");
+            return false;
+        }
+        this.paused = false;
+        console.log("Restarting pouring cycle.")
+        this.run();   
+        return true;
+    }
+    
+    pauseGrab(location, type) {
+        // Safety checkit tähän.
+        if(!this.paused) {
+            console.log("Cycle not paused.");
+            return false;
+        }
+        this.robot.grabBottle(location,type);
+        this.grabHandler();
+        return true;
+    }
+    
+    pausePour(pourTime, howMany) {
+        // Safety checkit asennosta.
+        if(!this.paused) {
+            console.log("Cycle not paused.");
+            return false;
+        }
+        this.robot.pourDrinks(pourTime,howMany);
+        this.pourHandler();
+        return true;
+    }
+    
+    pauseReturn(location, type) {
+        // Safety checkit tähän.
+        if(!this.paused) {
+            console.log("Cycle not paused.");
+            return false;
+        }
+        this.robot.returnBottle(location,type);
+        this.returnHandler();
+        return true;
+    }
+    
+    pauseRemove(location, type) {
+        // Safety checkit tähän.
+        if(!this.paused) {
+            console.log("Cycle not paused.");
+            return false;
+        }
+        this.robot.removeBottle(type);
+        this.removeHandler(location);
+        return true;
+    }
+    
+    pauseGetNew(location, type) {
+         // Safety checkit tähän.
+        if(!this.paused) {
+            console.log("Cycle not paused.");
+            return false;
+        }
+        this.robot.getNewBottle(location,type);
+        this.getNewHandler();
+        return true;
     }
     
 }; // End of the class and logic definition.
@@ -604,6 +718,8 @@ function editCommandLength(command) {
     return command;
 }
 
+
+
 /*
 // Create the test-object.
 let ProgramLogic = new ControlLogic();
@@ -649,3 +765,4 @@ setTimeout(function() {
 */
 
 module.exports = ControlLogic;
+
