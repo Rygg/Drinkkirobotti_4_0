@@ -64,7 +64,6 @@ setTimeout(function(){
 	var nextBottlePlace = -1;
 	var orderQueue = backend.orderQueue;
 	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
-  console.log(drinkList);
 
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Socket IO /////////////////////////////////
@@ -89,7 +88,6 @@ io.on('connection', function(socket){
 		if (nextBottlePlace != -1){
 			addedBottle = { "name": content, "type": shape, "volume":volume,"pourSpeed":1,"isAlcoholic":true};
 			let msg = content + "-" + shape + "-" + volume + " is reserved for place: " + nextBottlePlace;
-			console.log(msg);
 			socket.emit('addedBottleStatus', msg)
 		} else {
 			let msg = "Shelf is full! Cannot add a new bottle!"
@@ -122,7 +120,6 @@ setInterval(function () {
 // Funktio hakee vapaan paikan hyllystä. Jos vapaata paikkaa ei löydä palauttaa -1
 function getFreeShelfPlace() {
 	let bottles = backend.database.currentShelf.getBottles();
-	console.log(bottles);
 	let reserved_places = [];
 	// Hae varatut paikat ja lisää ne reserved_places listaan.
 	for (let i = 0; i < bottles.length; i++){
@@ -131,8 +128,6 @@ function getFreeShelfPlace() {
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
-	console.log(reserved_places);
-	console.log(reserved_places.indexOf(2));
 	//käy läpi paikat 0-12 ja palauta heti, jos paikka vapaana
 	for (let i = 0; i < 12; i++){
 		if (reserved_places.indexOf(i) == -1){
