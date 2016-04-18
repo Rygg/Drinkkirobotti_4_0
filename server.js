@@ -95,6 +95,16 @@ io.on('connection', function(socket){
 		};
 	});
 
+	// pysäyttää robotin seuraavan toiminnon jälkeen 
+	socket.on('pauserobot', function{
+		backend.pause();
+	});
+
+	// antaa robotin jatkaa
+	socket.on('resumerobot', function{
+		backend.unpause();
+	});
+
 	// Uuden syötettävän pullon tiedot
 	socket.on('loadBottle', function() {
 		if (addedBottle.type != undefined){

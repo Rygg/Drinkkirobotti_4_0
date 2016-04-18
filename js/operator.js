@@ -63,3 +63,11 @@ function addBottle(){
   };
   //
 }
+
+function pause(){
+  socket.emit('pauserobot');
+}
+
+function resume(){
+  socket.emit('resumerobot');
+}
