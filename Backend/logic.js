@@ -610,7 +610,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.grabBottle(location,type)) {
-            this.grabHandler();
+            this.grabHandler(location);
             return true;    
         }
         return false;
@@ -624,7 +624,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.pourDrinks(pourTime,howMany)) {
-            this.pourHandler();
+            this.pourHandler(pourTime,howMany);
             return true;    
         }
         return false;
@@ -637,7 +637,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.returnBottle(location,type)) {
-            this.returnHandler();
+            this.returnHandler(location,type);
             return true;
         }
         return false;
@@ -650,7 +650,7 @@ class ControlLogic {
             return false;
         }
         if(this.robot.removeBottle(type)) {
-             this.removeHandler(location);
+             this.removeHandler(location,type);
             return true;    
         }
         return false;
