@@ -112,6 +112,10 @@ class Database {
             this.reservedShelf.loadShelf(bottleShelf_file);
         }
         // Exit
+        // Check drink availability for all the drinks imported.
+        for(let i = 0; i < this.drinkDB.drinks.length; i++) {
+            this.checkDrinkAvailability(this.drinkDB.drinks[i].name);
+        }
         return;
     }
     
