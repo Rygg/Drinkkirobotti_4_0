@@ -1,4 +1,6 @@
 // Require express, http, socketio
+"use strict";
+
 var express = require('express');
 var http = require('http');
 var socketio = require('socket.io');
