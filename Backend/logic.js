@@ -36,17 +36,17 @@ class ControlLogic {
 
         // Add member variables for the Database and the Robot.
         this.database = new DB();
-        this.robot = new Robot();     
-            
+        this.robot = new Robot();
+
         // Initialize the database.
         this.database.importDB(drinkDB,bottleShelf);
-        
-            
+
+
     }
-    
-    
+
+
     // The API functions to be used.
-    
+
     //processOrder() - the function which adds a new object to the queue if possible. Should be called when user orders a drink.
     processOrder(newOrder) {
         // Parse the order to an object format.
@@ -81,14 +81,14 @@ class ControlLogic {
             return false;
             // << INSERT MASSIVE ERROR EMIT HERE >>
         }
-        
+
         // Afterwards, Start the pouring routine if not running already.
         if (!this.running) {
             this.run();
         }
         return true; // not started.
     }
-        
+
     //removeOrder() - The function which removes a certain object based on it's the ID  from both queues, should be used when a drink is cancelled from the UI.
     removeOrder(ID) {
         // Firsts see if the queues match.
@@ -119,10 +119,10 @@ class ControlLogic {
             }
         }
     }
-      
-    
-    // The other functions for the functionality of the logic. 
-   
+
+
+    // The other functions for the functionality of the logic.
+
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
     run() {
         // Check if already running:
@@ -137,7 +137,7 @@ class ControlLogic {
         if(!this.startable) {
             return false;
         }
-        // Check if the robot is in the correct 
+        // Check if the robot is in the correct
         // Check if there is a newBottle to be grabbed:
         if(this.newBottle[0]) {
             this.running = true;
@@ -155,7 +155,7 @@ class ControlLogic {
             this.running = false;
                 return false;
             }
-        
+
         console.log("Starting the pouring cycle:");
         // Count the number of orders for the same drink (max 4).
         let howMany = 1;
@@ -167,7 +167,7 @@ class ControlLogic {
             if(this.queue[0].drink.name == this.queue[i].drink.name) {
             howMany++;
             }
-        }   
+        }
         // Create a temporary queue so we do not touch to objects. Also pass this as the parameter.
         let pourQueue = this.queue.slice(0);
         // Pop the location of the first bottle.
@@ -195,15 +195,15 @@ class ControlLogic {
                 return false;
             }
             this.running = true;
-            return true; // The cycle is started.     
+            return true; // The cycle is started.
         }
         // grabBottle command didn't execute.
         this.running = false;
         return false;
     }
-    
-    
-    
+
+
+
     // newBottleReady() - Function which sets the flag for grabbing a new bottle next.
     newBottleReady(location,type,bottleString) {
         // Check if the location is empty:
@@ -216,16 +216,16 @@ class ControlLogic {
                 this.run();
                 console.log("Run() started from newBottleReady();");
             }
-            return true;    
+            return true;
         }
         console.log("Error: The bottleshelf location was occupied.");
         return false; // The location was not empty.
     }
-    
-    
-    
+
+
+
     // The event handler functions:
-    
+
     // grabHandler() - This is what is executed after the bottle is called to be grabbed from the bottleshelf.
     grabHandler(location, howMany, pourTime, amount, pourQueue) {
         console.log('grabHandler() started.');
@@ -252,12 +252,12 @@ class ControlLogic {
                 let expected = "grabBottle("+location+","+that.database.reservedShelf.bottles[location].type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
-                
+
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(data) {
                     if(data == expected) { // Whatever the message will be.
                         // The action was completed. If the robot is not paused, Call for the pourDrink action and the handler.
-                        console.log("Action: "+data+" completed!"); 
+                        console.log("Action: "+data+" completed!");
                         that.robot.working = false;
                         if(that.paused) {
                             return true; // Completed in case the robot is paused.
@@ -266,7 +266,7 @@ class ControlLogic {
                             try {
                                 that.pourHandler(pourTime,howMany,location,amount,pourQueue);
                             } catch(err) {
-                                console.log("Error occurred: " + err);       
+                                console.log("Error occurred: " + err);
                             }
                             return true; // Return true as all the necessary functions have been called.
                         }
@@ -278,13 +278,13 @@ class ControlLogic {
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
-                });   
+                });
             }
             // What happens if grabBottle fails in retry.? Is it even possible? insert here.
         });
     }
-    
-    
+
+
     // pourHandler() - Executed after pouring action is called upon.
     pourHandler(pourTime,howMany,location,amount,pourQueue) {
         console.log("pourHandler()-started.");
@@ -313,8 +313,8 @@ class ControlLogic {
                 expected = expected +";c"; // TODO
                 serialPort.once('data', function(data) {
                     if(data == expected) {
-                        console.log("Action: "+data+" completed!"); 
-                 
+                        console.log("Action: "+data+" completed!");
+
                         that.robot.working = false;
                         // Call the pourCompleted()-function,
                         that.database.pourCompleted(location,amount);
@@ -324,7 +324,7 @@ class ControlLogic {
                             return true;
                         }
                         if(that.database.currentShelf.bottles[location].volume < MIN_VOLUME) { // Minimum value for the bottle before changing it.
-                            console.log('Current bottle got empty. Removing it.'); 
+                            console.log('Current bottle got empty. Removing it.');
                             if(that.robot.removeBottle(that.database.currentShelf.bottles[location].type)) {
                                 that.removeHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
                                 return true;
@@ -347,9 +347,9 @@ class ControlLogic {
             }
             // ?????????????
         });
-        
+
     }
-    
+
     // returnHandler() - Executed after a bottle is called to be returned to the station.
     returnHandler(location, type, howMany, pourQueue) {
         console.log('returnHandler() started.');
@@ -394,7 +394,7 @@ class ControlLogic {
                             let portion = pourQueue[0].drink.recipe.shift(); // Pop the next portion of the recipe.
                             let amount = portion.amount; // Save the amount and find the amount needed.
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
-                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
+                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:
                             // Call the robot to grab the new bottle.
                             if(that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type)) {
                                 // Call the grabHandler.
@@ -408,7 +408,7 @@ class ControlLogic {
                                     return false;
                                 }
                             }
-                            
+
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
@@ -417,17 +417,17 @@ class ControlLogic {
                             that.run();
                             return true;
                         }
-                        
+
                     } else {
                         console.log("Error happened with the return-cycle.")
                         // <<INSERT MASSIVE ERROR EMIT HERE>>
                         return false;
                     }
                 })
-            }  
+            }
         });
     }
-    
+
     // removeHandler() - Executed after a bottle is called to be removed to the bottle-changing station.
     removeHandler(location, type, howMany, pourQueue) {
         console.log('removeHandler() started.');
@@ -474,7 +474,7 @@ class ControlLogic {
                             let portion = pourQueue[0].drink.recipe.shift(); // Pop the next portion of the recipe.
                             let amount = portion.amount; // Save the amount and find the amount needed.
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
-                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:       
+                            let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:
                             // Call the robot to grab the new bottle.
                             if(that.robot.grabBottle(location2,that.database.reservedShelf.bottles[location2].type)) {
                                 // Call the grabHandler.
@@ -502,11 +502,11 @@ class ControlLogic {
                         return false;
                     }
                 })
-            }  
+            }
         });
     }
 
-    
+
     // getNewHandler() - Executed after the bottle  is called to be fetched from the bottle-changing station.
     getNewHandler(location,type,bottleString) {
         console.log("getNewHandler() started.");
@@ -544,7 +544,7 @@ class ControlLogic {
                         that.newBottle[1] = 'unknown';
                         that.newBottle[2] = 'unknown';
                         that.newBottle[3] = 'unknown';
-                        
+
                         that.running = false;
                         that.startable = true; // The robot can start a new cycle from this position.
                         // Restart the cycle if the program is not paused:
@@ -563,7 +563,7 @@ class ControlLogic {
                         return false;
                     }
                 });
-            }  
+            }
         });
     }
 
@@ -573,7 +573,7 @@ class ControlLogic {
         console.log("Program cycle paused. Finishing current action.");
         // Örr?
     };
-    
+
     unpause() {
         // Unpause and restart the cycle.
         // Check if the robot is able to continue the cycle
@@ -584,10 +584,10 @@ class ControlLogic {
         }
         this.paused = false;
         console.log("Restarting pouring cycle.")
-        this.run();   
+        this.run();
         return true;
     }
-    
+
     pauseGrab(location, type) {
         // Safety checkit tähän.
         if(!this.paused) {
@@ -598,7 +598,7 @@ class ControlLogic {
         this.grabHandler();
         return true;
     }
-    
+
     pausePour(pourTime, howMany) {
         // Safety checkit asennosta.
         if(!this.paused) {
@@ -609,7 +609,7 @@ class ControlLogic {
         this.pourHandler();
         return true;
     }
-    
+
     pauseReturn(location, type) {
         // Safety checkit tähän.
         if(!this.paused) {
@@ -620,7 +620,7 @@ class ControlLogic {
         this.returnHandler();
         return true;
     }
-    
+
     pauseRemove(location, type) {
         // Safety checkit tähän.
         if(!this.paused) {
@@ -631,7 +631,7 @@ class ControlLogic {
         this.removeHandler(location);
         return true;
     }
-    
+
     pauseGetNew(location, type) {
          // Safety checkit tähän.
         if(!this.paused) {
@@ -642,7 +642,7 @@ class ControlLogic {
         this.getNewHandler();
         return true;
     }
-    
+
 }; // End of the class and logic definition.
 
 
@@ -653,7 +653,7 @@ function checkOrderFormat(order) {
     // Check if the types of the order are correct.
     if(typeof(order.ID) == 'number' && typeof(order.drinkName) == 'string' && typeof(order.orderer) == 'string') {
         // The format is correct.
-        return true; 
+        return true;
     }
     // If in the wrong format or the drink is not found in the database, return false.
     console.log("The format of the order proved wrong.");
@@ -714,7 +714,7 @@ function editCommandLength(command) {
         console.log("Command was too long for the robot.");
         return false;
     }
-     
+
     return command;
 }
 
@@ -746,14 +746,14 @@ setTimeout(function(err) {
 
 setTimeout(function() {
     console.log("Putting a new Bottle to the bottlestation.");
-    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
+    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}';
     ProgramLogic.newBottleReady(4,'Muovijallu',bottleString);
     console.log("Bottle placed in the changing station.");
 },15000);
 
 setTimeout(function() {
     console.log("Putting a new Bottle to a reserved space in the bottleshelf.");
-    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}'; 
+    let bottleString = '{"name":"Jallu","type":"Muovijallu","volume":50,"pourSpeed":2,"isAlcoholic":true}';
     ProgramLogic.newBottleReady(6,'Muovijallu',bottleString);
 },20000);
 
@@ -765,4 +765,3 @@ setTimeout(function() {
 */
 
 module.exports = ControlLogic;
-

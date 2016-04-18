@@ -95,14 +95,34 @@ io.on('connection', function(socket){
 		};
 	});
 
-	// pysäyttää robotin seuraavan toiminnon jälkeen 
-	socket.on('pauserobot', function{
+	// pysäyttää robotin seuraavan toiminnon jälkeen
+	socket.on('pauserobot', function(){
 		backend.pause();
 	});
 
 	// antaa robotin jatkaa
-	socket.on('resumerobot', function{
+	socket.on('resumerobot', function(){
 		backend.unpause();
+	});
+
+	socket.on('pausegrab', function(location, type){
+		backend.pauseGrab();
+	});
+
+	socket.on('pausepour', function(pourTime, howMany){
+		backend.pausePour();
+	});
+
+	socket.on('pausereturn', function(location, type){
+		backend.pauseReturn();
+	});
+
+	socket.on('pauseremove', function(location,type){
+		backend.pauseRemove();
+	});
+
+	socket.on('pausegetnew', function(location, type){
+		backend.pauseGetNew();
 	});
 
 	// Uuden syötettävän pullon tiedot

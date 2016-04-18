@@ -51,6 +51,38 @@ function hideBottleFill(){
 document.getElementById('abc2').style.display = "none";
 };
 
+function removeDrink(){
+
+}
+
+function pause(){
+  socket.emit('pauserobot');
+}
+
+function resume(){
+  socket.emit('resumerobot');
+}
+
+function pauseGrab(){
+  socket.emit('pausegrab',3,'FinlandiaVodka');
+}
+
+function pausePour(){
+  socket.emit('pausepour',5000,3);
+}
+
+function pauseReturn(){
+  socket.emit('pausereturn',3,'FinlandiaVodka');
+}
+
+function pauseRemove(){
+  socket.emit('pauseremove',3,'FinlandiaVodka');
+}
+
+function pauseGetNew(){
+  socket.emit('pausegetnew',3,'FinlandiaVodka');
+}
+
 function addBottle(){
   let bottleinfo = document.getElementById('bottleinfo_form');
   let content = bottleinfo.content.value;

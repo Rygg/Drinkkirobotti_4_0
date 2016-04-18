@@ -21,7 +21,18 @@
     <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
     <button class="operatorButton" onclick="pause()">Pause</button>
-    <button class="operatorButton" onclick="resume()">Resume</button>
+
+    <!-- --->
+    <div class="pausepanel">
+      <button class="operatorButton" onclick="resume()">Resume</button>
+      <button class="operatorButton" onclick="pauseGrab()">pauseGrab</button>
+      <button class="operatorButton" onclick="pausePour()">pausePour</button>
+      <button class="operatorButton" onclick="pauseReturn()">pauseReturn</button>
+      <button class="operatorButton" onclick="pauseRemove()">pauseRemove</button>
+      <button class="operatorButton" onclick="pauseGetNew()">pauseGetNew</button>
+    </div>
+
+
 
     <div class="floatfix"></div>
 
@@ -72,6 +83,7 @@
         <form id="chat-form">
           <input id="chat-input" size="15" maxlength="10">
         </form>
+        <button onclick="removedrink()">removedrink</button>
         <button onclick="orderselected()">YES</button>
         <button onclick= "hide_info()">NO</button>
       </div>
