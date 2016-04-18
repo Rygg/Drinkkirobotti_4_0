@@ -19,7 +19,7 @@ function refreshDrinkList(drinkList){
       writeToElement('noDrinks', 'Error reading drinks from database!')
   }
   for (i=0; i < drinkList.length; i++){
-    createOrderButton(drinkList[i],i);
+    createOrderButton(drinkList[i].name,i);
   }
 }
 
