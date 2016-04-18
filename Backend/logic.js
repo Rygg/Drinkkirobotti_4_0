@@ -96,7 +96,7 @@ class ControlLogic {
         // Find the index for the ID.
         let index = -1;
         for(let i = 0; i < this.queue.length; i++) {
-            if(this.queue == ID) {
+            if(this.queue.ID == ID) {
                 index = i;
             }
         }

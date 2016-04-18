@@ -185,6 +185,10 @@ class Database {
         return isAvailable; // Exit and return the result.
     }
     
+    addBottle(bottle, location) {
+        this.reservedShelf.addBottle(bottle,location);
+        this.currentShelf.addBottle(bottle,location);
+    }
 };
 
 module.exports = Database;

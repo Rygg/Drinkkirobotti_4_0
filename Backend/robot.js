@@ -313,7 +313,9 @@ function responseHandler(err,result,command,action,timeout,that) {
                 that.working = true;
                 that.communicating = false;
                 console.log("Robot started working");
+                RobotEmitter.removeListener('timeout_'+action); // No callback.
                 RobotEmitter.emit(action+'_done');
+                
             } else {
                 // The robot returned a wrong command, reset writing and set failure.
                 that.working = false;
