@@ -56,30 +56,37 @@ function removeDrink(){
 }
 
 function pause(){
+  writeToElement("lastCommand","Pause");
   socket.emit('pauserobot');
 }
 
 function resume(){
+  writeToElement("lastCommand","Resume");
   socket.emit('resumerobot');
 }
 
 function pauseGrab(){
+  writeToElement("lastCommand","pauseGrab");
   socket.emit('pausegrab',3,'Finlandia');
 }
 
 function pausePour(){
+  writeToElement("lastCommand","pausePour");
   socket.emit('pausepour',5000,3);
 }
 
 function pauseReturn(){
+  writeToElement("lastCommand","pauseReturn");
   socket.emit('pausereturn',3,'Finlandia');
 }
 
 function pauseRemove(){
+  writeToElement("lastCommand","pauseRemove");
   socket.emit('pauseremove',3,'Finlandia');
 }
 
 function pauseGetNew(){
+  writeToElement("lastCommand","pauseGetNew");
   socket.emit('pausegetnew',3,'Finlandia');
 }
 

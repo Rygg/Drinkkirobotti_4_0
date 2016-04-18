@@ -110,7 +110,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausepour', function(pourTime, howMany){
-		backend.pausePour(pourTime,howMany);
+		backend.pausePour(pourTime,howMany,3,2);
 	});
 
 	socket.on('pausereturn', function(location, type){
