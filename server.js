@@ -30,7 +30,6 @@ app.use(express.static(__dirname + '/Backend/logic.js'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/ui_customer.html');
-	res.sendFile(__dirname + '/dynamic_test.html');
 });
 app.get('/operator', function (req, res) {
   res.sendFile(__dirname + '/ui_operator.html');
