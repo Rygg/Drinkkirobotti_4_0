@@ -111,7 +111,7 @@ io.on('connection', function(socket){
 
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
-	console.log('UI updated..');
+	//console.log('UI updated..');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
 
@@ -125,9 +125,9 @@ function getFreeShelfPlace() {
 	console.log(bottles);
 	let reserved_places = [];
 	// Hae varatut paikat ja lisää ne reserved_places listaan.
-	for (let i = 0; i <= bottles.length; i++){
+	for (let i = 0; i < bottles.length; i++){
 		let bottle_locations = backend.database.currentShelf.findBottleLocations(bottles[i]);
-		for (let j = 0; j <= bottle_locations.length; j++){
+		for (let j = 0; j < bottle_locations.length; j++){
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
