@@ -121,8 +121,13 @@ io.on('connection', function(socket){
 		backend.pauseRemove(location,type);
 	});
 
-	socket.on('pausegetnew', function(location, type){
-		backend.pauseGetNew(location,type);
+	socket.on('pausegetnew', function(location, type, Bottle){
+		if (addedBottle.type !=undefined){
+			let JSONI = JSON.stringify(addedBottle);
+			backend.pauseGetNew(location,type,JSONI);
+		} else {
+			console.log("No in bottlechangestation! Add a bottle first!");
+		}
 	});
 
 	// Uuden syötettävän pullon tiedot
