@@ -125,7 +125,7 @@ function getFreeShelfPlace() {
 	// Hae varatut paikat ja lisää ne reserved_places listaan.
 	for (let i = 0; i <= bottles.length; i++){
 		let bottle_locations = backend.database.currentShelf.findBottleLocations(bottles[i]);
-		for (j = 0; j <= bottle_locations.length; j++){
+		for (let j = 0; j <= bottle_locations.length; j++){
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
