@@ -130,7 +130,7 @@ function getFreeShelfPlace() {
 		}
 	};
 	//käy läpi paikat 0-12 ja palauta heti, jos paikka vapaana
-	for (i = 0; i < 12; i++){
+	for (let i = 0; i < 12; i++){
 		if (reserved_places.indexOf(i) == -1){
 			return i;
 		}
