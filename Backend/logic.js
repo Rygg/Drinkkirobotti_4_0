@@ -235,7 +235,10 @@ class ControlLogic {
         RobotEmitter.once('grabBottle_done', function() {
             // Check if the event was succesfull.
             if(that.robot.failure) {
-                // The message wasn't delivered. Try again.
+                // If the message wasn't delivered and robot isn't paused, Try again.
+                if(that.paused) {
+                    return true;
+                }
                 that.errorCount++;
                 if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The grabBottle-message failed to deliver too many times.")
@@ -293,7 +296,10 @@ class ControlLogic {
         // Wait for the emit to happen.
         RobotEmitter.once('pourDrinks_done', function() {
             if(that.robot.failure) {
-                // The message wasn't delivered, Try again:
+                // If the message wasn't delivered and robot isn't paused, Try again.
+                if(that.paused) {
+                    return true;
+                }
                 that.errorCount++;
                  if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The grabBottle-message failed to deliver too many times.")
@@ -359,7 +365,10 @@ class ControlLogic {
         RobotEmitter.once('returnBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
-                // The message wasn't delivered, Try again:
+                // If the message wasn't delivered and robot isn't paused, Try again.
+                if(that.paused) {
+                    return true;
+                }
                 that.errorCount++;
                  if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The returnBottle-message failed to deliver too many times.")
@@ -436,7 +445,10 @@ class ControlLogic {
         RobotEmitter.once('removeBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
-                // The message wasn't delivered, Try again:
+                // If the message wasn't delivered and robot isn't paused, Try again.
+                if(that.paused) {
+                    return true;
+                }
                 that.errorCount++;
                  if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The removeBottle-message failed to deliver too many times.")
@@ -514,7 +526,10 @@ class ControlLogic {
         // Listen for the emit:
         RobotEmitter.once('getNewBottle_done', function() {
             if(that.robot.failure) {
-                // The message wasn't delivered, Try again:
+                // If the message wasn't delivered and robot isn't paused, Try again.
+                if(that.paused) {
+                    return true;
+                }
                 that.errorCount++;
                  if(that.errorCount > MAX_ERRORS -1) { // Max amount of errors = 10.
                     console.log("The getNewHandler-message failed to deliver too many times.")
@@ -641,14 +656,14 @@ class ControlLogic {
         return false;
     }
 
-    pauseGetNew(location, type) {
+    pauseGetNew(location, type, bottleString) {
          // Safety checkit tähän.
         if(!this.paused) {
             console.log("Cycle not paused.");
             return false;
         }
         if(this.robot.getNewBottle(location,type)) {
-            this.getNewHandler();
+            this.getNewHandler(location,type,bottleString);
             return true;    
         }
         return false;
