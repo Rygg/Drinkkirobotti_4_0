@@ -350,7 +350,10 @@ function checkStatus(action,lastCommand,failure) {
     if(failure) {
         return false;
     }
-    
+    if(lastCommand == 'none' && (action == 'returnBottle' ||action == 'removeBottle' || action == 'pourDrinks')) {
+        console.log("Error: Robot has to grab a bottle for the first command.");
+        return false;
+    }
     // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
         if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle' || failure) {
