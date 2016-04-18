@@ -106,23 +106,23 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausegrab', function(location, type){
-		backend.pauseGrab();
+		backend.pauseGrab(location,type);
 	});
 
 	socket.on('pausepour', function(pourTime, howMany){
-		backend.pausePour();
+		backend.pausePour(pourTime,howMany);
 	});
 
 	socket.on('pausereturn', function(location, type){
-		backend.pauseReturn();
+		backend.pauseReturn(location,type);
 	});
 
 	socket.on('pauseremove', function(location,type){
-		backend.pauseRemove();
+		backend.pauseRemove(location,type);
 	});
 
 	socket.on('pausegetnew', function(location, type){
-		backend.pauseGetNew();
+		backend.pauseGetNew(location,type);
 	});
 
 	// Uuden syötettävän pullon tiedot
