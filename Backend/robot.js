@@ -313,7 +313,8 @@ function responseHandler(err,result,command,action,timeout,that) {
                 that.working = true;
                 that.communicating = false;
                 console.log("Robot started working");
-                RobotEmitter.removeListener('timeout_'+action); // No callback.
+		let eventstring = 'timeout_' + action;
+                RobotEmitter.removeListener(eventstring); // No callback.
                 RobotEmitter.emit(action+'_done');
                 
             } else {
