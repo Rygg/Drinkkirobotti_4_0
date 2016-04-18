@@ -618,14 +618,14 @@ class ControlLogic {
         
     }
 
-    pausePour(pourTime, howMany) {
+    pausePour(pourTime,howMany,location,amount) {
         // Safety checkit asennosta.
         if(!this.paused) {
             console.log("Cycle not paused.");
             return false;
         }
         if(this.robot.pourDrinks(pourTime,howMany)) {
-            this.pourHandler(pourTime,howMany);
+            this.pourHandler(pourTime,howMany,location,amount);
             return true;    
         }
         return false;
