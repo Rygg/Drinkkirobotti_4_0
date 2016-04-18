@@ -356,7 +356,7 @@ function checkStatus(action,lastCommand,failure) {
         return false;
     }
 
-    // Check if the robot is able to grab a new bottle.
+   // Check if the robot is able to grab a new bottle.
     if(action == 'getNewBottle' || action == 'grabBottle') {
         if(lastCommand == 'pourDrinks' || lastCommand == 'grabBottle' || failure) {
             console.log("Unable to execute "+ action +": The robot is already holding a bottle");
