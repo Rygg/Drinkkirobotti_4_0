@@ -709,7 +709,7 @@ function addToQueues(queue, orderQueue, drinkName, newOrder, queueObject) {
         return true;
     } else {
         // Insert the item into the index behind the last item in the find array, as there is room behind it in the queue (for the batches of 4).
-        let index = found[-1] +1;
+        let index = found[found.length -1] +1;
         queue.splice(index,0,queueObject);
         orderQueue.splice(index,0,newOrder);
         return true;
