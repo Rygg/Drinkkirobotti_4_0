@@ -64,7 +64,7 @@ function resume(){
 }
 
 function pauseGrab(){
-  socket.emit('pausegrab',3,'FinlandiaVodka');
+  socket.emit('pausegrab',3,'Finlandia');
 }
 
 function pausePour(){
@@ -72,15 +72,15 @@ function pausePour(){
 }
 
 function pauseReturn(){
-  socket.emit('pausereturn',3,'FinlandiaVodka');
+  socket.emit('pausereturn',3,'Finlandia');
 }
 
 function pauseRemove(){
-  socket.emit('pauseremove',3,'FinlandiaVodka');
+  socket.emit('pauseremove',3,'Finlandia');
 }
 
 function pauseGetNew(){
-  socket.emit('pausegetnew',3,'FinlandiaVodka');
+  socket.emit('pausegetnew',3,'Finlandia');
 }
 
 function addBottle(){
