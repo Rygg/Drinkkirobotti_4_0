@@ -64,7 +64,7 @@ setTimeout(function(){
 	var nextBottlePlace = -1;
 	var orderQueue = backend.orderQueue;
 	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
-
+  console.log(drinkList);
 
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Socket IO /////////////////////////////////
