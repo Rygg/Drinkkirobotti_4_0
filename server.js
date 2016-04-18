@@ -121,7 +121,7 @@ setInterval(function () {
 // Funktio hakee vapaan paikan hyllystä. Jos vapaata paikkaa ei löydä palauttaa -1
 function getFreeShelfPlace() {
 	let bottles = backend.database.currentShelf.getBottles();
-	reserved_places = [];
+	let reserved_places = [];
 	// Hae varatut paikat ja lisää ne reserved_places listaan.
 	for (i = 0; i <= bottles.length; i++){
 		bottle_locations = backend.database.currentShelf.findBottleLocations(bottles[i]);
