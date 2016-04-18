@@ -79,7 +79,7 @@ io.on('connection', function(socket){
 	socket.on('giveorder', function(drinkName, ordererName) {
 		ID = ID+1;
     let order = { "ID": ID, "drinkName": drinkName, "orderer":ordererName }
-    JSONI = JSON.stringify(order);
+    let JSONI = JSON.stringify(order);
 		backend.processOrder(JSONI);
 	});
 
@@ -99,7 +99,7 @@ io.on('connection', function(socket){
 	// Uuden syötettävän pullon tiedot
 	socket.on('loadBottle', function() {
 		if (addedBottle.type != undefined){
-			JSONI = JSON.stringify(addedBottle);
+			let JSONI = JSON.stringify(addedBottle);
 			backend.newBottleReady(nextBottlePlace,addedBottle.type,JSONI);
 		} else {
 			socket.emit('addedBottleStatus', "Please add bottleinfo!");
