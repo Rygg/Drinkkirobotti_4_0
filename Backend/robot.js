@@ -86,20 +86,20 @@ class Robot {
     // pourDrinks() - Pouring a drink from the grabbed bottle: returns an instant false if unable to comply, true if the function reaches its end and starts all callbacks.
     // Emits a RobotEmitter 'pourDrinks_done' once fully done with callbacks. the result of the process is stored in the failure-variable.
     // failure == false if succesful, true if not.
-    pourDrinks(pourTime, howMany) {
+    pourDrinks(pourTime, howMany,type) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
             return false;
         }
         // Check if the parameters are correct:
-        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourTime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4) {
+        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourTime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4 ||typeof(type) != 'string') {
             console.log("Error with pourDrinks()-parameters, Instruction not registered.");
             return false;
         }
         // Set the action and command for the commHandler-function.
         let action = 'pourDrinks';
-        let command = action+'('+pourTime+','+howMany+');';
+        let command = action+'('+pourTime+','+howMany+','+type+');';
         
         command = editCommandLength(command); // Edit the length to 30.
         if(!command) {

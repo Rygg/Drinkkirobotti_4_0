@@ -266,9 +266,9 @@ class ControlLogic {
                         if(that.paused) {
                             return true; // Completed in case the robot is paused.
                         }
-                        if(that.robot.pourDrinks(pourTime,howMany)) {
+                        if(that.robot.pourDrinks(pourTime,howMany,type)) {
                             try {
-                                that.pourHandler(pourTime,howMany,location,amount,pourQueue);
+                                that.pourHandler(pourTime,howMany,type,location,amount,pourQueue);
                             } catch(err) {
                                 console.log("Error occurred: " + err);
                             }
@@ -290,7 +290,7 @@ class ControlLogic {
 
 
     // pourHandler() - Executed after pouring action is called upon.
-    pourHandler(pourTime,howMany,location,amount,pourQueue) {
+    pourHandler(pourTime,howMany,type,location,amount,pourQueue) {
         console.log("pourHandler()-started.");
         this.startable = false; // The robot is not able to start from this position;
         let that = this;
@@ -307,15 +307,15 @@ class ControlLogic {
                     // <<INSERT MASSIVE ERROR EMIT HERE>>
                     return false;
                 }
-                if(that.robot.pourDrinks(pourTime,howMany)) {
+                if(that.robot.pourDrinks(pourTime,howMany,type)) {
                     // Try again and call the current function recursively.
-                    that.pourHandler(pourTime,howMany,location,amount,pourQueue);
+                    that.pourHandler(pourTime,howMany,type,location,amount,pourQueue);
                     return true;
                 }
             } else {
                 // No failure occurred.
                 that.errorCount = 0;
-                let expected = "pourDrinks("+pourTime+","+howMany+");";
+                let expected = "pourDrinks("+pourTime+","+howMany+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 serialPort.once('data', function(data) {
@@ -332,14 +332,14 @@ class ControlLogic {
                         }
                         if(that.database.currentShelf.bottles[location].volume < MIN_VOLUME) { // Minimum value for the bottle before changing it.
                             console.log('Current bottle got empty. Removing it.');
-                            if(that.robot.removeBottle(that.database.currentShelf.bottles[location].type)) {
-                                that.removeHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                            if(that.robot.removeBottle(type)) {
+                                that.removeHandler(location,type, howMany, pourQueue);
                                 return true;
                             }
                         } else {
                             // The bottle has still enough liquid left, return it to the bottleshelf.
-                            if(that.robot.returnBottle(location,that.database.currentShelf.bottles[location].type)) {
-                                that.returnHandler(location,that.database.currentShelf.bottles[location].type, howMany, pourQueue);
+                            if(that.robot.returnBottle(location,type)) {
+                                that.returnHandler(location, type, howMany, pourQueue);
                                 return true;
                             }
                         }
