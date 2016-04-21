@@ -90,6 +90,11 @@ function pauseGetNew(){
   socket.emit('pausegetnew',3,'Finlandia');
 }
 
+// Funktio juomakarusellin pyöräyttämiselle.
+function pauseSpin() {
+  socket.emit('pausespin');
+}
+
 function addBottle(){
   let bottleinfo = document.getElementById('bottleinfo_form');
   let content = bottleinfo.content.value;
