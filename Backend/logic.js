@@ -50,7 +50,7 @@ class ControlLogic {
     //processOrder() - the function which adds a new object to the queue if possible. Should be called when user orders a drink.
     processOrder(newOrder) {
         // Parse the order to an object format.
-        let new_Order;
+        let new_Order;v
         console.log("Processing Order:");
         try {
             new_Order = JSON.parse(newOrder);
@@ -618,14 +618,14 @@ class ControlLogic {
         
     }
 
-    pausePour(pourTime,howMany,location,amount) {
+    pausePour(pourTime,howMany,type,location,amount) {
         // Safety checkit asennosta.
         if(!this.paused) {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.pourDrinks(pourTime,howMany)) {
-            this.pourHandler(pourTime,howMany,location,amount);
+        if(this.robot.pourDrinks(pourTime,howMany,type)) {
+            this.pourHandler(pourTime,howMany,type,location,amount);
             return true;    
         }
         return false;
