@@ -107,7 +107,11 @@ io.on('connection', function(socket){
 			JSONI = JSON.stringify(addedBottle);
 			console.log("newBottleReady: " + nextBottlePlace + ", " + addedBottle.type + ", " + JSONI);
 			//backend.newBottleReady(nextBottlePlace,addedBottle.type,JSONI);
+			socket.emit('addedBottleStatus', "");
+			addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
+			nextBottlePlace = -1;
 		} else {
+			socket.emit('addedBottleStatus', "Please add bottleinfo!");
 			// Joku
 		}
 	});

@@ -92,6 +92,7 @@ function pauseGetNew(){
 
 // Funktio juomakarusellin pyöräyttämiselle.
 function pauseSpin() {
+  writeToElement("lastCommand","pauseSpin");
   socket.emit('pausespin');
 }
 
@@ -109,9 +110,12 @@ function addBottle(){
 }
 
 function pause(){
+  $("#pausepanel").slideDown("slow");
+
   socket.emit('pauserobot');
 }
 
 function resume(){
+  $("#pausepanel").slideUp("slow");
   socket.emit('resumerobot');
 }

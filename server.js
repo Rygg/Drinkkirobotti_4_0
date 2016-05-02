@@ -120,7 +120,7 @@ io.on('connection', function(socket){
 	socket.on('pauseremove', function(location,type){
 		backend.pauseRemove(location,type);
 	});
-	
+
 	socket.on('pausespin', function() {
 		console.log("TODO: Juomakarusellin pyöräytys, TODO");
 	});
@@ -139,6 +139,11 @@ io.on('connection', function(socket){
 		if (addedBottle.type != undefined){
 			let JSONI = JSON.stringify(addedBottle);
 			backend.newBottleReady(nextBottlePlace,addedBottle.type,JSONI);
+
+			// nollaa pullotiedot
+			socket.emit('addedBottleStatus', "");
+			addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
+			nextBottlePlace = -1;
 		} else {
 			socket.emit('addedBottleStatus', "Please add bottleinfo!");
 		}

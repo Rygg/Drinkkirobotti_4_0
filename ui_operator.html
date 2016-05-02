@@ -4,36 +4,48 @@
     <meta charset="utf-8">
     <title>Drinkrobot</title>
     <link rel="stylesheet" type="text/css" href="ui_customer.css">
+    <link rel="stylesheet" type="text/css" href="ui_operator.css">
     <link rel="stylesheet" type="text/css" href="popup.css">
     <link rel="stylesheet" type="text/css" href="mobile.css">
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
   <header>
-    <div class="commandPanel">
-      <p>Hello operator!</p>
-      <button class="operatorButton" onclick="fillBottleInfo()">Add bottle</button>
-    </div>
-    <p>Bottle Status:
+
+    <p>Hello operator!</p>
+    <div class="systemInformation">
+    <h1>System Information</h1>
+    <p>Last button pressed:
+    <span id="lastCommand"></span></p>
+    <p>Bottle waiting for Robot:
     <span id="addedBottle"></span></p>
-    <button class="operatorButton" onclick="loadBottle()">Load Bottle</button><br>
+    </div>
+
+    <div id="supplyButtons">
+    <h1>Supply</h2>
+      <button class="operatorButton" onclick="fillBottleInfo()">Add bottle</button>
+      <button class="operatorButton" onclick="loadBottle()">Bottle ready</button>
+    </div>
+    <div id="orderButtons">
+    <h1>Management</h1>
     <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
     <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
-    <button class="operatorButton" onclick="pause()">Pause</button>
-
-    <!-- --->
-    <div class="pausepanel">
-      <p>Last Command:
-      <span id="lastCommand"></span></p>
-      <button class="operatorButton" onclick="resume()">Resume</button>
-      <button class="operatorButton" onclick="pauseGrab()">pauseGrab</button>
-      <button class="operatorButton" onclick="pausePour()">pausePour</button>
-      <button class="operatorButton" onclick="pauseReturn()">pauseReturn</button>
-      <button class="operatorButton" onclick="pauseRemove()">pauseRemove</button>
-      <button class="operatorButton" onclick="pauseGetNew()">pauseGetNew</button>
-      <button class="operatorButton" oncluck="pauseSpin()">pauseSpin</button>
-      
+    </div>
+    <div id="maintenanceButtons">
+      <h1>Maintenance</h1>
+      <button class="operatorButton red" onclick="pause()">Pause</button>
+      <!-- --->
+      <div id="pausepanel">
+        <hr>
+        <button class="operatorButton green" onclick="resume()">Resume</button>
+        <button class="operatorButton" onclick="pauseGrab()">pauseGrab</button>
+        <button class="operatorButton" onclick="pausePour()">pausePour</button>
+        <button class="operatorButton" onclick="pauseReturn()">pauseReturn</button>
+        <button class="operatorButton" onclick="pauseRemove()">pauseRemove</button>
+        <button class="operatorButton" onclick="pauseGetNew()">pauseGetNew</button>
+        <button class="operatorButton" onclick="pauseSpin()">pauseSpin</button>
+      </div>
     </div>
 
 
@@ -69,8 +81,8 @@
           <input type="radio" name="volume" value="50" id="50volume">
           <label for="50volume">50cl</label><br>
         </form>
-        <button type="button" class="operatorButton" onclick="addBottle()">YES</button>
-        <button type="button" class="operatorButton" onclick= "hideBottleFill()">NO</button>
+        <button type="button" class="operatorButton red" onclick="addBottle()">YES</button>
+        <button type="button" class="operatorButton green" onclick= "hideBottleFill()">NO</button>
       </div>
       </div>
       </div>
