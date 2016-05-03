@@ -260,11 +260,6 @@ class Robot {
 
         return true;
     }
-    
-    // listenSerial() - Exportable listening function, perharps used in the main logic module.
-    listenSerial(callback) {
-        serialPort.once('data', callback);
-    }
 
 };
 
