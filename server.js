@@ -120,6 +120,10 @@ io.on('connection', function(socket){
 	socket.on('pauseremove', function(location,type){
 		backend.pauseRemove(location,type);
 	});
+	
+	socket.on('pausespin', function() {
+		console.log("TODO: Juomakarusellin pyöräytys, TODO");
+	});
 
 	socket.on('pausegetnew', function(location, type, Bottle){
 		if (addedBottle.type !=undefined){
