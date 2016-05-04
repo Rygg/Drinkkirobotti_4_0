@@ -214,8 +214,8 @@ class ControlLogic {
             this.newBottle[2] = type;
             this.newBottle[3] = bottleString;
             if(!this.running) {
-                this.run();
                 console.log("Run() started from newBottleReady();");
+                this.run();
             }
             return true;
         }
