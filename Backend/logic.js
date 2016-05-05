@@ -29,7 +29,7 @@ class ControlLogic {
         this.orderQueue = []; // The queue from the website.
         this.running = false; // The variable for monitoring if the robot pour cycle is running.
         this.errorCount = 0; // The variable for monitoring how many times the message has failed to execute.
-        this.newBottle = [false,'unknown','unknown']; // The flag which is checked in beginning of every cycle if there's a new bottle to be grabbed.
+        this.newBottle = [false,'unknown','unknown','unknown']; // The flag which is checked in beginning of every cycle if there's a new bottle to be grabbed.
         this.beingPoured = []; // The variable which keeps track of the drink currently being poured.
         this.paused = false;
         this.startable = true;
