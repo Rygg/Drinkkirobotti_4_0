@@ -167,6 +167,7 @@ class Robot {
 
         command = editCommandLength(command); // Edit the length to 30.
         if(!command) {
+	    console.log("Here?");
             return false;
         }
         // Call the communications handler

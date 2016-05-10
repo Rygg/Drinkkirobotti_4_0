@@ -50,7 +50,7 @@ class ControlLogic {
     //processOrder() - the function which adds a new object to the queue if possible. Should be called when user orders a drink.
     processOrder(newOrder) {
         // Parse the order to an object format.
-        let new_Order;v
+        let new_Order;
         console.log("Processing Order:");
         try {
             new_Order = JSON.parse(newOrder);
@@ -214,8 +214,8 @@ class ControlLogic {
             this.newBottle[2] = type;
             this.newBottle[3] = bottleString;
             if(!this.running) {
-                this.run();
                 console.log("Run() started from newBottleReady();");
+                this.run();
             }
             return true;
         }
