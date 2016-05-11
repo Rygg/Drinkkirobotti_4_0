@@ -40,7 +40,7 @@ function orderselected() {
   socket.emit('giveorder', drinkName, orderer);
   // tyhjennä kentät ja sulje ruutu
   input.value = '';
-  document.getElementById('abc').style.display = "none";
+  document.getElementById('orderscreen').style.display = "none";
 };
 
 // Hyödyllinen funktio elementin poistoon

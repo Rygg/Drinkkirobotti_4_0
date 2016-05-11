@@ -121,6 +121,13 @@ io.on('connection', function(socket){
 			socket.emit('addedBottleStatus', bottlestatus);
 		};
 	});
+
+	socket.on('removeOrder', function(orderID){
+		console.log(orderID);
+		console.log(typeof(Number(orderID)));
+		//backend.removeOrder(orderID);
+	});
+
 	socket.on('loadBottle', function() {
 		if (addedBottle.type != undefined){
 			JSONI = JSON.stringify(addedBottle);
