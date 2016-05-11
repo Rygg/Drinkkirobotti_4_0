@@ -82,7 +82,7 @@ beingPrepared.push( { ID: 11, drinkName: "ScrewDriver", orderer: "Teppo" } );
 ////////////////////////// Servun muuttujat /////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-var ID = 0;
+var ID = 20;
 var addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
 var nextBottlePlace = -1;
 

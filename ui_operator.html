@@ -29,16 +29,14 @@
     <div id="orderButtons">
     <h1>Management</h1>
     <p>Order ID
-    <span><form class="inputfield">
-      <input id="removeorder-input"/>
-    </form>
-    </span></p>
+    <form class="inputfield">
+      <input id="removeorder-input" class="wideinput"/>
+    </form></p>
     </div>
 
     <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
     <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
-    </div>
     <div id="maintenanceButtons">
       <h1>Maintenance</h1>
       <button class="operatorButton red" onclick="pause()">Pause</button>
@@ -60,7 +58,30 @@
 
     <div class="floatfix"></div>
 
-      <div id="bottleinfo" class="shade">
+    <div id="orderscreen">
+        <!-- Popup Div Starts Here -->
+      <div class="formboundary">
+        <!-- Contact Us Form -->
+      <div class="form">
+        <h2 id="orderName">No Drink name!</h2>
+        <hr>
+        <div id="recipe">
+          <ul id="portionlist">
+            <li>2 cl Gin</li>
+            <li>10 cl Tonic</li>
+          </ul>
+        </div>
+          <form class="inputfield">
+            <input id="chat-input" class="wideinput"/>
+          </form>
+        <button class="green" onclick="orderselected()">YES</button>
+        <button class="red" onclick= "hide_element('orderscreen')">NO</button>
+        <div class="floatfix"></div>
+      </div>
+      </div>
+    </div>
+
+      <div id="bottleinfo">
       <!-- Popup Div Starts Here -->
       <div class="formboundary">
       <!-- Contact Us Form -->
@@ -91,34 +112,9 @@
         </form>
         <button type="button" class="operatorButton green" onclick="addBottle()">YES</button>
         <button type="button" class="operatorButton red" onclick= "hide_element('bottleinfo')">NO</button>
-        <div class="floatfix"</div>
+        <div class="floatfix"></div>
       </div>
       </div>
-    </div>
-
-    <div id="orderscreen">
-        <!-- Popup Div Starts Here -->
-      <div class="formboundary">
-        <!-- Contact Us Form -->
-      <div class="form">
-        <h2 id="orderName">No Drink name!</h2>
-        <hr>
-        <div id="recipe">
-          <ul id="portionlist">
-            <li>2 cl Gin</li>
-            <li>10 cl Tonic</li>
-          </ul>
-        </div>
-          <form class="inputfield">
-            <input id="chat-input"/>
-          </form>
-        <button class="green" onclick="orderselected()">YES</button>
-        <button class="red" onclick= "hide_info()">NO</button>
-        <div class="floatfix"</div>
-      </div>
-        <!-- Popup Div Ends Here -->
-      </div>
-        <!-- Display Popup Button -->
     </div>
   </header>
   <div id="contentleft">

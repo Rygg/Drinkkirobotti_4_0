@@ -15,6 +15,8 @@ overflow:auto;
 z-index: 1;
 }
 
+
+
 #orderscreen {
 width:100%;
 height:100%;
@@ -43,39 +45,18 @@ font-family:'Raleway',sans-serif
   padding:10px 50px;
 }
 
-/*#form, #form2 {
-max-width:300px;
-min-width:250px;
-padding:10px 50px;
-border:2px solid gray;
-border-radius:10px;
-font-family:raleway;
-background-color:#fff;
-} */
-/*p {
-margin-top:30px
+input {
+width:10%;
 }
-h2 {
-background-color:#FEFFED;
-padding:20px 35px;
-margin:-10px -50px;
-text-align:center;
-border-radius:10px 10px 0 0
-}
-hr {
-margin:10px -50px;
-border:0;
-border-top:1px solid #ccc
-}*/
-.form input {
-width:50%;
-  margin: 0 0% 5% 0%;
-padding:10px;
-margin-top:30px;
-border:1px solid #ccc;
-padding-left:40px;
-font-size:16px;
-font-family:raleway
+
+.wideinput {
+  width: 50%;
+  padding:10px;
+  margin:30px 0 30px 0;
+  border:1px solid #ccc;
+  padding-left:40px;
+  font-size:16px;
+  font-family:raleway
 }
 
 .form button{

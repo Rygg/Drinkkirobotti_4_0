@@ -62,6 +62,7 @@ setTimeout(function(){
 	var ID = 0;
 	var addedBottle = {"name":undefined,"type": undefined,"volume":undefined,"pourSpeed":undefined,"isAlcoholic":undefined};
 	var nextBottlePlace = -1;
+	var beingPrepared = backend.beingPoured;
 	var orderQueue = backend.orderQueue;
 	var drinkList = backend.database.drinkDB.drinks; // onko database pienellä vai isolla?
 
@@ -71,6 +72,7 @@ setTimeout(function(){
 
 io.on('connection', function(socket){
 	socket.emit('initializeList', orderQueue);
+	socket.emit('initializePreparedDrinks', beingPrepared);
 	socket.emit('initializeDrinkList',drinkList);
 	console.log('a user connected');
 
