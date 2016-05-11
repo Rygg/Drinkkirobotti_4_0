@@ -6,6 +6,7 @@
 
 socket.on('addedBottleStatus', changeBottleStatus);
 socket.on('initializeList', refreshQueue);
+socket.on('initializePreparedDrinks', refreshCurrentOrderers);
 
 function refreshCurrentOrderers(currentOrderers){
   if(currentOrderers.length == 0) {
