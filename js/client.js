@@ -31,11 +31,6 @@ function addDrink(drinkName, batchID) {
   appendElement(li_ID,"ol",batchID);
 };
 
-function addOrderer(ordererName,uniqueID, batchID) {
-  appendElement(batchID,"li",uniqueID)
-  writeToElement(uniqueID,ordererName)
-};
-
 function orderselected() {
   // Hae tilatun juoman nimi
   let drinkName = document.getElementById('orderName').innerHTML;
@@ -129,7 +124,7 @@ function validate() {
 // });
 
 function show_info(headLine,recipelist) {
-document.getElementById('abc').style.display = "block";
+document.getElementById('orderscreen').style.display = "block";
 document.getElementById('orderName').innerHTML = headLine;
 removeElement("recipe","portionlist")
 appendElement("recipe","ul","portionlist")
@@ -141,6 +136,10 @@ for (i=0; i < recipelist.length; i++){
 }
 };
 //Function to Hide Popup
-function hide_info(){
-document.getElementById('abc').style.display = "none";
+function hide_element(elementID){
+document.getElementById(elementID).style.display = "none";
+};
+
+function show_element(elementID){
+document.getElementById(elementID).style.display = "block";
 };

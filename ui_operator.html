@@ -23,11 +23,18 @@
 
     <div id="supplyButtons">
     <h1>Supply</h2>
-      <button class="operatorButton" onclick="fillBottleInfo()">Add bottle</button>
+      <button class="operatorButton" onclick="show_element('bottleinfo')">Add bottle</button>
       <button class="operatorButton" onclick="loadBottle()">Bottle ready</button>
     </div>
     <div id="orderButtons">
     <h1>Management</h1>
+    <p>Order ID
+    <span><form class="inputfield">
+      <input id="removeorder-input"/>
+    </form>
+    </span></p>
+    </div>
+
     <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
     <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
@@ -53,12 +60,12 @@
 
     <div class="floatfix"></div>
 
-    <div class="bottleinfo">
-      <div id="abc2">
+      <div id="bottleinfo" class="shade">
       <!-- Popup Div Starts Here -->
-      <div id="popupContact2">
+      <div class="formboundary">
       <!-- Contact Us Form -->
-      <div id="form2" name="form">
+
+      <div class="form">
         <h2>Add Bottle</h2>
         <hr>
         <form id="bottleinfo_form">
@@ -83,31 +90,34 @@
           <label for="50volume">50cl</label><br>
         </form>
         <button type="button" class="operatorButton green" onclick="addBottle()">YES</button>
-        <button type="button" class="operatorButton red" onclick= "hideBottleFill()">NO</button>
-      </div>
+        <button type="button" class="operatorButton red" onclick= "hide_element('bottleinfo')">NO</button>
+        <div class="floatfix"</div>
       </div>
       </div>
     </div>
 
-    <div class="orderinfo">
-      <div id="abc">
-      <!-- Popup Div Starts Here -->
-      <div id="popupContact">
-      <!-- Contact Us Form -->
-      <div id="form" name="form">
-        <h2 id="orderName">Oletko varma?</h2>
+    <div id="orderscreen">
+        <!-- Popup Div Starts Here -->
+      <div class="formboundary">
+        <!-- Contact Us Form -->
+      <div class="form">
+        <h2 id="orderName">No Drink name!</h2>
         <hr>
-        <form id="chat-form">
-          <input id="chat-input" size="15" maxlength="10">
-        </form>
-        <button onclick="removedrink()">removedrink</button>
-        <button onclick="orderselected()">YES</button>
-        <button onclick= "hide_info()">NO</button>
+        <div id="recipe">
+          <ul id="portionlist">
+            <li>2 cl Gin</li>
+            <li>10 cl Tonic</li>
+          </ul>
+        </div>
+          <form class="inputfield">
+            <input id="chat-input"/>
+          </form>
+        <button class="green" onclick="orderselected()">YES</button>
+        <button class="red" onclick= "hide_info()">NO</button>
+        <div class="floatfix"</div>
       </div>
-      <!-- Popup Div Ends Here -->
+        <!-- Popup Div Ends Here -->
       </div>
-      <!-- Display Popup Button -->
-    </div>
         <!-- Display Popup Button -->
     </div>
   </header>

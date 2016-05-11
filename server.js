@@ -95,6 +95,10 @@ io.on('connection', function(socket){
 		};
 	});
 
+	socket.on('removeOrder', function(orderID){
+		backend.removeOrder(orderID);
+	});
+
 	// pysäyttää robotin seuraavan toiminnon jälkeen
 	socket.on('pauserobot', function(){
 		backend.pause();

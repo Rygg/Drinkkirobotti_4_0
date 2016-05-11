@@ -2,7 +2,7 @@
 /*----------------------------------------------
 CSS settings for HTML div Exact Center
 ------------------------------------------------*/
-#abc, #abc2 {
+#bottleinfo {
 width:100%;
 height:100%;
 opacity:.95;
@@ -15,18 +15,30 @@ overflow:auto;
 z-index: 1;
 }
 
-div#popupContact, div#popupContact2 {
+#orderscreen {
+width:100%;
+height:100%;
+opacity:.95;
+top:0;
+left:0;
+display:none;
+position:fixed;
+background-color:#313131;
+overflow:auto;
+z-index: 1;
+}
+
+.formboundary {
 position:absolute;
-  opacity:1;
 width: 90%;
 left: 5%;
 top:17%;
 font-family:'Raleway',sans-serif
-
 }
 
-#form {
+.form {
   background-color: #FFF;
+  opacity:1;
   border-radius:10px;
   padding:10px 50px;
 }
@@ -55,7 +67,7 @@ margin:10px -50px;
 border:0;
 border-top:1px solid #ccc
 }*/
-#form input {
+.form input {
 width:50%;
   margin: 0 0% 5% 0%;
 padding:10px;
@@ -66,7 +78,7 @@ font-size:16px;
 font-family:raleway
 }
 
-#form button{
+.form button{
   width: 140px;
   -webkit-border-radius: 60;
   -moz-border-radius: 60;
@@ -84,23 +96,23 @@ font-family:raleway
   text-decoration: none;
 }
 
-#form .red {
+.form .red {
   margin: 0 10% 0 0;
   background: #CC0000;
   float: right;
 }
 
-#form .red:hover {
+.form .red:hover {
   background: #FF0000;
 }
 
-#form .green {
+.form .green {
   margin: 0 0 0 10%;
   background: #006600;
   float: left;
 }
 
-#form .green:hover {
+.form .green:hover {
   background: #00FF00;
 }
 

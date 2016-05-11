@@ -16,31 +16,29 @@
     Order a drink you prefer from the list. If you want to get your drink faster, order a
     drink which is already on the order list and is not full of orderers!</p>
   </div>
-  <div class="orderinfo">
-      <div id="abc">
+  <div id="orderscreen" class="shade">
       <!-- Popup Div Starts Here -->
-      <div id="popupContact">
+    <div class="formboundary">
       <!-- Contact Us Form -->
-      <div id="form" name="form">
-        <h2 id="orderName">No Drink name!</h2>
-        <hr>
-        <div id="recipe">
-          <ul id="portionlist">
-            <li>2 cl Gin</li>
-            <li>10 cl Tonic</li>
-          </ul>
-        </div>
-        <form id="chat-form">
+    <div class="form">
+      <h2 id="orderName">No Drink name!</h2>
+      <hr>
+      <div id="recipe">
+        <ul id="portionlist">
+          <li>2 cl Gin</li>
+          <li>10 cl Tonic</li>
+        </ul>
+      </div>
+        <form class="inputfield">
           <input id="chat-input"/>
         </form>
-        <button class="green" onclick="orderselected()">YES</button>
-        <button class="red" onclick= "hide_info()">NO</button>
-        <div class="floatfix"</div>
-      </div>
-      <!-- Popup Div Ends Here -->
-      </div>
-      <!-- Display Popup Button -->
+      <button class="green" onclick="orderselected()">YES</button>
+      <button class="red" onclick= "hide_element('orderscreen')">NO</button>
+      <div class="floatfix"</div>
     </div>
+      <!-- Popup Div Ends Here -->
+    </div>
+      <!-- Display Popup Button -->
   </div>
   </header>
   <div id="maincontent">

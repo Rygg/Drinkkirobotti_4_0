@@ -33,6 +33,11 @@ function refreshQueue(orderQueue){
   }
 }
 
+function addOrderer(ordererName,uniqueID, batchID) {
+  appendElement(batchID,"li",uniqueID)
+  writeToElement(uniqueID,ordererName + " ID:" + uniqueID)
+};
+
 function changeBottleStatus(msg) {
   writeToElement('addedBottle',msg);
 }
@@ -51,6 +56,11 @@ document.getElementById('abc2').style.display = "none";
 
 function removeDrink(){
 
+}
+
+function removeOrder(){
+let input = document.getElementById('chat-input');
+  socket.emit('removeOrder',input);
 }
 
 function pause(){
