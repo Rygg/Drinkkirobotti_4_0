@@ -93,6 +93,7 @@ class ControlLogic {
     removeOrder(ID) {
         // Firsts see if the queues match.
         if(this.queue.length != this.orderQueue.length) {
+            console.log("Error: queue-lengths didn't match.")
             return false; // Queues didn't match.
         }
         // Find the index for the ID.
@@ -103,10 +104,12 @@ class ControlLogic {
             }
         }
         if(index < 0) {
+            console.log("Error: the ID wasn't found in the queue.")
             return false; // the robot didn't found the ID in the queue.
         } else {
             // Check if the IDs match in both queues.
             if(this.queue[index].ID != this.orderQueue[index].ID) {
+                console.log("Error: Order IDs didn't match in the queues.");
                 return false; // The IDs of the objects in the same places in queues didn't match.
                 // << INSERT MASSIVE ERROR EMIT HERE >>
             } else {
