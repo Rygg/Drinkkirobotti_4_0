@@ -11,8 +11,8 @@
     font-size: 120%;
   }
 
-  li, #prepared p {
-    font-size: 130%;
+  h1 {
+    margin-left: 10px;
   }
 
   #contentleft {
@@ -22,16 +22,17 @@
   }
 
   #contentright {
-    background: #C1C1C1;
+    background: None;
     width: 100%;
     overflow: hidden;
     float: right;
   }
   .drink {
-  margin-left: 200px;
-  width: 60%;
+  margin-left: 210px;
+  width: 50vw;
+  height: 37vw;
   }
-
+/*
   div#popupContact {
 position:absolute;
 left:13%;
@@ -65,12 +66,34 @@ padding-left:40px;
 font-size:16px;
 font-family:raleway
 }
-
+*/
 }
 
 @media only screen and (min-width : 150px) and (max-width : 600px){
   .drink {
-  width: 50%;
+   margin-left: 190px;
+   width: 45vw;
+   height: 32vw;
+  }
+
+  h1, h2 {
+    font-size: 100%;
+  }
+
+  li, #prepared p {
+    font-size: 100%;
+  }
+
+  #contentleft {
+    position: absolute;
+    left: 5%;
+    width: 180px;
+  }
+
+  #contentright {
+    width: 100%;
+    overflow: hidden;
+    float: right;
   }
 
 }

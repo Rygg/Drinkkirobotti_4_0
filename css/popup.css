@@ -14,22 +14,24 @@ background-color:#313131;
 overflow:auto;
 z-index: 1;
 }
-img#close {
-position:absolute;
-right:-14px;
-top:-14px;
-cursor:pointer;
-display:none;
-}
+
 div#popupContact, div#popupContact2 {
 position:absolute;
-opacity:1;
-left:50%;
+  opacity:1;
+width: 90%;
+left: 5%;
 top:17%;
-margin-left:-202px;
 font-family:'Raleway',sans-serif
+
 }
-#form, #form2 {
+
+#form {
+  background-color: #FFF;
+  border-radius:10px;
+  padding:10px 50px;
+}
+
+/*#form, #form2 {
 max-width:300px;
 min-width:250px;
 padding:10px 50px;
@@ -37,7 +39,7 @@ border:2px solid gray;
 border-radius:10px;
 font-family:raleway;
 background-color:#fff;
-}
+} */
 /*p {
 margin-top:30px
 }
@@ -53,8 +55,9 @@ margin:10px -50px;
 border:0;
 border-top:1px solid #ccc
 }*/
-input[type=text] {
-width:82%;
+#form input {
+width:50%;
+  margin: 0 0% 5% 0%;
 padding:10px;
 margin-top:30px;
 border:1px solid #ccc;
@@ -62,6 +65,46 @@ padding-left:40px;
 font-size:16px;
 font-family:raleway
 }
+
+#form button{
+  width: 140px;
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  text-shadow: 1px 2px 6px #000000;
+  -webkit-box-shadow: 1px 2px 2px #050205;
+  -moz-box-shadow: 1px 2px 2px #050205;
+  box-shadow: 1px 2px 2px #050205;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 27px;
+  padding: 40px;
+  background: #009dff;
+  border: solid #000000 2px;
+  text-decoration: none;
+}
+
+#form .red {
+  margin: 0 10% 0 0;
+  background: #CC0000;
+  float: right;
+}
+
+#form .red:hover {
+  background: #FF0000;
+}
+
+#form .green {
+  margin: 0 0 0 10%;
+  background: #006600;
+  float: left;
+}
+
+#form .green:hover {
+  background: #00FF00;
+}
+
+
 /*span {
 color:red;
 font-weight:700

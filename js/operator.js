@@ -33,8 +33,6 @@ function refreshQueue(orderQueue){
   }
 }
 
-
-
 function changeBottleStatus(msg) {
   writeToElement('addedBottle',msg);
 }

@@ -5,6 +5,24 @@
 //
 
 socket.on('initializeList', refreshQueue);
+socket.on('initializePreparedDrinks', refreshCurrentOrderers);
+
+function refreshCurrentOrderers(currentOrderers){
+  if(currentOrderers.length == 0) {
+      writeToElement("prepared", "");
+      return;
+  }
+  //writeToElement("prepared", "IT WORKS");
+  // Tuhoa vanha ja tee uusi lista
+  removeElement("prepared", "preparedlist");
+  appendElement("prepared", "ol", "preparedlist");
+  //lisää drinkki
+  let drinkName = currentOrderers[0].drinkName;
+  writeToElement("prepareddrink", drinkName);
+  for (i=0; i < currentOrderers.length; i++){
+    addOrderer(currentOrderers[i].orderer,currentOrderers[i].ID,"preparedlist")
+  }
+}
 
 function refreshQueue(orderQueue){
   if(orderQueue.length == 0) {

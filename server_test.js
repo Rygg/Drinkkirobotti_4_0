@@ -44,7 +44,8 @@ app.get('/operator', function (req, res) {
 //////////////////////////TESTAUS TYNGÄT ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 var orderQueue = [];
-var drinkList = ["Screwdriver","Apple Juice","Green Widow"];
+var beingPrepared = [];
+var drinkList = [];
 // backend.database.BottleShelf.getBottles();
 var backend_getbottles = ["Vodka","Water","OrangeJuice","Water"];
 // backend.database.BottleShelf.findBottleLocations(bottles[i])
@@ -60,6 +61,23 @@ function backend_findBottleLocations(bottle){
 	}
 }
 
+drinkList.push({"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]});
+drinkList.push({"name":"Screwdriver","available":false,"recipe":[{"bottleName":"Finlandia","amount":4},{"bottleName":"Orange Juice","amount":10}]});
+drinkList.push({"name":"Cat","available":false,"recipe":[{"bottleName":"Furball","amount":2},{"bottleName":"Mice","amount":1}]});
+
+orderQueue.push( { ID: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
+orderQueue.push( { ID: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
+orderQueue.push( { ID: 5, drinkName: "ScrewDriver", orderer: "Ville" } );
+orderQueue.push( { ID: 4, drinkName: "Apple Juice", orderer: "Jori" } );
+orderQueue.push( { ID: 6, drinkName: "Apple Juice", orderer: "Jakke" } );
+orderQueue.push( { ID: 7, drinkName: "Apple Juice", orderer: "Sepi" } );
+orderQueue.push( { ID: 8, drinkName: "Green Widow", orderer: "Juha88" } );
+
+beingPrepared.push( { ID: 9, drinkName: "ScrewDriver", orderer: "Matti" } );
+beingPrepared.push( { ID: 10, drinkName: "ScrewDriver", orderer: "Seppo" } );
+beingPrepared.push( { ID: 11, drinkName: "ScrewDriver", orderer: "Teppo" } );
+
+
 /////////////////////////////////////////////////////////////////////////
 ////////////////////////// Servun muuttujat /////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -74,6 +92,7 @@ var nextBottlePlace = -1;
 
 io.on('connection', function(socket){
 	socket.emit('initializeDrinkList',drinkList);
+	socket.emit('initializePreparedDrinks', beingPrepared);
 	socket.emit('initializeList', orderQueue);
 	console.log('a user connected');
 

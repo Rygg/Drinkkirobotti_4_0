@@ -9,6 +9,7 @@ var socket = io();
 socket.on('drinkOrdered', addDrink);
 socket.on('initializeDrinkList', refreshDrinkList);
 
+
 function refreshDrinkList(drinkList){
   // Tuhoa vanha ja tee uusi lista
   removeElement("contentright", "drinkList");
@@ -19,7 +20,7 @@ function refreshDrinkList(drinkList){
       writeToElement('noDrinks', 'Error reading drinks from database!')
   }
   for (i=0; i < drinkList.length; i++){
-    createOrderButton(drinkList[i].name,i);
+    createOrderButton(drinkList[i],i);
   }
 }
 
@@ -42,7 +43,6 @@ function orderselected() {
   let input = document.getElementById('chat-input');
   let orderer = input.value;
   socket.emit('giveorder', drinkName, orderer);
-
   // tyhjennä kentät ja sulje ruutu
   input.value = '';
   document.getElementById('abc').style.display = "none";
@@ -69,16 +69,23 @@ function writeToElement(elementID, text){
   el.innerHTML = text;
 }
 
-function createOrderButton(drinkName,buttonIndex){
+function createOrderButton(drinkObj,buttonIndex){
+  let drinkName = drinkObj.name;
+  let drinkRecipe = drinkObj.recipe;
+  let availability = drinkObj.available;
   let buttonID="orderButton_"+buttonIndex;
-  appendElement('drinkList',"button",buttonID,"drink")
-  configureButtonElement(buttonID,drinkName);
+  let labelID="drinklabel_"+buttonIndex;
+  appendElement('drinkList',"button",buttonID,"drink");
+  configureButtonElement(buttonID,drinkName,drinkRecipe,availability);
+  appendElement(buttonID,"h1",labelID,"drinklabel");
+  writeToElement(labelID,drinkName);
 }
 
 // lisää tilausnappulaan kuvan ja funktion
-function configureButtonElement(elementID, drinkName){
+function configureButtonElement(elementID,drinkName,drinkRecipe,available){
   let el = document.getElementById(elementID);
-  let functionality = "show_info('"+drinkName+"')";
+  let recipe_str = JSON.stringify(drinkRecipe);
+  let functionality = "show_info('"+drinkName+"',"+recipe_str+")";
   el.setAttribute("onclick", functionality);
   // luodaan kuva
   let img = document.createElement("img");
@@ -95,9 +102,7 @@ function imageExists(image_url){
     var http = new XMLHttpRequest();
     http.open('HEAD', image_url, false);
     http.send();
-
     return http.status != 404;
-
 }
 
 function validate() {
@@ -123,9 +128,17 @@ function validate() {
 //   document.getElementById('abc').style.display = "none";
 // });
 
-function show_info(headLine) {
+function show_info(headLine,recipelist) {
 document.getElementById('abc').style.display = "block";
 document.getElementById('orderName').innerHTML = headLine;
+removeElement("recipe","portionlist")
+appendElement("recipe","ul","portionlist")
+for (i=0; i < recipelist.length; i++){
+  let portionID = "rec_"+headLine+i;
+  let row = recipelist[i].amount +" cl "+ recipelist[i].bottleName;
+  appendElement("portionlist","li",portionID,"rec_li");
+  writeToElement(portionID,row);
+}
 };
 //Function to Hide Popup
 function hide_info(){

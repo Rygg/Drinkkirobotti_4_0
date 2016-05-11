@@ -45,14 +45,14 @@ backend.database.currentShelf.addBottle('{"name":"Tonic","type":"Tonic","volume"
 backend.database.reservedShelf.addBottle('{"name":"Gin","type":"Gin","volume":100,"pourSpeed":1,"isAlcoholic":true}',5)
 backend.database.reservedShelf.addBottle('{"name":"Tonic","type":"Tonic","volume":100,"pourSpeed":2,"isAlcoholic":false}',6)
 */
-/*orderQueue.push( { id: 1, drinkName: "ScrewDriver", orderer: "Matti" } );
-orderQueue.push( { id: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
-orderQueue.push( { id: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
-orderQueue.push( { id: 5, drinkName: "ScrewDriver", orderer: "Ville" } );
-orderQueue.push( { id: 4, drinkName: "Apple Juice", orderer: "Jori" } );
-orderQueue.push( { id: 6, drinkName: "Apple Juice", orderer: "Jakke" } );
-orderQueue.push( { id: 7, drinkName: "Apple Juice", orderer: "Sepi" } );
-orderQueue.push( { id: 8, drinkName: "Green Widow", orderer: "Juha88" } );
+/*orderQueue.push( { ID: 1, drinkName: "ScrewDriver", orderer: "Matti" } );
+orderQueue.push( { ID: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
+orderQueue.push( { ID: 3, drinkName: "ScrewDriver", orderer: "Seppo" } );
+orderQueue.push( { ID: 5, drinkName: "ScrewDriver", orderer: "Ville" } );
+orderQueue.push( { ID: 4, drinkName: "Apple Juice", orderer: "Jori" } );
+orderQueue.push( { ID: 6, drinkName: "Apple Juice", orderer: "Jakke" } );
+orderQueue.push( { ID: 7, drinkName: "Apple Juice", orderer: "Sepi" } );
+orderQueue.push( { ID: 8, drinkName: "Green Widow", orderer: "Juha88" } );
 */
 
 /////////////////////////////////////////////////////////////////////////
