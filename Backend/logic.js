@@ -118,7 +118,7 @@ class ControlLogic {
                 // << INSERT MASSIVE ERROR EMIT HERE >>
             } else {
                 // Add the qObject back to the reserved shelf:
-                this.database.cancelDrink(queue[index]);
+                this.database.cancelDrink(this.queue[index]);
                 // Remove the objects from the queues:
                 this.queue.splice(index,0);
                 this.orderQueue.splice(index,0);
