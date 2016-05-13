@@ -1,3 +1,5 @@
+
+
 @media only screen and (min-width : 150px) and (max-width : 1500px)
 
 {
@@ -5,6 +7,14 @@
     width: 90%;
     margin: 0 auto;
     font-size: 125%;
+  }
+  
+  #logo{
+  width: 25%;
+  }
+  
+  .greetings_text{
+  padding: 20px;
   }
 
   h1, h2 {
@@ -18,7 +28,7 @@
   #contentleft {
     position: absolute;
     left: 5%;
-    width: 200px;
+    width: 235px;
   }
 
   #contentright {
@@ -27,46 +37,30 @@
     overflow: hidden;
     float: right;
   }
+  
+  #listmargin {
+  padding: 0px 0px 12px 11px;
+  }
+  
   .drink {
-  margin-left: 210px;
+  margin-left: 245px;
   width: 50vw;
   height: 37vw;
   }
-/*
-  div#popupContact {
-position:absolute;
-left:13%;
-top:17%;
-margin-left:0px;
-font-family:'Raleway',sans-serif
-}
-
-#form, #form2{
-max-width:500px;
-width:500px;
-min-width:250px;
-padding:10px 50px;
-border:2px solid gray;
-border-radius:10px;
-font-family:raleway;
-background-color:#fff;
-}
-
-  #form button, #form2 button{
-    margin: auto;
-    padding: 10%;
+  
+  .drinklabel{
+    left: -7px;
+    width:98.5%;
+    /* styling bellow */
   }
 
-input {
-width:20%;
-padding:10px;
-margin:10px 0px;
-border:1px solid #ccc;
-padding-left:40px;
-font-size:16px;
-font-family:raleway
 }
-*/
+
+@media only screen and (min-width : 800px) and (max-width : 1500px){
+  #logo{
+  margin: 20px;
+  width: 12%;
+  }
 }
 
 @media only screen and (min-width : 150px) and (max-width : 600px){
@@ -76,6 +70,14 @@ font-family:raleway
    height: 32vw;
   }
 
+  .drinklabel{
+    font-size:23px;
+    padding-bottom: 5%;
+    left: -8px;
+    width:98%;
+    /* styling bellow */
+  }
+  
   h1, h2 {
     font-size: 100%;
   }

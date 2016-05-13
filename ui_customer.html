@@ -11,10 +11,16 @@
   <body>
   <header>
   <div class="greetings">
-    <p>Good evening sir/madam! <br><br>
-
-    Order a drink you prefer from the list. If you want to get your drink faster, order a
+    <img src="pullonkaula_logo_inv2.png" id="logo" alt="Pullonkaula">
+    <img src="plank_wide.jpg" class="topbeam">
+    <img src="plank_wide.jpg" class="bottombeam">
+    <img src="plank.jpg" class="leftbeam">
+    <img src="plank.jpg" class="rightbeam">
+    <div class="greetings_text">
+    <p class="infotext">Good evening!</p>
+    <p class="infotext">Order a drink you prefer from the list. If you want to get your drink faster, order a
     drink which is already on the order list and is not full of orderers!</p>
+    </div>
   </div>
   <div id="orderscreen" class="shade">
       <!-- Popup Div Starts Here -->
@@ -30,11 +36,11 @@
         </ul>
       </div>
         <form class="inputfield">
-          <input id="chat-input"/>
+          <input id="chat-input"/ class="wideinput">
         </form>
       <button class="green" onclick="orderselected()">YES</button>
       <button class="red" onclick= "hide_element('orderscreen')">NO</button>
-      <div class="floatfix"</div>
+      <div class="floatfix"></div>
     </div>
       <!-- Popup Div Ends Here -->
     </div>
@@ -43,56 +49,23 @@
   </header>
   <div id="maincontent">
   <div id="contentleft">
+    <img src="plank_wide.jpg" class="topbeam">
+    <img src="plank_wide.jpg" class="bottombeam">
+    <img src="plank.jpg" class="leftbeam">
+    <img src="plank.jpg" class="rightbeam">
+    <div id="listmargin">
     <h1>Being prepared:</h1>
     <p class="batch" id="prepareddrink"><!--Screwdriver--></p>
     <div id="prepared">
       <ol id="preparedlist">
-          <!--<li class="orderer1">Mikko</li>
-          <li class="orderer2">Aleksi</li>
-          <li class="orderer3">-</li>
-          <li class="orderer4">-</li>-->
       </ol>
     </div>
 
     <hr>
     <h1>Next order:</h1>
     <ol id=orderlist>
-      <!-- TESTI lista
-      <li class="batch">Vodka Apple
-        <ol id="batch1">
-          <li class="orderer1">Mikko</li>
-          <li class="orderer2">Aleksi</li>
-          <li class="orderer3">-</li>
-          <li class="orderer4">-</li>
-        </ol>
-      </li>
-      <li class="batch">Screwdriver
-        <ol id="batch2">
-          <li>Max</li>
-          <li>-</li>
-          <li>-</li>
-          <li>-</li>
-        </ol>
-      </li>
-      <li class="batch">Green Widow
-        <ol id="batch3">
-          <li>Joonas</li>
-          <li>Konsta</li>
-          <li>-</li>
-          <li>-</li>
-        </ol>
-      </li>
-      <li class="batch">Cranberry Lime Virgin
-        <ol id="batch4">
-          <li>Tatu</li>
-          <li>-</li>
-          <li>-</li>
-          <li>-</li>
-        </ol>
-      </li>
-    -->
     </ol>
-
+  </div>
   </div>
   <div id="contentmiddle">
   </div>

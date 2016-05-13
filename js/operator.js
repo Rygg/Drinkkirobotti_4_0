@@ -30,8 +30,8 @@ function refreshQueue(orderQueue){
       return;
   }
   // Tuhoa vanha ja tee uusi lista
-  removeElement("contentleft", "orderlist");
-  appendElement("contentleft", "ol", "orderlist");
+  removeElement("listmargin", "orderlist");
+  appendElement("listmargin", "ol", "orderlist");
   // Lisää listan eka drinkki.
   let drinkName = orderQueue[0].drinkName;
   let batchID = drinkName + orderQueue[0].ID;
