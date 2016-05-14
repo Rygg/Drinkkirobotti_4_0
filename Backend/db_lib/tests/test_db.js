@@ -54,6 +54,7 @@ console.log("----------------------------------------------------");
 console.log("");
 
 if(DB.drinkDB.drinks[0].available) {
+    console.log("Error: Drink available by default.")
     failure++;
     console.log("Test failure!");
 } else {

@@ -1,6 +1,7 @@
 // Testing of the BottleShelf-class.
 "use strict";
 let BottleShelf = require('../bottleshelf.js');
+const MAX_BOTTLES = 9; // Bottleshelf size
 
 let success = 0;
 let failure = 0;
@@ -15,8 +16,8 @@ console.log('Test 1: Testing of the constructor:');
 console.log("----------------------------------------------------");
 console.log("");
 let testif = true;
-if(BS.length = 12 && typeof(BS.bottles) == 'object' && testif) {
-	for(let i = 0; i < 12; i++) {
+if(BS.length = MAX_BOTTLES && typeof(BS.bottles) == 'object' && testif) {
+	for(let i = 0; i < MAX_BOTTLES; i++) {
 		if(BS.bottles[i] != 'empty') {
 			testif = false;
 		}
@@ -314,7 +315,7 @@ console.log('Test 13: Testing the removeBottle() with an empty location:');
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.removeBottle(9) != false) {
+if(BS.removeBottle(3) != false) {
     failure++;
 	console.log('Test failure!');
 } else {
@@ -394,7 +395,7 @@ console.log('Test 17: Testing the loadShelf() with a file with a correct bottleS
 console.log("----------------------------------------------------");
 console.log("");
 
-if(BS.loadShelf('test_bottleShelf.json') != true && BS.bottles.length != 12) {
+if(BS.loadShelf('test_bottleShelf.json') != true && BS.bottles.length != MAX_BOTTLES) {
     failure++;
     console.log('Test failure!');
 } else {
@@ -405,8 +406,7 @@ if(BS.loadShelf('test_bottleShelf.json') != true && BS.bottles.length != 12) {
 	&& BS.bottles[5].volume != 10 && BS.bottles[5].pourSpeed != 2 && BS.bottles[5].isAlcoholic != true &&
 	typeof(BS.bottles[6]) != 'object' && BS.bottles[6].name != 'Gin' && BS.bottles[5].type != 'Bombaypullo' 
 	&& BS.bottles[6].volume != 10 && BS.bottles[6].pourSpeed != 2 && BS.bottles[6].isAlcoholic != true &&
-    BS.bottles[7] != 'empty' && BS.bottles[8] != 'empty' && BS.bottles[9] != 'empty' && BS.bottles[10] != 'empty' &&
-    BS.bottles[11] != 'empty') {
+    BS.bottles[7] != 'empty' && BS.bottles[8] != 'empty') {
 	    failure++;
 		console.log('Test failure!');
 	} else {

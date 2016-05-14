@@ -2,6 +2,8 @@
 "use strict";
 // Load the filestream -module.
 let fs = require('fs');
+// Constant value for the bottleshelf size.
+const MAX_BOTTLES = 9;
 
 // Class Bottle
 class Bottle {
@@ -22,7 +24,7 @@ class BottleShelf {
     
     // Creates a new array with the size 12 that's filled with the strings 'empty'.
     constructor() {
-        this.bottles = new Array(12);
+        this.bottles = new Array(9);
         this.bottles.fill('empty');
     }
     
@@ -31,7 +33,7 @@ class BottleShelf {
     // If location isn't between 0 and 11 or is not specified or JSON cannot be parsed, returns -1.
     addBottle(bottle, location) {
         // Check for the value of location parameter. If incorrect, return false.
-        if(location < 0 || location > 11 || typeof(location) != 'number') {
+        if(location < 0 || location > (MAX_BOTTLES -1) || typeof(location) != 'number') {
             console.log('Error occurred while adding bottle: Invalid location for bottle.');
             return -1;
         }
@@ -60,7 +62,7 @@ class BottleShelf {
     // Returns true if succesfull, false if no bottle is present in the location or the location is faulted.
     removeBottle(location) {
         // Check for the parameter restrictions.
-        if(location < 0 || location > 11 || typeof(location) != 'number') {
+        if(location < 0 || location > (MAX_BOTTLES -1) || typeof(location) != 'number') {
             console.log('Unknown bottle location while removing bottle.');
             return false;
         }
@@ -96,7 +98,7 @@ class BottleShelf {
         let array = [];
         for(let i = 0; i < this.bottles.length; i++) {
             // If the index exceeds 11, there is too many bottles in the bottleshelf and an error must occur.
-            if(i > 11) {
+            if(i > MAX_BOTTLES -1) {
                 console.log('Error: There\'s too many bottles in the bottleshelf');
                 return;
             }
@@ -132,7 +134,7 @@ class BottleShelf {
             return false;
         }
         // Check if the length of the object is 12.
-        if(object.length != 12) {
+        if(object.length != MAX_BOTTLES) {
             console.log('Error while reading shelf configuration from file ' + filename +': Not a proper BottleShelf-object.');
             return false;
         }
