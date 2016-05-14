@@ -91,6 +91,10 @@ class ControlLogic {
 
     //removeOrder() - The function which removes a certain object based on it's the ID  from both queues, should be used when a drink is cancelled from the UI.
     removeOrder(ID) {
+        if(typeof(ID) != 'number') {
+            console.log("Error, the ID wasn't a number.");
+            return false;
+        }
         // Firsts see if the queues match.
         if(this.queue.length != this.orderQueue.length) {
             console.log("Error: queue-lengths didn't match.")
@@ -99,7 +103,7 @@ class ControlLogic {
         // Find the index for the ID.
         let index = -1;
         for(let i = 0; i < this.queue.length; i++) {
-            if(this.queue.ID == ID) {
+            if(this.queue[i].ID == ID) {
                 index = i;
             }
         }
@@ -114,10 +118,11 @@ class ControlLogic {
                 // << INSERT MASSIVE ERROR EMIT HERE >>
             } else {
                 // Add the qObject back to the reserved shelf:
-                this.database.cancelDrink(queue[index]);
+                console.log("Canceling the drink.");
+                this.database.cancelDrink(this.queue[index]);
                 // Remove the objects from the queues:
-                this.queue.splice(index,0);
-                this.orderQueue.splice(index,0);
+                this.queue.splice(index,1);
+                this.orderQueue.splice(index,1);
                 return true;
             }
         }
