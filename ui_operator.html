@@ -28,14 +28,13 @@
     </div>
     <div id="orderButtons">
     <h1>Management</h1>
-    <p>Order ID
     <form class="inputfield">
+      <p>Order ID:</p>
       <input id="removeorder-input" class="wideinput"/>
-    </form></p>
+    </form>
     </div>
-
+    <button class="operatorButton" id="removeorder_but" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
-    <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
     <button class="operatorButton" onclick="removeOrder()">Remove order</button>
     <div id="maintenanceButtons">
       <h1>Maintenance</h1>
@@ -105,10 +104,16 @@
           <input type="radio" name="shape" value="Tasavalta" id=Tasavalta>
           <label for="Tasavalta">Tasavalta</label><br>
           <h3>Select volume:<h3>
+            <p id="volumeinfo">100 cl</p>
+            <input type="range" class="wideinput slider" id="volumeslider" value="100" step="5" name=volume onchange="writeToElement('volumeinfo',this.value + ' cl')">
+
+          <!--
           <input type="radio" name="volume" value="100" id="100volume">
           <label for="100volume">100cl</label><br>
           <input type="radio" name="volume" value="50" id="50volume">
           <label for="50volume">50cl</label><br>
+          -->
+          <div class="floatfix"></div>
         </form>
         <button type="button" class="operatorButton green" onclick="addBottle()">YES</button>
         <button type="button" class="operatorButton red" onclick= "hide_element('bottleinfo')">NO</button>

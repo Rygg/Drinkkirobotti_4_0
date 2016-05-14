@@ -37,10 +37,14 @@ function orderselected() {
   // Hae tilaajan nimi
   let input = document.getElementById('chat-input');
   let orderer = input.value;
-  socket.emit('giveorder', drinkName, orderer);
-  // tyhjennä kentät ja sulje ruutu
-  input.value = '';
-  document.getElementById('orderscreen').style.display = "none";
+  if(validate(orderer) == true){
+    socket.emit('giveorder', drinkName, orderer);
+    // tyhjennä kentät ja sulje ruutu
+    input.value = '';
+    document.getElementById('orderscreen').style.display = "none";
+  } else {
+    input.focus();
+  }
 };
 
 // Hyödyllinen funktio elementin poistoon
@@ -100,17 +104,27 @@ function imageExists(image_url){
     return http.status != 404;
 }
 
-function validate() {
-    if (document.myForm.name.value == "") {
-        alert("Enter a name");
-        document.myForm.name.focus();
+function validate(text) {
+    let input = document.getElementById('inputadvice');
+    if (text == "") {
+        //alert("Enter a name");
+        //.myForm.name.focus();
         return false;
     }
-    if (!/^[a-zA-Z]*$/g.test(document.myForm.name.value)) {
-        alert("Invalid characters");
-        document.myForm.name.focus();
+    if (text.length > 10) {
+        input.innerHTML="Name too long!"
+        //alert("Name too long!");
+        //.myForm.name.focus();
         return false;
     }
+    if (!/^[a-zA-Z]*$/g.test(text)) {
+        input.innerHTML="Name has invalid characters!"
+        //alert("Invalid characters");
+        //document.myForm.name.focus();
+        return false;
+    }
+    input.innerHTML="Please enter your name"
+    return true;
 }
 
 // var form = document.getElementById('chat-form');
@@ -133,6 +147,8 @@ for (i=0; i < recipelist.length; i++){
   let row = recipelist[i].amount +" cl "+ recipelist[i].bottleName;
   appendElement("portionlist","li",portionID,"rec_li");
   writeToElement(portionID,row);
+  let input = document.getElementById('chat-input');
+  input.focus();
 }
 };
 //Function to Hide Popup

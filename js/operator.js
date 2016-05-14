@@ -25,6 +25,10 @@ function refreshCurrentOrderers(currentOrderers){
   }
 }
 
+function updateTextInput(textInput,val) {
+  writeToElement(textInput,val);
+}
+
 function refreshQueue(orderQueue){
   if(orderQueue.length == 0) {
       return;
@@ -63,14 +67,6 @@ function changeBottleStatus(msg) {
 function loadBottle(){
   socket.emit('loadBottle');
 }
-
-function fillBottleInfo() {
-document.getElementById('abc2').style.display = "block";
-};
-//Function to Hide Popup
-function hideBottleFill(){
-document.getElementById('abc2').style.display = "none";
-};
 
 function removeDrink(){
 
@@ -131,7 +127,7 @@ function addBottle(){
   // console.log(content)
   if (volume != "" & shape != "" & content != "" ){
   socket.emit('bottleadded', content,shape,volume);
-  hideBottleFill();
+  hide_element("bottleinfo");
   };
   //
 }

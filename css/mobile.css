@@ -50,8 +50,12 @@
   
   .drinklabel{
     left: -7px;
-    width:98.5%;
+    width:99%;
     /* styling bellow */
+  }
+  
+  .slider {
+    width: 90%;
   }
 
 }

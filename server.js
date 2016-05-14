@@ -159,6 +159,7 @@ io.on('connection', function(socket){
 
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
+	io.emit('initializePreparedDrinks', beingPrepared);
 	//console.log('UI updated..');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
