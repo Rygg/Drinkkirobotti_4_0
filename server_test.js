@@ -122,10 +122,16 @@ io.on('connection', function(socket){
 		};
 	});
 
-	socket.on('removeOrder', function(orderID){
-		console.log(orderID);
-		console.log(typeof(Number(orderID)));
-		//backend.removeOrder(orderID);
+	socket.on('removeOrder', function(IDlist){
+		for(i=0; i < IDlist.length; i++)
+			console.log(Number(IDlist[i]));
+	});
+
+	socket.on('addNewDrink', function(drinkObject){
+		//{"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}
+		var newDrink = {"name":drinkObject.name,"available":true,"recipe":drinkObject.recipe};
+		drinkList.push(newDrink)
+		socket.emit('initializeDrinkList',drinkList);
 	});
 
 	socket.on('loadBottle', function() {

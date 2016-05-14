@@ -20,13 +20,9 @@ function refreshCurrentOrderers(currentOrderers){
   //lisää drinkki
   let drinkName = currentOrderers[0].drinkName;
   writeToElement("prepareddrink", drinkName);
-  for (i=0; i < currentOrderers.length; i++){
+  for (let i=0; i < currentOrderers.length; i++){
     addOrderer(currentOrderers[i].orderer,currentOrderers[i].ID,"preparedlist")
   }
-}
-
-function updateTextInput(textInput,val) {
-  writeToElement(textInput,val);
 }
 
 function refreshQueue(orderQueue){
@@ -41,7 +37,7 @@ function refreshQueue(orderQueue){
   let batchID = drinkName + orderQueue[0].ID;
   addDrink(drinkName, batchID);
   // käy läpi tilaajat
-  for (i=0; i < orderQueue.length; i++){
+  for (let i=0; i < orderQueue.length; i++){
   // jos tilaajalla sama drinkki kuin edellisellä, lisää nimi samaan erään
     if (orderQueue[i].drinkName==drinkName){
         addOrderer(orderQueue[i].orderer, orderQueue[i].ID, batchID)
@@ -64,6 +60,34 @@ function changeBottleStatus(msg) {
   writeToElement('addedBottle',msg);
 }
 
+function addNewDrink() {
+  let nameform = document.getElementById('newdrink_form');
+  let drinkName = nameform.drinkname.value;
+  if(drinkName != ""){
+    let portionlist = [];
+    for (let i=0; i < 4; i++){
+      let portionformID = "portionform" + i;
+      let portionform = document.getElementById(portionformID);
+      let bottleName = portionform.bottlename.value;
+      if (bottleName == "None"){ continue; };
+      let portionAmount = portionform.amount.value;
+      let portionObject = {"bottleName":bottleName,"amount":portionAmount};
+      portionlist.push(portionObject);
+    }
+    if (portionlist.length > 0){
+      let drinkObject = {"name":drinkName,"recipe":portionlist};
+      socket.emit('addNewDrink',drinkObject);
+      hide_element("newdrinkinfo");
+    }
+  }else {
+    let input = document.getElementById('drinkname_input');
+    input.focus();
+  }
+}
+  //{"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}
+
+
+
 function loadBottle(){
   socket.emit('loadBottle');
 }
@@ -74,8 +98,9 @@ function removeDrink(){
 
 function removeOrder(){
 let input = document.getElementById('removeorder-input');
-let value = input.value;
-  socket.emit('removeOrder',value);
+let ID_list = input.value.split(" ");
+socket.emit('removeOrder',ID_list);
+input.value = "";
 }
 
 function pause(){

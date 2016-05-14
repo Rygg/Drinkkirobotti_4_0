@@ -28,14 +28,16 @@
     </div>
     <div id="orderButtons">
     <h1>Management</h1>
+    <button class="operatorButton" id="removeorder_but" onclick="removeOrder()">Remove order</button>
     <form class="inputfield">
-      <p>Order ID:</p>
+      <p class="nomargintext">Order ID:</p>
       <input id="removeorder-input" class="wideinput"/>
     </form>
+    <div class="floatfix"></div>
     </div>
-    <button class="operatorButton" id="removeorder_but" onclick="removeDrink()">Remove drink</button>
-    <button class="operatorButton" onclick="addNewDrink()">Add drink</button>
-    <button class="operatorButton" onclick="removeOrder()">Remove order</button>
+    <button class="operatorButton" onclick="removeDrink()">Remove drink</button>
+    <div class="floatfix"></div>
+    <button class="operatorButton" onclick="show_element('newdrinkinfo')">Add drink</button>
     <div id="maintenanceButtons">
       <h1>Maintenance</h1>
       <button class="operatorButton red" onclick="pause()">Pause</button>
@@ -52,12 +54,133 @@
       </div>
     </div>
   </div>
+<!-- Tässä parempi tapa tehdä sliderit
+  oninput="x.value=parseInt(a.value)">
+  <output name="x" for="a"></output>
+  <br>
+    0
+    <input type="range" id="asd" name="a" value="50">
+    100
+-->
 
+  <!--   add new Bottle     -->
+  <div id="newdrinkinfo" class="shade">
+  <!-- Popup Div Starts Here -->
+  <div class="formboundary">
+  <!-- Contact Us Form -->
+  <div class="form">
+    <h2>Add new drink</h2>
+    <hr>
+    <form id="newdrink_form">
+      <h3>Drink name:</h3>
+        <p>Maximum 15 letters</p>
+        <input id="drinkname_input" class="wideinput" name="drinkname">
+      <ol id="ingredients">
+    </form>
+        <li>
+        <form id="portionform0">
+        <h3>Add Portion:</h3>
 
+          <p>Bottle name:</p>
+          <select name="bottlename" class="bottleselect">
+            <option value="None" selected>None</option>
+            <option value="Vodka">Water</option>
+            <option value="Vodka">Vodka</option>
+            <option value="Cranberry Juice">Cranberry Juice</option>
+            <option value="Orange Juice">Orange Juice</option>
+            <option value="Pear Juice">Pear Juice</option>
+            <option value="Apple Juice">Apple Juice</option>
+            <option value="Jaloviina">Jaloviina</option>
+            <option value="Curacao">Curacao</option>
+            <option value="Strawberry Juice">Strawberry Juice</option>
+          </select>
+          <p>Portion amount:</p>
+          <p id="portion1">0 cl</p>
+          <input type="range" class="wideinput slider" max="10" value="0" name="amount" onchange="writeToElement('portion1',this.value + ' cl')">
+        </form>
+      </li>
+
+      <li>
+      <form id="portionform1">
+      <h3>Add Portion:</h3>
+
+        <p>Bottle name:</p>
+        <select name="bottlename" class="bottleselect">
+          <option value="None" selected>None</option>
+          <option value="Vodka">Water</option>
+          <option value="Vodka">Vodka</option>
+          <option value="Cranberry Juice">Cranberry Juice</option>
+          <option value="Orange Juice">Orange Juice</option>
+          <option value="Pear Juice">Pear Juice</option>
+          <option value="Apple Juice">Apple Juice</option>
+          <option value="Jaloviina">Jaloviina</option>
+          <option value="Curacao">Curacao</option>
+          <option value="Strawberry Juice">Strawberry Juice</option>
+        </select>
+        <p>Portion amount:</p>
+        <p id="portion2">0 cl</p>
+        <input type="range" class="wideinput slider" max="10" value="0" name="amount" onchange="writeToElement('portion2',this.value + ' cl')">
+      </form>
+    </li>
+
+    <li>
+    <form id="portionform2">
+    <h3>Add Portion:</h3>
+
+      <p>Bottle name:</p>
+      <select name="bottlename" class="bottleselect">
+        <option value="None" selected>None</option>
+        <option value="Vodka">Water</option>
+        <option value="Vodka">Vodka</option>
+        <option value="Cranberry Juice">Cranberry Juice</option>
+        <option value="Orange Juice">Orange Juice</option>
+        <option value="Pear Juice">Pear Juice</option>
+        <option value="Apple Juice">Apple Juice</option>
+        <option value="Jaloviina">Jaloviina</option>
+        <option value="Curacao">Curacao</option>
+        <option value="Strawberry Juice">Strawberry Juice</option>
+      </select>
+      <p>Portion amount:</p>
+      <p id="portion3">0 cl</p>
+      <input type="range" class="wideinput slider" max="10" value="0" name="amount" onchange="writeToElement('portion3',this.value + ' cl')">
+    </form>
+  </li>
+
+  <li>
+  <form id="portionform3">
+  <h3>Add Portion:</h3>
+
+    <p>Bottle name:</p>
+    <select name="bottlename" class="bottleselect">
+      <option value="None" selected>None</option>
+      <option value="Vodka">Water</option>
+      <option value="Vodka">Vodka</option>
+      <option value="Cranberry Juice">Cranberry Juice</option>
+      <option value="Orange Juice">Orange Juice</option>
+      <option value="Pear Juice">Pear Juice</option>
+      <option value="Apple Juice">Apple Juice</option>
+      <option value="Jaloviina">Jaloviina</option>
+      <option value="Curacao">Curacao</option>
+      <option value="Strawberry Juice">Strawberry Juice</option>
+    </select>
+    <p>Portion amount:</p>
+    <p id="portion4">0 cl</p>
+    <input type="range" class="wideinput slider" max="10" value="0" name="amount" onchange="writeToElement('portion4',this.value + ' cl')">
+  </form>
+</li>
+</ol>
+      <div class="floatfix"></div>
+    <button type="button" class="operatorButton green" onclick="addNewDrink()">YES</button>
+    <button type="button" class="operatorButton red" onclick= "hide_element('newdrinkinfo')">NO</button>
+    <div class="floatfix"></div>
+
+  </div>
+  </div>
+</div>
 
     <div class="floatfix"></div>
 
-    <div id="orderscreen">
+    <div id="orderscreen" class="shade">
         <!-- Popup Div Starts Here -->
       <div class="formboundary">
         <!-- Contact Us Form -->
@@ -70,9 +193,10 @@
             <li>10 cl Tonic</li>
           </ul>
         </div>
-          <form class="inputfield">
-            <input id="chat-input" class="wideinput"/>
-          </form>
+        <form class="inputfield">
+          <p id="inputadvice">Please enter your name:</p>
+          <input id="chat-input" class="wideinput" name="orderer">
+        </form>
         <button class="green" onclick="orderselected()">YES</button>
         <button class="red" onclick= "hide_element('orderscreen')">NO</button>
         <div class="floatfix"></div>
@@ -80,7 +204,7 @@
       </div>
     </div>
 
-      <div id="bottleinfo">
+      <div id="bottleinfo" class="shade">
       <!-- Popup Div Starts Here -->
       <div class="formboundary">
       <!-- Contact Us Form -->
@@ -106,7 +230,6 @@
           <h3>Select volume:<h3>
             <p id="volumeinfo">100 cl</p>
             <input type="range" class="wideinput slider" id="volumeslider" value="100" step="5" name=volume onchange="writeToElement('volumeinfo',this.value + ' cl')">
-
           <!--
           <input type="radio" name="volume" value="100" id="100volume">
           <label for="100volume">100cl</label><br>
