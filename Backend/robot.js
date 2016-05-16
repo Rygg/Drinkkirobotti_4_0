@@ -296,7 +296,9 @@ function responseHandler(err,result,command,action,timeout,that) {
     }
     console.log("Wrote "+result+" symbols to serial, waiting for response:");
     try {
+        console.log("Waiting for data...");
         serialPort.once('data', function(data){
+            console.log("Data detected!");
             if(timeout._called) {
                 // Do not emit anything and exit. Results in a timeout 'done'-emit.
                 console.log("Timeout when reading robots response.");

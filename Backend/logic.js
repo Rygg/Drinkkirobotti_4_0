@@ -246,6 +246,7 @@ class ControlLogic {
         this.startable = false; // The cycle is not able to start from this position.
         let that = this;
         // Wait for the emit happening.
+         console.log("Waiting for data...");   
         RobotEmitter.once('grabBottle_done', function() {
             // Check if the event was succesfull.
             if(that.robot.failure) {
@@ -269,9 +270,10 @@ class ControlLogic {
                 let expected = "grabBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
-
+                console.log("Waiting for data...");                    
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(data) {
+                    console.log("Data recieved!");
                     if(data == expected) { // Whatever the message will be.
                         // The action was completed. If the robot is not paused, Call for the pourDrink action and the handler.
                         console.log("Action: "+data+" completed!");
@@ -379,6 +381,7 @@ class ControlLogic {
         this.startable = false; // The robot is not yet able to start a new cycle from this position.
         let that = this;
         // Wait for the emit to happen:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('returnBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
@@ -403,6 +406,7 @@ class ControlLogic {
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
+                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
@@ -464,6 +468,7 @@ class ControlLogic {
         console.log('removeHandler() started.');
         let that = this;
         // Wait for the emit to happen:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('removeBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
@@ -488,6 +493,7 @@ class ControlLogic {
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
+                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
@@ -551,6 +557,7 @@ class ControlLogic {
         console.log("getNewHandler() started.");
         let that = this;
         // Listen for the emit:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('getNewBottle_done', function() {
             if(that.robot.failure) {
                 // If the message wasn't delivered and robot isn't paused, Try again.
@@ -574,6 +581,7 @@ class ControlLogic {
                 let expected = "getNewBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
+                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
