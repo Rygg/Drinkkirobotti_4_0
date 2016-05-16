@@ -76,7 +76,7 @@ class Robot {
             return false;
         }
         // Call the communications handler
-        if(!this.commHandler(action,command)) {
+        if(!this.commHandler(action,command,paused)) {
             console.log("The robot is not able to execute the command: " + command);
             return false;
         }
@@ -106,7 +106,7 @@ class Robot {
             return false;
         }
         // Call the communications handler
-        if(!this.commHandler(action,command)) {
+        if(!this.commHandler(action,command,paused)) {
             console.log("The robot is not able to execute the command: " + command);
             return false;
         }
@@ -138,7 +138,7 @@ class Robot {
             return false;
         }
         // Call the communications handler
-        if(!this.commHandler(action,command)) {
+        if(!this.commHandler(action,command,paused)) {
             console.log("The robot is not able to execute the command: " + command);
             return false;
         }
@@ -171,7 +171,7 @@ class Robot {
             return false;
         }
         // Call the communications handler
-        if(!this.commHandler(action,command)) {
+        if(!this.commHandler(action,command,paused)) {
             console.log("The robot is not able to execute the command: " + command);
             return false;
         }
@@ -202,7 +202,7 @@ class Robot {
             return false;
         }
         // Call the communications handler
-        if(!this.commHandler(action,command)) {
+        if(!this.commHandler(action,command,paused)) {
             console.log("The robot is not able to execute the command: " + command);
             return false;
         }
