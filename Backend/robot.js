@@ -93,7 +93,7 @@ class Robot {
             return false;
         }
         // Check if the parameters are correct:
-        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourTime > 8000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4 ||typeof(type) != 'string') {
+        if(typeof(pourTime) != 'number' || pourTime <= 0 || pourTime > 20000 || typeof(howMany) != 'number' || howMany <= 0 || howMany > 4 ||typeof(type) != 'string') {
             console.log("Error with pourDrinks()-parameters, Instruction not registered.");
             return false;
         }
