@@ -69,6 +69,18 @@
   margin: 20px;
   width: 12%;
   }
+  
+}
+
+@media only screen and (min-width : 1000px) and (max-width : 1500px){
+  
+  .drink{
+    position:relative;
+    margin-left: 0px;
+    left: 245px;
+    width: 32vw;
+    height: 22vw;
+  }
 }
 
 @media only screen and (min-width : 150px) and (max-width : 600px){
