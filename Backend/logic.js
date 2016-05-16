@@ -455,12 +455,13 @@ class ControlLogic {
                             that.paused = true;
                             let spinCommand = "spinDrinkRevolver()";
                             spinCommand = editCommandLength(spinCommand);
-                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result,that) {
+                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result) {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
-                                setTimeout(function(that) {
+                                
+                            });
+                            setTimeout(function(that) {
                                     that.unpause();
                                 },1500);
-                            });
                             return true;
                         }
 
@@ -553,13 +554,13 @@ class ControlLogic {
                             that.paused = true;
                             let spinCommand = "spinDrinkRevolver()";
                             spinCommand = editCommandLength(spinCommand);
-                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result,that) {
+                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result) {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
-                                setTimeout(function(that) {
+                                
+                            });
+                            setTimeout(function(that) {
                                     that.unpause();
                                 },1500);
-                            });
-                            
                             return true;
                         }
                     } else {
@@ -727,6 +728,14 @@ class ControlLogic {
             return true;    
         }
         return false;
+    }
+    
+    pauseSpin() {
+        let spinCommand = "spinDrinkRevolver()";
+        spinCommand = editCommandLength(spinCommand);
+        serialPort.write(Buffer(spinCommand, "utf8"), function(err,result) {
+            console.log("Wrote "+result+" symbols to serial for spinning the thing.");
+        });
     }
 
 }; // End of the class and logic definition.
