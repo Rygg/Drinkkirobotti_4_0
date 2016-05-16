@@ -88,7 +88,7 @@ io.on('connection', function(socket){
 	socket.on('bottleadded', function(content,shape,volume) {
 		nextBottlePlace = getFreeShelfPlace();
 		if (nextBottlePlace != -1){
-			addedBottle = { "name": content, "type": shape, "volume":volume,"pourSpeed":1,"isAlcoholic":true};
+			addedBottle = { "name": content, "type": shape, "volume":Number(volume),"pourSpeed":1,"isAlcoholic":true};
 			let msg = content + "-" + shape + "-" + volume + " is reserved for place: " + nextBottlePlace;
 			socket.emit('addedBottleStatus', msg)
 		} else {
