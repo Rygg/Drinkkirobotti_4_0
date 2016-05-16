@@ -135,7 +135,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausespin', function() {
-		console.log("TODO: Juomakarusellin pyöräytys, TODO");
+		backend.pausespin();
 	});
 
 	socket.on('pausegetnew', function(location, type, Bottle){
