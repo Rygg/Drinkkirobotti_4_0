@@ -122,8 +122,8 @@ io.on('connection', function(socket){
 		backend.pauseGrab(location,type);
 	});
 
-	socket.on('pausepour', function(pourTime, howMany){
-		backend.pausePour(pourTime,howMany,3,2);
+	socket.on('pausepour', function(pourTime, howMany,type,location,amount){
+		backend.pausePour(pourTime,howMany,type,location,amount);
 	});
 
 	socket.on('pausereturn', function(location, type){

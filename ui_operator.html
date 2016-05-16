@@ -44,16 +44,19 @@
       <!-- --->
       <div id="pausepanel">
         <hr>
+        <h1>Pause Functions</h1>
         <button class="operatorButton green" onclick="resume()">Resume</button>
-        <button class="operatorButton" onclick="pauseGrab()">pauseGrab</button>
-        <button class="operatorButton" onclick="pausePour()">pausePour</button>
-        <button class="operatorButton" onclick="pauseReturn()">pauseReturn</button>
-        <button class="operatorButton" onclick="pauseRemove()">pauseRemove</button>
-        <button class="operatorButton" onclick="pauseGetNew()">pauseGetNew</button>
-        <button class="operatorButton" onclick="pauseSpin()">pauseSpin</button>
+        <button class="operatorButton" onclick="show_pausefunction(this.innerHTML,'pauseGrab()')">Grab Bottle</button>
+        <button class="operatorButton" onclick="show_element('pourscreen')">Pour Drink</button>
+        <button class="operatorButton" onclick="show_pausefunction(this.innerHTML,'pauseReturn()')">Return Bottle</button>
+        <button class="operatorButton" onclick="show_pausefunction(this.innerHTML,'pauseRemove()')">Remove Bottle</button>
+        <button class="operatorButton" onclick="show_pausefunction(this.innerHTML,'pauseGetNew()')">Get new Bottle</button>
+        <button class="operatorButton" onclick="pauseSpin()">Spin drinks</button>
       </div>
     </div>
   </div>
+
+
 <!-- Tässä parempi tapa tehdä sliderit
   oninput="x.value=parseInt(a.value)">
   <output name="x" for="a"></output>
@@ -63,7 +66,7 @@
     100
 -->
 
-  <!--   add new Bottle     -->
+  <!--   add new Drink    -->
   <div id="newdrinkinfo" class="shade">
   <!-- Popup Div Starts Here -->
   <div class="formboundary">
@@ -178,8 +181,8 @@
   </div>
 </div>
 
+    <!--   order Drinks     -->
     <div class="floatfix"></div>
-
     <div id="orderscreen" class="shade">
         <!-- Popup Div Starts Here -->
       <div class="formboundary">
@@ -204,6 +207,7 @@
       </div>
     </div>
 
+    <!--   add Bottles     -->
       <div id="bottleinfo" class="shade">
       <!-- Popup Div Starts Here -->
       <div class="formboundary">
@@ -213,21 +217,21 @@
         <h2>Add Bottle</h2>
         <hr>
         <form id="bottleinfo_form">
-          <h3>Select bottle content:<h3>
+          <h3>Select bottle content:</h3>
           <input type="radio" name="content" value="Water" id="Water">
           <label for="Water">Water</label><br>
           <input type="radio" name="content" value="Vodka" id="Vodka">
           <label for="Vodka">Vodka</label><br>
           <input type="radio" name="content" value="OrangeJuice" id="OrangeJuice">
           <label for="OrangeJuice">Orange Juice</label><br>
-          <h3>Select bottle shape:<h3>
+          <h3>Select bottle shape:</h3>
           <input type="radio" name="shape" value="FinlandiaVodka" id=FinlandiaVodka>
           <label for="FinlandiaVodka">Finlandia Vodka</label><br>
           <input type="radio" name="shape" value="Muovijallu" id=Muovijallu>
           <label for="Muovijallu">Muovijallu</label><br>
           <input type="radio" name="shape" value="Tasavalta" id=Tasavalta>
           <label for="Tasavalta">Tasavalta</label><br>
-          <h3>Select volume:<h3>
+          <h3>Select volume:</h3>
             <p id="volumeinfo">100 cl</p>
             <input type="range" class="wideinput slider" id="volumeslider" value="100" step="5" name=volume onchange="writeToElement('volumeinfo',this.value + ' cl')">
           <!--
@@ -244,6 +248,68 @@
       </div>
       </div>
     </div>
+
+    <!--   Pause functions     -->
+      <div id="pausescreen" class="shade">
+      <!-- Popup Div Starts Here -->
+      <div class="formboundary">
+      <!-- Contact Us Form -->
+
+      <div class="form">
+        <h2 id="pausefunction_name">Unknown function!</h2>
+        <hr>
+        <form id="pausefunction_form">
+          <h3>Bottle Location:</h3>
+            <input type="number" name="location" min="0" max="8">
+          <h3>Select bottle shape:</h3>
+            <input type="radio" name="shape" value="FinlandiaVodka">
+            <label for="FinlandiaVodka">Finlandia Vodka</label><br>
+            <input type="radio" name="shape" value="Muovijallu">
+            <label for="Muovijallu">Muovijallu</label><br>
+            <input type="radio" name="shape" value="Tasavalta">
+            <label for="Tasavalta">Tasavalta</label><br>
+        </form>
+        <button id="pausefunction_button" type="button" class="operatorButton green">YES</button>
+        <button type="button" class="operatorButton red" onclick= "hide_element('pausescreen')">NO</button>
+        <div class="floatfix"></div>
+      </div>
+      </div>
+    </div>
+
+    <!--   Pour function     -->
+      <div id="pourscreen" class="shade">
+      <!-- Popup Div Starts Here -->
+      <div class="formboundary">
+      <!-- Contact Us Form -->
+
+      <div class="form">
+        <h2>Pour</h2>
+        <hr>
+        <form id="pour_form">
+          <h3>Pour Time:</h3>
+            <input type="number" name="time" min="0">
+          <h3>How many:</h3>
+            <input type="number" name="cups" min="1" max="4">
+          <h3>Bottle Shape:</h3>
+            <input type="radio" name="shape" value="FinlandiaVodka">
+            <label for="FinlandiaVodka">Finlandia Vodka</label><br>
+            <input type="radio" name="shape" value="Muovijallu">
+            <label for="Muovijallu">Muovijallu</label><br>
+            <input type="radio" name="shape" value="Tasavalta">
+            <label for="Tasavalta">Tasavalta</label><br>
+          <h3>Bottle Location:</h3>
+            <input type="number" name="location" min="0" max="8">
+            <h3>How much is left in the bottle:</h3>
+            <p id="pourvolumeinfo">100 cl</p>
+            <input type="range" class="wideinput slider" id="pourvolumeslider" value="100" step="5" name=volume onchange="writeToElement('pourvolumeinfo',this.value + ' cl')">
+        </form>
+        <button type="button" class="operatorButton green" onclick="pausePour()">YES</button>
+        <button type="button" class="operatorButton red" onclick= "hide_element('pourscreen')">NO</button>
+        <div class="floatfix"></div>
+      </div>
+      </div>
+    </div>
+
   </header>
 
   <div id="maincontent">

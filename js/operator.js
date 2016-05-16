@@ -92,6 +92,17 @@ function loadBottle(){
   socket.emit('loadBottle');
 }
 
+// säädetään pausefunktioiden valintaikkuna vastaamaan oikeaa funktiota
+function show_pausefunction(function_nick,function_name){
+  writeToElement("pausefunction_name",function_nick);
+  // function_name = pauseGrab
+  //onclick(pauseGrab(location,type))
+  let el = document.getElementById('pausefunction_button');
+  el.setAttribute("onclick", function_name);
+  //el.setAttribute("onmouseenter", "functionality");
+  show_element("pausescreen");
+}
+
 function removeDrink(){
 
 }
@@ -114,28 +125,47 @@ function resume(){
 }
 
 function pauseGrab(){
-  writeToElement("lastCommand","pauseGrab");
-  socket.emit('pausegrab',3,'Finlandia');
+  let form = document.getElementById('pausefunction_form');
+  let location = form.location.value;
+  let shape = form.shape.value;
+  hide_element("pausescreen");
+  socket.emit("pausegrab",location,shape);
 }
 
 function pausePour(){
-  writeToElement("lastCommand","pausePour");
-  socket.emit('pausepour',5000,3);
+  let form = document.getElementById('pour_form');
+  let pourtime = form.time.value;
+  let cups = form.cups.value;
+  let shape = form.shape.value
+  let location = form.location.value;
+  let volume = form.volume.value;
+  // lisää parametreja tänne
+  socket.emit('pausepour',pourtime,cups,shape,location,volume);
+  hide_element("pourscreen");
 }
 
 function pauseReturn(){
-  writeToElement("lastCommand","pauseReturn");
-  socket.emit('pausereturn',3,'Finlandia');
+  let form = document.getElementById('pausefunction_form');
+  let location = form.location.value;
+  let shape = form.shape.value;
+  hide_element("pausescreen");
+  socket.emit('pausereturn',location,shape);
 }
 
 function pauseRemove(){
-  writeToElement("lastCommand","pauseRemove");
-  socket.emit('pauseremove',3,'Finlandia');
+  let form = document.getElementById('pausefunction_form');
+  let location = form.location.value;
+  let shape = form.shape.value;
+  hide_element("pausescreen");
+  socket.emit('pauseremove',location,shape);
 }
 
 function pauseGetNew(){
-  writeToElement("lastCommand","pauseGetNew");
-  socket.emit('pausegetnew',3,'Finlandia');
+  let form = document.getElementById('pausefunction_form');
+  let location = form.location.value;
+  let shape = form.shape.value;
+  hide_element("pausescreen");
+  socket.emit('pausegetnew',location,shape);
 }
 
 // Funktio juomakarusellin pyöräyttämiselle.
