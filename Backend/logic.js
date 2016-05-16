@@ -18,7 +18,7 @@ let RobotEmitter = require('./robot.js').RobotEmitter;
 
 // Some constants for the logic:
 const MAX_ERRORS = 10; // The maximum amount that the message sending can fail.
-const MIN_VOLUME = 6; // The minimum volume to be remaining in the bottle before it's removed.
+const MIN_VOLUME = 15; // The minimum volume to be remaining in the bottle before it's removed.
 
 // The class for the robots control logic.
 class ControlLogic {

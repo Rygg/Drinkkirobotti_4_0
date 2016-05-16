@@ -129,6 +129,7 @@ class BottleShelf {
         let object;
         try {
             object = JSON.parse(objString);
+	    console.log(object.length);
         } catch (err) {
             console.log('Error while reading shelf configuration from file: ' + err.message + '.');
             return false;
