@@ -419,8 +419,8 @@ class ControlLogic {
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
                             let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:
                             // Call the robot to grab the new bottle.
-                            let type2 = that.database.reservedShelf.bottles[location2].type);
-                            if(that.robot.grabBottle(location2,type2) {
+                            let type2 = that.database.reservedShelf.bottles[location2].type;
+                            if(that.robot.grabBottle(location2,type2)) {
                                 // Call the grabHandler.
                                 try {
                                     that.grabHandler(location2,type2,howMany,pourTime,amount,pourQueue);
