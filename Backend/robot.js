@@ -55,7 +55,7 @@ class Robot {
     // grabBottle() - Grabbing the bottle from the bottleshelf. returns an instant false if unable to comply, true if reaches the end.
     // Emits a RobotEmitter 'grabBottle_done' once fully done with callbacks. the result of the process is stored in the failure-variable.
     // failure == false if succesful, true if not.
-    grabBottle(location, type) {
+    grabBottle(location, type, paused) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
@@ -86,7 +86,7 @@ class Robot {
     // pourDrinks() - Pouring a drink from the grabbed bottle: returns an instant false if unable to comply, true if the function reaches its end and starts all callbacks.
     // Emits a RobotEmitter 'pourDrinks_done' once fully done with callbacks. the result of the process is stored in the failure-variable.
     // failure == false if succesful, true if not.
-    pourDrinks(pourTime, howMany,type) {
+    pourDrinks(pourTime, howMany,type, paused) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
@@ -117,7 +117,7 @@ class Robot {
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
     // Emits a RobotEmitter 'returnBottle_done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
     // Success: failure == false, Failure: failure == true
-    returnBottle(location, type) {
+    returnBottle(location, type, paused) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
@@ -149,7 +149,7 @@ class Robot {
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
     // Emits a RobotEmitter 'removeBottle_done' once fully done with callbacks. The result of the process can be accessed from the failure-variable.
     // Success: failure == false, Failure: failure == true
-    removeBottle(type) {
+    removeBottle(type, paused) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
@@ -182,7 +182,7 @@ class Robot {
     // Returns an instant false if the robot is unable to comply with the request. True if all the requests are called, timeout is still possible though.
     // Emits a RobotEmitter 'getNewBottle_done' once fully done with callbacks. The result of the process can be accessed from the lastCommand-variable.
     // Success: failure == false, Failure: failure == true
-    getNewBottle(location, type) {
+    getNewBottle(location, type, paused) {
         // Check if the robot is busy:
         if(this.isBusy()) {
             console.log("Command not registered: Robot is busy.");
@@ -229,9 +229,9 @@ class Robot {
     // Checks the robots current status, changes the robot to be busy, starts a timeout counter,
     // calls for writing to serial port and handles to possible timeout.
     // returns false unable to execute, true if all the callbacks are initiated.
-    commHandler(action,command) {
+    commHandler(action,command, paused) {
         // Check if the robot is able to perform the current action.
-        if(!checkStatus(action, this.lastCommand, this.failure)) {
+        if(!checkStatus(action, this.lastCommand, this.failure, paused)) {
             return false; // Not.
         }
         
@@ -337,7 +337,10 @@ function responseHandler(err,result,command,action,timeout,that) {
  * -----------------------------------------------------------------------------*/
 
 // checkStatus- a function which checks if the robot is able to perform the required operation.
-function checkStatus(action,lastCommand,failure) { 
+function checkStatus(action,lastCommand,failure, paused) {
+    if(paused == true) {
+        return true;
+    } 
     // Check if the robot is trying to perform the same task again.
     if(failure && lastCommand == action) {
         // Return true: otherwise with failure, always false.

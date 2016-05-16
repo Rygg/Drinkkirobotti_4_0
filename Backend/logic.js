@@ -624,7 +624,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.grabBottle(location,type)) {
+        if(this.robot.grabBottle(location,type,true)) {
             this.grabHandler(location,type);
             return true;    
         }
@@ -638,7 +638,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.pourDrinks(pourTime,howMany,type)) {
+        if(this.robot.pourDrinks(pourTime,howMany,type,true)) {
             this.pourHandler(pourTime,howMany,type,location,amount);
             return true;    
         }
@@ -651,7 +651,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.returnBottle(location,type)) {
+        if(this.robot.returnBottle(location,type,true)) {
             this.returnHandler(location,type);
             return true;
         }
@@ -664,7 +664,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.removeBottle(type)) {
+        if(this.robot.removeBottle(type,true)) {
              this.removeHandler(location,type);
             return true;    
         }
@@ -677,7 +677,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.getNewBottle(location,type)) {
+        if(this.robot.getNewBottle(location,type,true)) {
             this.getNewHandler(location,type,bottleString);
             return true;    
         }
