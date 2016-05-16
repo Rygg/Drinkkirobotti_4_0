@@ -150,7 +150,7 @@ class DrinkDB {
 function changeExport(object) {
     let drinksJSON = JSON.stringify(object);
     fs.writeFileSync("drinkdb.json", drinksJSON)
-    console.log("Changes were made into drinklist.txt");
+    console.log("Changes were made into drinkdb.json");
     return;
 }
 

@@ -1,1 +1,9 @@
-[{"name":"Finlandia", "type":"Finlandia", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty",{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},{"name":"Gin", "type":"Bombaypullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},"empty","empty","empty","empty","empty","empty"] 	
+[{"name":"Finlandia", "type":"Finlandia", "volume":10,"pourSpeed":2, "isAlcoholic":true},
+"empty",
+"empty",
+"empty",
+{"name":"Janoviina", "type":"Lasijallupullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},
+{"name":"Gin", "type":"Bombaypullo", "volume":10,"pourSpeed":2, "isAlcoholic":true},
+"empty",
+"empty",
+"empty"] 	
