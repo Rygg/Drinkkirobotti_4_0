@@ -1,0 +1,9 @@
+[
+    {"name":"Vodka Cranberry","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"CranberryJuice","amount":10}]},
+    {"name":"Cranberry Juice","available":false,"recipe":[{"bottleName":"CranberryJuice","amount":14}]},
+    {"name":"Orange Juice","available":false,"recipe":[{"bottleName":"OrangeJuice","amount":14}]},
+    {"name":"Screwdriver","available":false,"recipe":[{"bottleName":"Vodka","amount":4},{"bottleName":"OrangeJuice","amount":10}]},
+    {"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}
+    {"name":"Jaloviina","available":false,"recipe":[{"bottleName":"Jaloviina","amount":4}]}
+    {"name":"Kelkka","available":false,"recipe":[{"bottleName":"Vodka","amount":2},{"bottleName":"Passion","amount":2},{"bottleName":"OrangeJuice","amount":10}]}
+]
