@@ -450,7 +450,17 @@ class ControlLogic {
                             // Restart the cycle:
                             that.beingPoured = []; // Clear the info of what is being poured.
                             that.running = false; // The system is no longer running.
-                            that.run();
+                           
+                            // Tell the drink carousel to spin.
+                            that.paused = true;
+                            let spinCommand = "spinDrinkRevolver()";
+                            spinCommand = editCommandLength(spinCommand);
+                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result,that) {
+                                console.log("Wrote "+result+" symbols to serial for spinning the thing.");
+                                setTimeout(function(that) {
+                                    that.unpause();
+                                },1500);
+                            });
                             return true;
                         }
 
@@ -535,9 +545,21 @@ class ControlLogic {
                         } else {
                             // The drink has been completely poured.
                             // Restart the cycle:
+                            
                             that.beingPoured = []; // Clear what is being poured.
                             that.running = false; // The system is no longer running.
-                            that.run();
+                            
+                            // Tell the drink carousel to spin.
+                            that.paused = true;
+                            let spinCommand = "spinDrinkRevolver()";
+                            spinCommand = editCommandLength(spinCommand);
+                            serialPort.write(Buffer(spinCommand, "utf8"), function(err,result,that) {
+                                console.log("Wrote "+result+" symbols to serial for spinning the thing.");
+                                setTimeout(function(that) {
+                                    that.unpause();
+                                },1500);
+                            });
+                            
                             return true;
                         }
                     } else {
