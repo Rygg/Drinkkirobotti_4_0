@@ -10,8 +10,8 @@ var Logic = require('./Backend/logic.js');
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
-var backend = new Logic('test_database.json', 'currentShelf.json');
-var locations = [""]
+var backend = new Logic('drinkdatabase_kampus.json', 'currentShelf.json');
+var locations = [""];
 
 server.listen(3000, function(){
 	console.log("Started");
@@ -166,6 +166,7 @@ io.on('connection', function(socket){
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
 	io.emit('initializePreparedDrinks', beingPrepared);
+	io.emit('initializeDrinkList',drinkList);
 	//console.log('UI updated..');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
@@ -185,8 +186,8 @@ function getFreeShelfPlace() {
 			reserved_places.push(bottle_locations[j]);
 		}
 	};
-	//käy läpi paikat 0-12 ja palauta heti, jos paikka vapaana
-	for (let i = 0; i < 12; i++){
+	//käy läpi paikat 0-8 ja palauta heti, jos paikka vapaana
+	for (let i = 0; i < 8; i++){
 		if (reserved_places.indexOf(i) == -1){
 			return i;
 		}
