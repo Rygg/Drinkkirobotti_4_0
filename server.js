@@ -135,7 +135,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausespin', function() {
-		backend.pausespin();
+		backend.pauseSpin();
 	});
 
 	socket.on('pausegetnew', function(location, type, Bottle){
