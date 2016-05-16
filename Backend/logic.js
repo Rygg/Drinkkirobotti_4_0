@@ -246,6 +246,7 @@ class ControlLogic {
         this.startable = false; // The cycle is not able to start from this position.
         let that = this;
         // Wait for the emit happening.
+         console.log("Waiting for data...");   
         RobotEmitter.once('grabBottle_done', function() {
             // Check if the event was succesfull.
             if(that.robot.failure) {
@@ -269,9 +270,10 @@ class ControlLogic {
                 let expected = "grabBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
-
+                console.log("Waiting for data...");                    
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(data) {
+                    console.log("Data recieved!");
                     if(data == expected) { // Whatever the message will be.
                         // The action was completed. If the robot is not paused, Call for the pourDrink action and the handler.
                         console.log("Action: "+data+" completed!");
@@ -340,6 +342,9 @@ class ControlLogic {
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
                         // Also check if the robot is paused, and if so, don't call anything.
+                        // Export bottleshelf:
+                        that.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -376,6 +381,7 @@ class ControlLogic {
         this.startable = false; // The robot is not yet able to start a new cycle from this position.
         let that = this;
         // Wait for the emit to happen:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('returnBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
@@ -400,6 +406,7 @@ class ControlLogic {
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
+                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
@@ -407,6 +414,10 @@ class ControlLogic {
                         that.robot.working = false;
                         that.startable = true; // The robot can start a new cycle from this position.
                         // See if the robot is paused. return true if yes.
+                        
+                        // Export bottleshelf:
+                        that.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -419,8 +430,8 @@ class ControlLogic {
                             let pourSpeed = that.database.reservedShelf.bottles[location2].pourSpeed; // Find the pourSpeed of the bottle.
                             let pourTime = countPourTime(pourSpeed,portion); // Calculate the pourTime:
                             // Call the robot to grab the new bottle.
-                            let type2 = that.database.reservedShelf.bottles[location2].type);
-                            if(that.robot.grabBottle(location2,type2) {
+                            let type2 = that.database.reservedShelf.bottles[location2].type;
+                            if(that.robot.grabBottle(location2,type2)) {
                                 // Call the grabHandler.
                                 try {
                                     that.grabHandler(location2,type2,howMany,pourTime,amount,pourQueue);
@@ -457,6 +468,7 @@ class ControlLogic {
         console.log('removeHandler() started.');
         let that = this;
         // Wait for the emit to happen:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('removeBottle_done', function() {
             // Check for failure:
             if(that.robot.failure) {
@@ -481,6 +493,7 @@ class ControlLogic {
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 // No errors occurred, wait for the completion message.
+                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
@@ -491,6 +504,10 @@ class ControlLogic {
                         that.database.reservedShelf.removeBottle(location);
                         that.startable = true; // The robot can start a new cycle from this position.
                         // See if the program is paused.
+                        
+                        // Export bottleshelf:
+                        that.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -540,6 +557,7 @@ class ControlLogic {
         console.log("getNewHandler() started.");
         let that = this;
         // Listen for the emit:
+         console.log("Waiting for emit...");   
         RobotEmitter.once('getNewBottle_done', function() {
             if(that.robot.failure) {
                 // If the message wasn't delivered and robot isn't paused, Try again.
@@ -563,6 +581,7 @@ class ControlLogic {
                 let expected = "getNewBottle("+location+","+type+");";
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
+                console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
@@ -578,6 +597,9 @@ class ControlLogic {
                         that.running = false;
                         that.startable = true; // The robot can start a new cycle from this position.
                         // Restart the cycle if the program is not paused:
+                        // Export bottleshelf:
+                        that.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -624,7 +646,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.grabBottle(location,type)) {
+        if(this.robot.grabBottle(location,type,true)) {
             this.grabHandler(location,type);
             return true;    
         }
@@ -638,7 +660,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.pourDrinks(pourTime,howMany,type)) {
+        if(this.robot.pourDrinks(pourTime,howMany,type,true)) {
             this.pourHandler(pourTime,howMany,type,location,amount);
             return true;    
         }
@@ -651,7 +673,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.returnBottle(location,type)) {
+        if(this.robot.returnBottle(location,type,true)) {
             this.returnHandler(location,type);
             return true;
         }
@@ -664,7 +686,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.removeBottle(type)) {
+        if(this.robot.removeBottle(type,true)) {
              this.removeHandler(location,type);
             return true;    
         }
@@ -677,7 +699,7 @@ class ControlLogic {
             console.log("Cycle not paused.");
             return false;
         }
-        if(this.robot.getNewBottle(location,type)) {
+        if(this.robot.getNewBottle(location,type,true)) {
             this.getNewHandler(location,type,bottleString);
             return true;    
         }
