@@ -57,6 +57,10 @@
   .slider {
     width: 90%;
   }
+  
+  .form {
+  max-height: 85vw;
+  }
 
 }
 

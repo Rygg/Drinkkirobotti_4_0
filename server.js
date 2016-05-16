@@ -10,7 +10,7 @@ var Logic = require('./Backend/logic.js');
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
-var backend = new Logic('test_database.json', 'test_bottleshelf.json');
+var backend = new Logic('test_database.json');
 var locations = [""]
 
 server.listen(3000, function(){
@@ -97,8 +97,15 @@ io.on('connection', function(socket){
 		};
 	});
 
-	socket.on('removeOrder', function(orderID){
-		backend.removeOrder(Number(orderID));
+	socket.on('removeOrder', function(IDlist){
+		for(i=0; i < IDlist.length; i++)
+			backend.removeOrder(Number(IDlist[i]));
+	});
+
+	socket.on('addNewDrink', function(drinkObject){
+		//{"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}
+		let JSONI = JSON.stringify(drinkObject);
+		backend.database.drinkDB.addDrink(JSONI);
 	});
 
 	// pysäyttää robotin seuraavan toiminnon jälkeen
@@ -115,8 +122,8 @@ io.on('connection', function(socket){
 		backend.pauseGrab(location,type);
 	});
 
-	socket.on('pausepour', function(pourTime, howMany){
-		backend.pausePour(pourTime,howMany,3,2);
+	socket.on('pausepour', function(pourTime, howMany,type,location,amount){
+		backend.pausePour(pourTime,howMany,type,location,amount);
 	});
 
 	socket.on('pausereturn', function(location, type){

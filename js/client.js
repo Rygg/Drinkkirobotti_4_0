@@ -9,7 +9,7 @@ var socket = io();
 socket.on('drinkOrdered', addDrink);
 socket.on('initializeDrinkList', refreshDrinkList);
 
-
+// Funktio lisää eri drinkit drinkkilistaan
 function refreshDrinkList(drinkList){
   // Tuhoa vanha ja tee uusi lista
   removeElement("contentright", "drinkList");
@@ -24,6 +24,7 @@ function refreshDrinkList(drinkList){
   }
 }
 
+// Lisää drinkin tilauslistaan.
 function addDrink(drinkName, batchID) {
   li_ID = "li_" + batchID;
   appendElement('orderlist',"li",li_ID, "batch");
@@ -31,6 +32,7 @@ function addDrink(drinkName, batchID) {
   appendElement(li_ID,"ol",batchID);
 };
 
+// Antaa juomatilauksen servulle poimitusta tiedoista.
 function orderselected() {
   // Hae tilatun juoman nimi
   let drinkName = document.getElementById('orderName').innerHTML;
@@ -63,11 +65,13 @@ function appendElement(parentID, childElement, childIDName, childClassName){
   parent.appendChild(child);
 }
 
+// hyödyllinen funktio elementtiin kirjoittaessa.
 function writeToElement(elementID, text){
   let el = document.getElementById(elementID);
   el.innerHTML = text;
 }
 
+// Lisää tilausnappulan drinkkilistaan ja drinkin nimen.
 function createOrderButton(drinkObj,buttonIndex){
   let drinkName = drinkObj.name;
   let drinkRecipe = drinkObj.recipe;
@@ -80,7 +84,7 @@ function createOrderButton(drinkObj,buttonIndex){
   writeToElement(labelID,drinkName);
 }
 
-// lisää tilausnappulaan kuvan ja funktion
+// lisää tilausnappulaan kuvan ja yksilölliset parametrit.
 function configureButtonElement(elementID,drinkName,drinkRecipe,available){
   let el = document.getElementById(elementID);
   let recipe_str = JSON.stringify(drinkRecipe);
@@ -95,8 +99,21 @@ function configureButtonElement(elementID,drinkName,drinkRecipe,available){
     img.src=url;
   }
   el.appendChild(img);
+
+  // Jos juoma on loppu
+  if (available == false){
+    let out_img = document.createElement("img");
+    out_img.setAttribute("class","outofstock");
+    let out_url = "outofstock.png";
+    out_img.src=out_url;
+    el.appendChild(out_img);
+    el.disabled = true;
+  } else {
+    el.disabled = false;
+  }
 }
 
+// Tarkastaa löytyykö drinkin kuvaa. Ottaa parametrina kuvan osoitteen.
 function imageExists(image_url){
     var http = new XMLHttpRequest();
     http.open('HEAD', image_url, false);
@@ -104,6 +121,7 @@ function imageExists(image_url){
     return http.status != 404;
 }
 
+// Validoi nimen drinkkiä tilatessa
 function validate(text) {
     let input = document.getElementById('inputadvice');
     if (text == "") {
@@ -137,6 +155,7 @@ function validate(text) {
 //   document.getElementById('abc').style.display = "none";
 // });
 
+// Tämä funktio näyttää drinkin tiedot
 function show_info(headLine,recipelist) {
 document.getElementById('orderscreen').style.display = "block";
 document.getElementById('orderName').innerHTML = headLine;
@@ -151,11 +170,12 @@ for (i=0; i < recipelist.length; i++){
   input.focus();
 }
 };
-//Function to Hide Popup
+// Piilottaa elementin
 function hide_element(elementID){
 document.getElementById(elementID).style.display = "none";
 };
 
+// Näyttää elementin
 function show_element(elementID){
 document.getElementById(elementID).style.display = "block";
 };

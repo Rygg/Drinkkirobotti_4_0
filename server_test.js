@@ -62,7 +62,7 @@ function backend_findBottleLocations(bottle){
 }
 
 drinkList.push({"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]});
-drinkList.push({"name":"Screwdriver","available":false,"recipe":[{"bottleName":"Finlandia","amount":4},{"bottleName":"Orange Juice","amount":10}]});
+drinkList.push({"name":"Screwdriver","available":true,"recipe":[{"bottleName":"Finlandia","amount":4},{"bottleName":"Orange Juice","amount":10}]});
 drinkList.push({"name":"Cat","available":false,"recipe":[{"bottleName":"Furball","amount":2},{"bottleName":"Mice","amount":1}]});
 
 orderQueue.push( { ID: 2, drinkName: "ScrewDriver", orderer: "Teppo" } );
@@ -122,10 +122,61 @@ io.on('connection', function(socket){
 		};
 	});
 
-	socket.on('removeOrder', function(orderID){
-		console.log(orderID);
-		console.log(typeof(Number(orderID)));
-		//backend.removeOrder(orderID);
+	socket.on('removeOrder', function(IDlist){
+		for(i=0; i < IDlist.length; i++)
+			console.log(Number(IDlist[i]));
+	});
+
+	socket.on('addNewDrink', function(drinkObject){
+		//{"name":"GT","available":false,"recipe":[{"bottleName":"Gin","amount":6},{"bottleName":"Tonic","amount":10}]}
+		var newDrink = {"name":drinkObject.name,"available":true,"recipe":drinkObject.recipe};
+		drinkList.push(newDrink)
+		socket.emit('initializeDrinkList',drinkList);
+	});
+
+	// pysäyttää robotin seuraavan toiminnon jälkeen
+	socket.on('pauserobot', function(){
+		console.log("Robot paused");
+		//backend.pause();
+	});
+
+	// antaa robotin jatkaa
+	socket.on('resumerobot', function(){
+		console.log("resumed");
+		//backend.unpause();
+	});
+
+	socket.on('pausegrab', function(location, type){
+		console.log("location: " + location + " type: " + type);
+		//backend.pauseGrab(location,type);
+	});
+
+	socket.on('pausepour', function(pourTime, howMany,type,location,amount){
+		console.log("pourTime: " + pourTime + " howMany: " + howMany + " type: " + type + " location: " + location + " amount: " + amount);
+		//backend.pausePour(pourTime,howMany,3,2);
+	});
+
+	socket.on('pausereturn', function(location, type){
+		console.log("location: " + location + " type: " + type);
+		//backend.pauseReturn(location,type);
+	});
+
+	socket.on('pauseremove', function(location,type){
+		console.log("location: " + location + " type: " + type);
+		//backend.pauseRemove(location,type);
+	});
+
+	socket.on('pausespin', function() {
+		console.log("TODO: Juomakarusellin pyöräytys, TODO");
+	});
+
+	socket.on('pausegetnew', function(location, type){
+		if (addedBottle.type !=undefined){
+			var JSONI = JSON.stringify(addedBottle);
+			console.log(location,type,JSONI);
+		} else {
+			console.log("No in bottlechangestation! Add a bottle first!");
+		}
 	});
 
 	socket.on('loadBottle', function() {

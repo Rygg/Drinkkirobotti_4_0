@@ -7,6 +7,13 @@ html {
   overflow: scroll;
 }
 
+.outofstock{
+  position: absolute;
+  top: -70%;
+  right: 0;
+  background:rgba(0,0,0,0.7);
+}
+
 #logo{
   float: right;
   margin: 30px 30px 20px 20px;
@@ -37,6 +44,10 @@ body {
   font-family: Arial, 'Lucida Sans Unicode';
   line-height: 1.5;
   text-align: left;
+}
+
+.nomargintext{
+  margin: 0px;
 }
 
 .greetings{
