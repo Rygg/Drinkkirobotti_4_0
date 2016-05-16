@@ -192,6 +192,16 @@ class Database {
     addBottle(bottle, location) {
         this.reservedShelf.addBottle(bottle,location);
         this.currentShelf.addBottle(bottle,location);
+
+        // Looping through the whole drinkDB to check availability.
+	console.log("Checking availability for every drink in the DB.");
+        for(let i = 0; i < this.drinkDB.drinks.length; i++) {
+            if(this.checkDrinkAvailability(this.drinkDB.drinks[i].name)) {
+                console.log("Drink: " + this.drinkDB.drinks[i].name + " is now available.");
+            } else {
+                console.log(this.drinkDB.drinks[i].name + "Not yet available.");
+            }
+        };
     }
 };
 

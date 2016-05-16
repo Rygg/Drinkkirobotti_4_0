@@ -10,7 +10,7 @@ var Logic = require('./Backend/logic.js');
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
-var backend = new Logic('test_database.json', 'test_bottleshelf.json');
+var backend = new Logic('test_database.json');
 var locations = [""]
 
 server.listen(3000, function(){
@@ -119,19 +119,19 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausegrab', function(location, type){
-		backend.pauseGrab(location,type);
+		backend.pauseGrab(Number(location),type);
 	});
 
 	socket.on('pausepour', function(pourTime, howMany,type,location,amount){
-		backend.pausePour(pourTime,howMany,type,location,amount);
+		backend.pausePour(Number(pourTime),Number(howMany),type,Number(location),Number(amount));
 	});
 
 	socket.on('pausereturn', function(location, type){
-		backend.pauseReturn(location,type);
+		backend.pauseReturn(Number(location),type);
 	});
 
 	socket.on('pauseremove', function(location,type){
-		backend.pauseRemove(location,type);
+		backend.pauseRemove(Number(location),type);
 	});
 
 	socket.on('pausespin', function() {
@@ -141,12 +141,11 @@ io.on('connection', function(socket){
 	socket.on('pausegetnew', function(location, type, Bottle){
 		if (addedBottle.type !=undefined){
 			let JSONI = JSON.stringify(addedBottle);
-			backend.pauseGetNew(location,type,JSONI);
+			backend.pauseGetNew(Number(location),type,JSONI);
 		} else {
 			console.log("No in bottlechangestation! Add a bottle first!");
 		}
 	});
-
 	// Uuden syötettävän pullon tiedot
 	socket.on('loadBottle', function() {
 		if (addedBottle.type != undefined){

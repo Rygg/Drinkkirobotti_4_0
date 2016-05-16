@@ -147,7 +147,6 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('pausegrab', function(location, type){
-		console.log(typeof location)
 		console.log("location: " + location + " type: " + type);
 		//backend.pauseGrab(location,type);
 	});

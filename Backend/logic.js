@@ -133,6 +133,11 @@ class ControlLogic {
 
     // Run() - The function which starts the drink pouring process. Should be called from processOrder if the system isn't running already (running == true).
     run() {
+
+        // Flush the serial port to be sure there's no trash in there.
+        serialPort.flush(function() {
+            console.log("Serialport flushed.");
+        });
         // Check if already running:
         if(this.running) {
             return false;
@@ -562,8 +567,7 @@ class ControlLogic {
                         that.robot.working = false;
                         // The action was carried out completely.
                         // Add the bottle to the bottleshelfs:
-                        that.database.currentShelf.addBottle(bottleString,location);
-                        that.database.reservedShelf.addBottle(bottleString,location);
+                        that.database.addBottle(bottleString,location);
                         that.newBottle[0] = false; // Set the flags accordingly.
                         that.newBottle[1] = 'unknown';
                         that.newBottle[2] = 'unknown';
