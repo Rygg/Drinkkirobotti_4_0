@@ -340,6 +340,9 @@ class ControlLogic {
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
                         // Also check if the robot is paused, and if so, don't call anything.
+                        // Export bottleshelf:
+                        this.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -407,6 +410,10 @@ class ControlLogic {
                         that.robot.working = false;
                         that.startable = true; // The robot can start a new cycle from this position.
                         // See if the robot is paused. return true if yes.
+                        
+                        // Export bottleshelf:
+                        this.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -491,6 +498,10 @@ class ControlLogic {
                         that.database.reservedShelf.removeBottle(location);
                         that.startable = true; // The robot can start a new cycle from this position.
                         // See if the program is paused.
+                        
+                        // Export bottleshelf:
+                        this.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }
@@ -578,6 +589,9 @@ class ControlLogic {
                         that.running = false;
                         that.startable = true; // The robot can start a new cycle from this position.
                         // Restart the cycle if the program is not paused:
+                        // Export bottleshelf:
+                        this.database.currentShelf.exportShelf('currentShelf.json');
+                        
                         if(that.paused) {
                             return true;
                         }

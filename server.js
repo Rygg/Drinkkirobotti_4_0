@@ -10,7 +10,7 @@ var Logic = require('./Backend/logic.js');
 var app = express();
 var server = http.createServer(app);
 var io = socketio(server);
-var backend = new Logic('test_database.json');
+var backend = new Logic('test_database.json', 'currentShelf.json');
 var locations = [""]
 
 server.listen(3000, function(){
