@@ -459,9 +459,7 @@ class ControlLogic {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
                                 
                             });
-                            setTimeout(function(that) {
-                                    that.unpause();
-                                },1500);
+                            setTimeout(that.unpause(),1500);
                             return true;
                         }
 
@@ -558,9 +556,7 @@ class ControlLogic {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
                                 
                             });
-                            setTimeout(function(that) {
-                                    that.unpause();
-                                },1500);
+                            setTimeout(that.unpause(),1500);
                             return true;
                         }
                     } else {
