@@ -95,7 +95,9 @@ class Database {
     // has been completed.
     // rather simple but keeps the implementation more module.
     pourCompleted(location, amount) {
+        
         this.currentShelf.bottles[location].volume -= amount;
+        console.log("New volume is: " + this.currentShelf.bottles[location].volume);
         return;
     }
     

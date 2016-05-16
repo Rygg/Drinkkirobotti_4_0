@@ -339,6 +339,7 @@ class ControlLogic {
 
                         that.robot.working = false;
                         // Call the pourCompleted()-function,
+                        
                         that.database.pourCompleted(location,amount);
                         // See if the bottle got empty, depending on that call the next command.
                         // Also check if the robot is paused, and if so, don't call anything.
@@ -415,8 +416,8 @@ class ControlLogic {
                         that.startable = true; // The robot can start a new cycle from this position.
                         // See if the robot is paused. return true if yes.
                         
-                        // Export bottleshelf:
-                        that.database.currentShelf.exportShelf('currentShelf.json');
+                        
+                        
                         
                         if(that.paused) {
                             return true;
