@@ -191,12 +191,12 @@ function addBottle(){
 }
 
 function pause(){
-  $("#pausepanel").slideDown("slow");
-
+  //$("#pausepanel").slideDown("slow");
+  show_element("pausepanel");
   socket.emit('pauserobot');
 }
 
 function resume(){
-  $("#pausepanel").slideUp("slow");
+  hide_element("pausepanel");
   socket.emit('resumerobot');
 }
