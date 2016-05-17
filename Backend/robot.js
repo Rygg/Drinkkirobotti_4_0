@@ -30,7 +30,7 @@ class Robot {
         this.failure = false;
 
         // Open the Serial Port connection
-        serialPort.open(function(err) {
+        /*serialPort.open(function(err) {
             if(err) {
                 throw err; // Port failed to open:
             }
@@ -40,15 +40,15 @@ class Robot {
                 serialPort.flush(function(){
                     console.log("Flushed!");
                 });
-                /*// Test write:
+                *//*// Test write:
                 serialPort.write('Moikka!', (err, res) => {
                     console.log("kirjoitettiin " + res + " merkkiä");
                 });
                 serialPort.on('data', (data) => {
                     console.log('Tuli dataa ' + data); 
                 }); */
-            }    
-        })
+         //   }    
+       // })
     }
     
        /*---------------------------------------------------------------------------------------------------

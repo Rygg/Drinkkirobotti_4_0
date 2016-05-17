@@ -342,7 +342,7 @@ class ControlLogic {
                         that.robot.working = false;
                         // Call the pourCompleted()-function,
                         
-                        that.database.pourCompleted(location,amount);
+                        that.database.pourCompleted(location,amount,howMany);
                         // See if the bottle got empty, depending on that call the next command.
                         // Also check if the robot is paused, and if so, don't call anything.
                         // Export bottleshelf:

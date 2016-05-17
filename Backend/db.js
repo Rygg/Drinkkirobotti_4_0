@@ -94,8 +94,8 @@ class Database {
     // Function for removing the poured amount from the bottle in the correct location after the pour action
     // has been completed.
     // rather simple but keeps the implementation more module.
-    pourCompleted(location, amount) {
-        
+    pourCompleted(location, amount, howMany) {
+        amount = howMany*amount;
         this.currentShelf.bottles[location].volume -= amount;
         console.log("New volume is: " + this.currentShelf.bottles[location].volume);
         return;
