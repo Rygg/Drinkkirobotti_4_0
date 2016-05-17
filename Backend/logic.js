@@ -273,6 +273,7 @@ class ControlLogic {
                 console.log("Waiting for data...");                    
                 // Wait for the move completed message from the robot.
                 serialPort.once('data', function(data) {
+                    serialPort.flush(function(){});
                     console.log("Data recieved!");
                     if(data == expected) { // Whatever the message will be.
                         // The action was completed. If the robot is not paused, Call for the pourDrink action and the handler.
@@ -334,6 +335,7 @@ class ControlLogic {
                 expected = editCommandLength(expected); // Reached this far, error impossible.
                 expected = expected +";c"; // TODO
                 serialPort.once('data', function(data) {
+                    serialPort.flush(function(){});
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
 
@@ -409,6 +411,7 @@ class ControlLogic {
                 // No errors occurred, wait for the completion message.
                  console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
+                    serialPort.flush(function(){});
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
@@ -459,7 +462,9 @@ class ControlLogic {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
                                 
                             });
-                            setTimeout(that.unpause(),1500);
+                            setTimeout(function(){
+                                that.unpause();
+                            },1500, that);
                             return true;
                         }
 
@@ -505,6 +510,7 @@ class ControlLogic {
                 // No errors occurred, wait for the completion message.
                  console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
+                    serialPort.flush(function(){});
                     // No error occurred, the bottle has been returned to the bottleshelf.
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
@@ -556,7 +562,9 @@ class ControlLogic {
                                 console.log("Wrote "+result+" symbols to serial for spinning the thing.");
                                 
                             });
-                            setTimeout(that.unpause(),1500);
+                            setTimeout(function(){
+                                that.unpause();
+                            },1500, that);
                             return true;
                         }
                     } else {
@@ -603,6 +611,7 @@ class ControlLogic {
                 expected = expected +";c"; // TODO
                 console.log("Waiting for data...");   
                 serialPort.once('data', function(data) {
+                    serialPort.flush(function(){});
                     if(data == expected) {
                         console.log("Action: "+data+" completed!");
                         that.robot.working = false;
@@ -807,6 +816,10 @@ function editCommandLength(command) {
     }
 
     return command;
+}
+
+function end_pause(){
+    
 }
 
 

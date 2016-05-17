@@ -37,6 +37,9 @@ class Robot {
             // Port opened 
             else {
                 console.log("SerialPort connection to controller opened.");
+                serialPort.flush(function(){
+                    console.log("Flushed!");
+                });
                 /*// Test write:
                 serialPort.write('Moikka!', (err, res) => {
                     console.log("kirjoitettiin " + res + " merkkiä");
@@ -249,7 +252,11 @@ class Robot {
 
         // Write the command to the serial port:
         let that = this;
-        writeSerial(action,command,timeout, that);
+        serialPort.flush(function(){
+              console.log("Flushed!");
+              writeSerial(action,command,timeout, that);
+        });
+        
 
         // Check for the timeout:
         RobotEmitter.once(timeoutString, function() {
@@ -312,6 +319,7 @@ function responseHandler(err,result,command,action,timeout,that) {
                 that.communicating = false;
                 console.log("Robot started working");
                 let eventstring = 'timeout_' + action;
+                serialPort.flush(function(){});
                 RobotEmitter.removeListener(eventstring, function(){}); // No callback.
                 RobotEmitter.emit(action+'_done');
                 
