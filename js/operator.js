@@ -35,14 +35,17 @@ function refreshQueue(orderQueue){
   // Lisää listan eka drinkki.
   let drinkName = orderQueue[0].drinkName;
   let batchID = drinkName + orderQueue[0].ID;
+  let batchorderers = 0;
   addDrink(drinkName, batchID);
   // käy läpi tilaajat
   for (let i=0; i < orderQueue.length; i++){
   // jos tilaajalla sama drinkki kuin edellisellä, lisää nimi samaan erään
-    if (orderQueue[i].drinkName==drinkName){
+    if (orderQueue[i].drinkName==drinkName && batchorderers < 3){
+        batchorderers = batchorderers + 1;
         addOrderer(orderQueue[i].orderer, orderQueue[i].ID, batchID)
   // muuten lisää uusi drinkki
     }else{
+      batchorderers = 0;
       drinkName = orderQueue[i].drinkName;
       batchID = drinkName + orderQueue[i].ID;
       addDrink(drinkName, batchID);

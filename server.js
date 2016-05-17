@@ -166,7 +166,7 @@ io.on('connection', function(socket){
 setInterval(function () {
 	io.emit('initializeList', orderQueue);
 	io.emit('initializePreparedDrinks', beingPrepared);
-	io.emit('initializeDrinkList',drinkList);
+	//io.emit('initializeDrinkList',drinkList);
 	//console.log('UI updated..');
 	//console.log(socket.listeners('initializeList').lenght);
 }, 3000);
