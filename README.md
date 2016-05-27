@@ -15,7 +15,7 @@ The server is run with node.js from the main server file server.js.
 The main control logic for the robot is used by importing the class exported by Backend/logic.js. This class uses the classes modeling the robot and other physical elements of the robot cell to communicate with the robot controller and maintain the pouring cycle based on the ordered drinks.
 
 The main program cycle is best described in a flow chart diagram located here:
-http://tinyurl.com/zb7uzpm
+http://s33.postimg.org/4czodx56n/process_eng.png
 
 ---- 
 
